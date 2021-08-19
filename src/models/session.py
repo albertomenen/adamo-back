@@ -1,0 +1,44 @@
+import datetime
+
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import relationship
+
+from .. import db
+from sqlalchemy.dialects.postgresql import UUID
+import uuid
+
+
+class Session(db.Model):
+    __tablename__ = 'session'
+
+    id_session = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    medic_name = db.Column(db.String(50), nullable=False, unique=True)
+    # image_3D_color = db.Column(db.String(50), nullable=False, unique=True)
+    # image_thermic = db.Column(db.String(12), nullable=False)
+    # image_3D_depth = db.Column(db.String(150), nullable=False)
+    points = db.Column(db.String(10000), nullable=False)
+    ts_creation_date = db.Column(db.DateTime(), nullable=False)
+    temperature = db.Column(db.SmallInteger(), nullable=False)
+    session_number = db.Column(db.SmallInteger(), nullable=False)
+    notes = db.Column(db.String(4000))
+    device_id = db.Column(UUID(as_uuid=True), ForeignKey('device.id_device'), nullable=False)
+    station_id = db.Column(UUID(as_uuid=True), ForeignKey('station.id_station'), nullable=False)
+    treatment_id = db.Column(UUID(as_uuid=True), ForeignKey('treatment.id_treatment'), nullable=False)
+
+    station = relationship('Station')
+
+    def __init__(self, medic_name, points, temperature, session_number, device_id, station_id, treatment_id,
+                 ts_creation_date=datetime.datetime, notes=None):
+        self.id_device = uuid.uuid4()
+        self.medic_name = medic_name
+        self.points = points
+        self.ts_creation_date = ts_creation_date
+        self.temperature = temperature
+        self.session_number = session_number
+        self.notes = notes
+        self.device_id = device_id
+        self.station_id = station_id
+        self.treatment_id = treatment_id
+
+    def __repr__(self):
+        return '<Session Number: {} >'.format(self.session_number)
