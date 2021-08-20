@@ -1,6 +1,6 @@
 from .common import save_changes, update_changes
 from ..models import Location, Group, Station, Device
-from flask import jsonify
+from flask import jsonify, make_response
 from marshmallow import Schema, fields
 from sqlalchemy import update
 
@@ -14,6 +14,8 @@ class LocationSchema(Schema):
     phone = fields.Str()
     contact_name = fields.Str()
     email = fields.Email()
+    state = fields.Boolean()
+    id_group = fields.UUID()
 
 
 class LocationListSchema(Schema):
@@ -45,6 +47,7 @@ def save_new_location(id_group, data):
                        'message': 'Group doesn\'t exists',
                    }, 401
         try:
+            data['id_group'] = id_group
             new_location = Location(**data)
             save_changes(new_location)
         except:
@@ -52,7 +55,7 @@ def save_new_location(id_group, data):
                        'status': 'fail',
                        'message': 'Wrong parameters',
                    }, 401
-        return jsonify(schema.dump(new_location)), 201
+        return make_response(jsonify(schema.dump(new_location)), 201)
     else:
         response_object = {
             'status': 'fail',
@@ -62,7 +65,8 @@ def save_new_location(id_group, data):
 
 
 def get_location_from_group(group_id):
-    return jsonify([schema_list.dump(location) for location in Location.query.filter_by(id_group=group_id).all()])
+    return jsonify([schema_list.dump(location) for location in Location.query.filter_by(id_group=group_id)
+                   .filter_by(state=True).all()])
 
 
 def get_all_locations():
@@ -70,11 +74,13 @@ def get_all_locations():
 
 
 def get_location(id_group, id_location):
-    return jsonify(schema.dump(Location.query.filter_by(id_location=id_location).filter_by(id_group=id_group).first()))
+    return jsonify(schema.dump(Location.query.filter_by(id_location=id_location)
+                               .filter_by(id_group=id_group).filter_by(state=True).first()))
 
 
 def update_location(id_group, id_location, data):
-    location = Location.query.filter_by(id_location=id_location).filter_by(id_group=id_group).first()
+    location = Location.query.filter_by(id_location=id_location).filter_by(id_group=id_group)\
+        .filter_by(state=True).first()
     if location:
         new_values = schema_update.dump(data)
         if new_values:
@@ -102,17 +108,18 @@ def update_location(id_group, id_location, data):
 
 
 def delete_location(id_group, id_location):
-    location = Location.query.filter_by(id_location=id_location).filter_by(id_group=id_group).first()
+    location = Location.query.filter_by(id_location=id_location).filter_by(id_group=id_group)\
+        .filter_by(state=True).first()
     if location:
         try:
-            stmt_patient = update(Location).where(Location.id_location == id_location).values(state=False). \
+            stmt_location = update(Location).where(Location.id_location == id_location).values(state=False). \
                 execution_options(synchronize_session=False)
             stmt_station = update(Station).where(Station.id_location == id_location).values(state=False)\
                 .execution_options(synchronize_session=False)
             stmt_device = update(Device).where(Device.station_id == Station.id_station) \
                 .where(Station.id_location == id_location).values(station_id=None). \
                 execution_options(synchronize_session=False)
-            update_changes(stmt_patient, stmt_station, stmt_device)
+            update_changes(stmt_location, stmt_station, stmt_device)
             return {
                 'status': 'success',
                 'message': 'location deleted',

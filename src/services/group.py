@@ -95,13 +95,13 @@ def update_group(id_group, data):
 
 def delete_group(group_id):
     group = Group.query.filter_by(id_group=group_id).first()
-    users = User.query.filter_by(group_id=group_id).filter_by(state=True).first()
+    users = User.query.filter_by(id_group=group_id).filter_by(state=True).first()
     if group:
         if not users:
             try:
                 stmt_user = update(Group).where(Group.id_group == group_id).values(state=False). \
                     execution_options(synchronize_session=False)
-                stmt_patient = update(Location).where(Location.id_group == group_id).values(state=False). \
+                stmt_location = update(Location).where(Location.id_group == group_id).values(state=False). \
                     execution_options(synchronize_session=False)
                 stmt_station = update(Station).where(Station.id_location == Location.id_location)\
                     .where(Location.id_group == group_id).values(state=False)\
@@ -110,7 +110,7 @@ def delete_group(group_id):
                     .where(Station.id_location == Location.id_location) \
                     .where(Location.id_group == group_id).values(station_id=None). \
                     execution_options(synchronize_session=False)
-                update_changes(stmt_user, stmt_patient, stmt_station, stmt_device)
+                update_changes(stmt_user, stmt_location, stmt_station, stmt_device)
                 return {
                     'status': 'success',
                     'message': 'user deleted',
