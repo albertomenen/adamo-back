@@ -1,6 +1,6 @@
 from flask import request, Blueprint
 from flask_restful import Resource, Api
-from ..services.user import save_new_user, get_users_role, get_user_role, update_user, delete_user
+from ..services.user import save_new_user, get_users_role, get_user_role, update_user, delete_user, get_users
 
 bp = Blueprint('user', __name__)
 api = Api(bp)
@@ -119,3 +119,4 @@ class NMP(Resource):
 
 api.add_resource(NMPList, '/group/<id_group>/nmp')
 api.add_resource(NMP, '/group/<id_group>/nmp/<id_user>')
+

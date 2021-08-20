@@ -1,4 +1,4 @@
-from flask import jsonify
+from flask import jsonify, make_response
 from src import db
 from ..models import System
 from marshmallow import Schema, fields
@@ -31,14 +31,14 @@ def save_new_system(data):
     if not system:
         try:
             new_system = System(**data)
+            save_changes(new_system)
         except:
             response_object = {
                 'status': 'fail',
                 'message': 'Bad parameters',
             }
             return response_object, 409
-        save_changes(new_system)
-        return jsonify(schema.dump(new_system)), 201
+        return make_response(jsonify(schema.dump(new_system)), 201)
     else:
         response_object = {
             'status': 'fail',

@@ -9,7 +9,7 @@ class Role(db.Model):
 
     id_role = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     role_name = db.Column(db.String(50), nullable=False)
-    role_code = db.Column(db.String(12), nullable=False)
+    role_code = db.Column(db.String(20))
     login_in_station = db.Column(db.Boolean)
     manage_practice_manager = db.Column(db.Boolean)
     manage_mp = db.Column(db.Boolean())
@@ -22,22 +22,23 @@ class Role(db.Model):
     detail_patient = db.Column(db.Boolean())
     manage_treatment = db.Column(db.Boolean())
     run_sesion = db.Column(db.Boolean())
+    session_adjustment = db.Column(db.Boolean())
+    session_stop = db.Column(db.Boolean())
     user_logout = db.Column(db.Boolean())
     app_login = db.Column(db.Boolean())
-    manager_login = db.Column(db.Boolean())
     app_select_patient = db.Column(db.Boolean())
     app_detail_patient = db.Column(db.Boolean())
     debug_app_hmi = db.Column(db.Boolean())
     manage_station = db.Column(db.Boolean())
     manage_group = db.Column(db.Boolean())
-    manage_practice = db.Column(db.Boolean())
+    manage_location = db.Column(db.Boolean())
 
     def __init__(self, role_name, role_code, login_in_station=False, manage_practice_manager=False, manage_mp=False,
                  manage_nmp=False, manage_patient=False, manage_sysadmin=False, manage_dev=False, get_patient=False,
                  list_patient=False, detail_patient=False, manage_treatment=False, run_sesion=False,
-                 manager_login=False, user_logout=False, app_login=False, app_select_patient=False,
+                 user_logout=False, app_login=False, app_select_patient=False, session_adjustment=False,
                  app_detail_patient=False, debug_app_hmi=False, manage_station=False, manage_group=False,
-                 manage_practice=False):
+                 manage_location=False, session_stop=False):
         self.id_role = uuid.uuid4()
         self.role_name = role_name
         self.role_code = role_code
@@ -60,8 +61,9 @@ class Role(db.Model):
         self.debug_app_hmi = debug_app_hmi
         self.manage_station = manage_station
         self.manage_group = manage_group
-        self.manage_practice = manage_practice
-        self.manager_login = manager_login
+        self.manage_location = manage_location
+        self.session_adjustment = session_adjustment
+        self.session_stop = session_stop
 
     def __repr__(self):
         return '<Role Name: {} >'.format(self.role_name)

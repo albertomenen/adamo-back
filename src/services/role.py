@@ -9,7 +9,7 @@ from sqlalchemy import update, delete
 class RoleSchema(Schema):
     id_role = fields.UUID()
     role_name = fields.Str()
-    code_role = fields.Str()
+    role_code = fields.Str()
     login_in_station = fields.Boolean()
     manage_practice_manager = fields.Boolean()
     manage_mp = fields.Boolean()
@@ -34,6 +34,7 @@ class RoleSchema(Schema):
 
 class RoleUpdateSchema(Schema):
     role_name = fields.Str()
+    role_code = fields.Str()
     login_in_station = fields.Boolean()
     manage_practice_manager = fields.Boolean()
     manage_mp = fields.Boolean()

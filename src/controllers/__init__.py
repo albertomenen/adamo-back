@@ -11,7 +11,7 @@ def register_controllers(app):
     app.register_blueprint(auth_api)
     app.register_blueprint(system_api, url_prefix='/system')
     app.register_blueprint(role_api, url_prefix='/role')
-    app.register_blueprint(user_api, url_prefix='/user')
+    app.register_blueprint(user_api)
     app.register_blueprint(location_api)
     app.register_blueprint(group_api, url_prefix='/group')
     app.register_blueprint(patient_api)

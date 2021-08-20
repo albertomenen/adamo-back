@@ -31,7 +31,7 @@ class PatientCreateSchema(Schema):
     town = fields.Str()
     phone = fields.Str()
     email = fields.Str()
-    birthdate = fields.Date()
+    birthdate = fields.Str()
     name = fields.Str()
     last_name = fields.Str()
     identification = fields.Str()
@@ -72,10 +72,10 @@ def save_new_patient(data):
     patient = Patient.query.filter_by(email=data['email']).first()
     if not patient:
         try:
+            data['role_id'] = Role.query.filter_by(role_code='patient').first().id_role
             new_user = User(**user_create_schema.dump(data))
-            new_user.role_id = Role.query.filter_by(role_code='patient').first().id_role
+            data['id_user'] = new_user.id_user
             new_patient = Patient(**schema_create.dump(data))
-            new_patient.id_user = new_user.id_user
             new_palias = PAlias(patient=new_patient.id_patient)
             save_changes(new_user)
             save_changes(new_patient)
