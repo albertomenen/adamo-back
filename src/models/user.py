@@ -21,11 +21,11 @@ class User(db.Model):
     password = db.Column(db.String(64), nullable=False)
     name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
-    role_id = db.Column(UUID(as_uuid=True), ForeignKey('role.id_role'))
+    role_id = db.Column(UUID(as_uuid=True), ForeignKey('role.id_role'), nullable=True)
 
     role = relationship("Role")
 
-    def __init__(self, user_name, role_id, phone, email, password, name, last_name, id_group=None):
+    def __init__(self, user_name, phone, email, password, name, last_name, role_id=None, id_group=None):
         self.id_user = uuid.uuid4()
         self.user_name = user_name
         self.role_id = role_id

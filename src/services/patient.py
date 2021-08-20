@@ -1,8 +1,8 @@
 from flask import jsonify, make_response
 from src import db
 from .common import update_changes, save_changes
-from .user import UserSchema
-from ..models import Patient, User, PAlias
+from .user import UserSchema, UserCreateSchema
+from ..models import Patient, User, PAlias, Role
 from marshmallow import Schema, fields
 from sqlalchemy import update
 
@@ -22,6 +22,21 @@ class PatientSchema(Schema):
     last_name = fields.Str()
     active_treatments = fields.Integer()
     user = fields.Nested(UserSchema())
+
+
+class PatientCreateSchema(Schema):
+    id_user = fields.UUID()
+    address = fields.Str()
+    city = fields.Str()
+    town = fields.Str()
+    phone = fields.Str()
+    email = fields.Str()
+    birthdate = fields.Date()
+    name = fields.Str()
+    last_name = fields.Str()
+    identification = fields.Str()
+    profession = fields.Str()
+    observations = fields.Str()
 
 
 class PatientListSchema(Schema):
@@ -49,19 +64,20 @@ class PatientUpdateSchema(Schema):
 schema = PatientSchema()
 schema_list = PatientListSchema()
 schema_update = PatientUpdateSchema()
+schema_create = PatientCreateSchema()
+user_create_schema = UserCreateSchema()
 
 
 def save_new_patient(data):
     patient = Patient.query.filter_by(email=data['email']).first()
     if not patient:
-        if Patient.query.filter_by(id_user=data['id_user']).first():
-            return {
-                       'status': 'fail',
-                       'message': 'User taken by another patient',
-                   }, 402
         try:
-            new_patient = Patient(**data)
+            new_user = User(**user_create_schema.dump(data))
+            new_user.role_id = Role.query.filter_by(role_code='patient').first().id_role
+            new_patient = Patient(**schema_create.dump(data))
+            new_patient.id_user = new_user.id_user
             new_palias = PAlias(patient=new_patient.id_patient)
+            save_changes(new_user)
             save_changes(new_patient)
             save_changes(new_palias)
         except Exception as e:
@@ -80,26 +96,33 @@ def save_new_patient(data):
 
 
 def get_patients():
-    patient_list = db.session.query(Patient).join(User).filter(User.id_user == Patient.id_user).filter(
-        User.state == True).all()
+    patient_list = db.session.query(Patient).join(User)\
+        .filter(User.id_user == Patient.id_user)\
+        .filter(User.state == True).all()
     return jsonify([schema_list.dump(patient) for patient in patient_list])
 
 
 def get_patients_by_group(id_group):
-    patient_list = db.session.query(Patient).join(User).filter(User.id_user == Patient.id_user).filter(
-        User.state == True).filter(User.id_group == id_group).all()
+    patient_list = db.session.query(Patient).join(User)\
+        .filter(User.id_user == Patient.id_user)\
+        .filter(User.state == True)\
+        .filter(User.id_group == id_group).all()
     return jsonify([schema_list.dump(patient) for patient in patient_list])
 
 
 def get_patient(id_patient):
-    patient = db.session.query(Patient).join(User).filter(Patient.id_patient == id_patient).filter(
-        User.id_user == Patient.id_user).filter(User.state == True).first()
+    patient = db.session.query(Patient).join(User)\
+        .filter(Patient.id_patient == id_patient)\
+        .filter(User.id_user == Patient.id_user)\
+        .filter(User.state == True).first()
     return jsonify(schema.dump(patient))
 
 
 def update_patient(patient_id, data):
-    patient = db.session.query(Patient).join(User).filter(Patient.id_patient == patient_id).filter(
-        User.id_user == Patient.id_user).filter(User.state == True).first()
+    patient = db.session.query(Patient).join(User)\
+        .filter(Patient.id_patient == patient_id)\
+        .filter(User.id_user == Patient.id_user)\
+        .filter(User.state == True).first()
     if patient:
         new_values = schema_update.dump(data)
         if new_values:
@@ -127,8 +150,10 @@ def update_patient(patient_id, data):
 
 
 def delete_patient(patient_id):
-    patient = db.session.query(Patient).join(User).filter(Patient.id_patient == patient_id).filter(
-        User.id_user == Patient.id_user).filter(User.state == True).first()
+    patient = db.session.query(Patient).join(User)\
+        .filter(Patient.id_patient == patient_id)\
+        .filter(User.id_user == Patient.id_user)\
+        .filter(User.state == True).first()
     if patient:
         try:
             stmt_user = update(User).where(User.id_user == patient.id_user).values(state=False). \

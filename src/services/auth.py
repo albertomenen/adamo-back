@@ -12,18 +12,14 @@ class Auth:
     @staticmethod
     def login_user(data):
         try:
-            # fetch the user data
             user = User.query.filter_by(email=data.get('email')).first()
             if user and user.check_password(data.get('password')):
                 auth_token = User.encode_auth_token(user.id_user)
                 if auth_token:
-                    patients = db.session.query(Patient).join(User).filter(User.id_group == user.id_group).all()
                     response_object = {
                         'status': 'success',
                         'message': 'Successfully logged in.',
-                        'Authorization': str(auth_token),
-                        'user': UserSchema().dump(user),
-                        'patients': [PatientListSchema().dump(patient) for patient in patients]
+                        'Authorization': str(auth_token)
                     }
                     return make_response(jsonify(response_object), 200)
             else:
