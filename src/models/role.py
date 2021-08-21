@@ -1,4 +1,3 @@
-from sqlalchemy.orm import relationship
 from .. import db
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
@@ -32,13 +31,15 @@ class Role(db.Model):
     manage_station = db.Column(db.Boolean())
     manage_group = db.Column(db.Boolean())
     manage_location = db.Column(db.Boolean())
+    manage_devices = db.Column(db.Boolean())
+    manage_roles = db.Column(db.Boolean())
 
     def __init__(self, role_name, role_code, login_in_station=False, manage_practice_manager=False, manage_mp=False,
                  manage_nmp=False, manage_patient=False, manage_sysadmin=False, manage_dev=False, get_patient=False,
                  list_patient=False, detail_patient=False, manage_treatment=False, run_sesion=False,
                  user_logout=False, app_login=False, app_select_patient=False, session_adjustment=False,
                  app_detail_patient=False, debug_app_hmi=False, manage_station=False, manage_group=False,
-                 manage_location=False, session_stop=False):
+                 manage_location=False, session_stop=False, manage_devices=False, manage_roles=False):
         self.id_role = uuid.uuid4()
         self.role_name = role_name
         self.role_code = role_code
@@ -64,6 +65,8 @@ class Role(db.Model):
         self.manage_location = manage_location
         self.session_adjustment = session_adjustment
         self.session_stop = session_stop
+        self.manage_devices = manage_devices
+        self.manage_roles = manage_roles
 
     def __repr__(self):
         return '<Role Name: {} >'.format(self.role_name)
