@@ -2,9 +2,11 @@ from flask import make_response
 from .. import db
 from ..models import User, Patient, Station, Location
 from ..services.blacklist import save_token
-from ..services.station import StationSchema
-from ..services.patient import PatientListSchema
+from ..services.user import UserDetailSchema
 from flask import jsonify
+
+
+user_schema = UserDetailSchema()
 
 
 def check_source(source, user):
@@ -16,9 +18,9 @@ def check_source(source, user):
                 .filter(Location.id_group == user.id_group) \
                 .filter(Station.id_location == Location.id_location) \
                 .filter(Station.id_station == source).first()
-            return station and user.role.login_in_station
+            return bool(station and user.role.login_in_station)
         except Exception as e:
-            return False
+            return str(e)
 
 
 class Auth:
@@ -34,7 +36,8 @@ class Auth:
                         response_object = {
                             'status': 'success',
                             'message': 'Successfully logged in.',
-                            'Authorization': str(auth_token)
+                            'Authorization': str(auth_token),
+                            'user': user_schema.dump(user)
                         }
                         return make_response(jsonify(response_object), 200)
                 else:
