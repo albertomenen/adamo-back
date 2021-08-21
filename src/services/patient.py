@@ -1,8 +1,9 @@
 from flask import jsonify, make_response
 from src import db
 from .common import update_changes, save_changes
+from .treatment import TreatmentListSchema
 from .user import UserSchema, UserCreateSchema
-from ..models import Patient, User, PAlias, Role
+from ..models import Patient, User, PAlias, Role, Group, Treatment
 from marshmallow import Schema, fields
 from sqlalchemy import update
 
@@ -22,6 +23,7 @@ class PatientSchema(Schema):
     last_name = fields.Str()
     active_treatments = fields.Integer()
     user = fields.Nested(UserSchema())
+    treatments = fields.List(fields.Nested(TreatmentListSchema()))
 
 
 class PatientCreateSchema(Schema):
@@ -68,10 +70,17 @@ schema_create = PatientCreateSchema()
 user_create_schema = UserCreateSchema()
 
 
-def save_new_patient(data):
+def save_new_patient(id_group, data):
     patient = Patient.query.filter_by(email=data['email']).first()
+    group = Group.query.filter_by(id_group=id_group).first()
     if not patient:
+        if not group:
+            return {
+                       'status': 'fail',
+                       'message': 'Group doesn\'t exists',
+                   }, 401
         try:
+            data['id_group'] = id_group
             data['role_id'] = Role.query.filter_by(role_code='patient').first().id_role
             new_user = User(**user_create_schema.dump(data))
             data['id_user'] = new_user.id_user
@@ -110,19 +119,25 @@ def get_patients_by_group(id_group):
     return jsonify([schema_list.dump(patient) for patient in patient_list])
 
 
-def get_patient(id_patient):
+def get_patient(id_group, id_patient):
     patient = db.session.query(Patient).join(User)\
         .filter(Patient.id_patient == id_patient)\
         .filter(User.id_user == Patient.id_user)\
-        .filter(User.state == True).first()
-    return jsonify(schema.dump(patient))
+        .filter(User.state == True)\
+        .filter(User.id_group == id_group).first()
+    patient = schema.dump(patient)
+    treatments = db.session.query(Treatment).join(PAlias)\
+        .filter(Treatment.id_patient == PAlias.id_palias).filter(PAlias.patient == id_patient).all()
+    patient['treatments'] = [TreatmentListSchema().dump(treatment) for treatment in treatments]
+    return jsonify(patient)
 
 
-def update_patient(patient_id, data):
+def update_patient(id_group, patient_id, data):
     patient = db.session.query(Patient).join(User)\
         .filter(Patient.id_patient == patient_id)\
         .filter(User.id_user == Patient.id_user)\
-        .filter(User.state == True).first()
+        .filter(User.state == True)\
+        .filter(User.id_group == id_group).first()
     if patient:
         new_values = schema_update.dump(data)
         if new_values:
@@ -149,11 +164,12 @@ def update_patient(patient_id, data):
                }, 404
 
 
-def delete_patient(patient_id):
+def delete_patient(id_group, patient_id):
     patient = db.session.query(Patient).join(User)\
         .filter(Patient.id_patient == patient_id)\
         .filter(User.id_user == Patient.id_user)\
-        .filter(User.state == True).first()
+        .filter(User.state == True)\
+        .filter(User.id_group == id_group).first()
     if patient:
         try:
             stmt_user = update(User).where(User.id_user == patient.id_user).values(state=False). \

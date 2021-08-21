@@ -1,6 +1,5 @@
 from functools import wraps
 from flask import request
-from ..models import User
 from ..services.auth import Auth
 
 

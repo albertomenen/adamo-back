@@ -5,6 +5,8 @@ from .user import bp as user_api
 from .location import bp as location_api
 from .group import bp as group_api
 from .patient import bp as patient_api
+from .station import bp as station_api
+from .device import bp as device_api
 
 
 def register_controllers(app):
@@ -15,3 +17,5 @@ def register_controllers(app):
     app.register_blueprint(location_api)
     app.register_blueprint(group_api, url_prefix='/group')
     app.register_blueprint(patient_api)
+    app.register_blueprint(station_api)
+    app.register_blueprint(device_api, url_prefix='/device')

@@ -1,5 +1,6 @@
 from flask import jsonify
 from src import db
+from .device import DeviceListSchema
 from ..models import Session
 from ..services.station import StationListSchema
 from marshmallow import Schema, fields
@@ -15,6 +16,7 @@ class SessionSchema(Schema):
     ts_creation_date = fields.Date()
     heating_duration = fields.Integer()
     points = fields.Str()
+    device = fields.Nested(DeviceListSchema())
     station = fields.Nested(StationListSchema())
 
 

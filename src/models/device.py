@@ -16,9 +16,6 @@ class Device(db.Model):
     sw_version = db.Column(db.String(12), nullable=False)
     device_name = db.Column(db.String(50), nullable=False)
     station_id = db.Column(UUID(as_uuid=True), ForeignKey('station.id_station'))
-    state = db.Column(db.Boolean(), default=True, nullable=False)
-
-    station = relationship("Station")
 
     def __init__(self, mac, serial_number, hw_version, sw_version, device_name, station_id=None):
         self.id_device = uuid.uuid4()
@@ -27,8 +24,7 @@ class Device(db.Model):
         self.hw_version = hw_version
         self.sw_version = sw_version
         self.device_name = device_name
-        self.station = station_id
-        self.state = True
+        self.station_id = station_id
 
     def __repr__(self):
         return '<Device Name: {} >'.format(self.device_type)
