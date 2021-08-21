@@ -1,10 +1,24 @@
 from flask import make_response
 from .. import db
-from ..models import User, Patient
+from ..models import User, Patient, Station, Location
 from ..services.blacklist import save_token
-from ..services.user import UserSchema
+from ..services.station import StationSchema
 from ..services.patient import PatientListSchema
 from flask import jsonify
+
+
+def check_source(source, user):
+    if source == 'manager':
+        return user.role.app_login
+    else:
+        try:
+            station = db.session.query(Station).join(Location) \
+                .filter(Location.id_group == user.id_group) \
+                .filter(Station.id_location == Location.id_location) \
+                .filter(Station.id_station == source).first()
+            return station and user.role.login_in_station
+        except Exception as e:
+            return False
 
 
 class Auth:
@@ -14,14 +28,21 @@ class Auth:
         try:
             user = User.query.filter_by(email=data.get('email')).first()
             if user and user.check_password(data.get('password')):
-                auth_token = User.encode_auth_token(user.id_user)
-                if auth_token:
-                    response_object = {
-                        'status': 'success',
-                        'message': 'Successfully logged in.',
-                        'Authorization': str(auth_token)
+                if check_source(data.get('source'), user):
+                    auth_token = User.encode_auth_token(user.id_user)
+                    if auth_token:
+                        response_object = {
+                            'status': 'success',
+                            'message': 'Successfully logged in.',
+                            'Authorization': str(auth_token)
+                        }
+                        return make_response(jsonify(response_object), 200)
+                else:
+                    return {
+                        'status': 'fail',
+                        'message': 'Wrong permissions'
                     }
-                    return make_response(jsonify(response_object), 200)
+
             else:
                 response_object = {
                     'status': 'fail',
