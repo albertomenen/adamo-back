@@ -8,7 +8,7 @@ from sqlalchemy import update
 
 class TreatmentSchema(Schema):
     id_treatment = fields.UUID()
-    medic_name = fields.Str()
+    medic = fields.UUID()
     name = fields.Str()
     sessions_number = fields.Integer()
     current_session_number = fields.Integer()
@@ -16,7 +16,7 @@ class TreatmentSchema(Schema):
     temperature = fields.Float()
     ts_creation_date = fields.Date()
     heating_duration = fields.Integer()
-    points = fields.Str()
+    points = fields.Str()  # TODO hacer point schema
     ts_next_session = fields.Float()
     ts_end = fields.Float()
     width = fields.Float()

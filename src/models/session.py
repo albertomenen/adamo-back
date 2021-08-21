@@ -12,11 +12,11 @@ class Session(db.Model):
     __tablename__ = 'session'
 
     id_session = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    medic_name = db.Column(db.String(50), nullable=False, unique=True)
+    medic = db.Column(UUID(as_uuid=True), ForeignKey('user.id_user'), nullable=False)
     # image_3D_color = db.Column(db.String(50), nullable=False, unique=True)
     # image_thermic = db.Column(db.String(12), nullable=False)
     # image_3D_depth = db.Column(db.String(150), nullable=False)
-    points = db.Column(db.String(10000), nullable=False)
+    points = db.Column(db.JSON())
     ts_creation_date = db.Column(db.DateTime(), nullable=False)
     temperature = db.Column(db.SmallInteger(), nullable=False)
     session_number = db.Column(db.SmallInteger(), nullable=False)
@@ -27,10 +27,10 @@ class Session(db.Model):
 
     station = relationship('Station')
 
-    def __init__(self, medic_name, points, temperature, session_number, device_id, station_id, treatment_id,
-                 ts_creation_date=datetime.datetime, notes=None):
+    def __init__(self, medic, temperature, session_number, device_id, station_id, treatment_id,
+                 ts_creation_date=datetime.datetime, notes=None, points=None):
         self.id_device = uuid.uuid4()
-        self.medic_name = medic_name
+        self.medic = medic
         self.points = points
         self.ts_creation_date = ts_creation_date
         self.temperature = temperature

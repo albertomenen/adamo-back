@@ -92,3 +92,5 @@ postgres_data
 migrations
 
 .idea
+
+.DS_Store

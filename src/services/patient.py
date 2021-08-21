@@ -23,6 +23,14 @@ class PatientSchema(Schema):
     last_name = fields.Str()
     active_treatments = fields.Integer()
     user = fields.Nested(UserSchema())
+    country = fields.Str()
+    gender = fields.Str()
+    race = fields.Str()
+    complexity = fields.Str()
+    width = fields.Float()
+    height = fields.Float()
+    allergies = fields.Str()
+    medication = fields.Str()
     treatments = fields.List(fields.Nested(TreatmentListSchema()))
 
 
@@ -39,6 +47,14 @@ class PatientCreateSchema(Schema):
     identification = fields.Str()
     profession = fields.Str()
     observations = fields.Str()
+    country = fields.Str()
+    gender = fields.Str()
+    race = fields.Str()
+    complexity = fields.Str()
+    width = fields.Float()
+    height = fields.Float()
+    allergies = fields.Str()
+    medication = fields.Str()
 
 
 class PatientListSchema(Schema):
@@ -61,6 +77,14 @@ class PatientUpdateSchema(Schema):
     identification = fields.Str()
     name = fields.Str()
     last_name = fields.Str()
+    country = fields.Str()
+    gender = fields.Str()
+    race = fields.Str()
+    complexity = fields.Str()
+    width = fields.Float()
+    height = fields.Float()
+    allergies = fields.Str()
+    medication = fields.Str()
 
 
 schema = PatientSchema()

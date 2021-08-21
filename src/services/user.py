@@ -7,7 +7,7 @@ from .role import RoleSchema
 from sqlalchemy import update
 
 
-class UserSchema(Schema):
+class UserDetailSchema(Schema):
     id_user = fields.UUID()
     id_group = fields.UUID()
     user_name = fields.Str()
@@ -15,7 +15,19 @@ class UserSchema(Schema):
     email = fields.Email()
     name = fields.Str()
     last_name = fields.Str()
+    country = fields.Str()
     role = fields.Nested(RoleSchema())
+
+
+class UserSchema(Schema):
+    id_user = fields.UUID()
+    id_group = fields.UUID()
+    user_name = fields.Str()
+    phone = fields.Str()
+    email = fields.Email()
+    name = fields.Str()
+    country = fields.Str()
+    last_name = fields.Str()
 
 
 class UserCreateSchema(Schema):
@@ -26,6 +38,7 @@ class UserCreateSchema(Schema):
     password = fields.Str()
     name = fields.Str()
     last_name = fields.Str()
+    country = fields.Str()
     role_id = fields.UUID()
 
 
@@ -45,10 +58,12 @@ class UserUpdate(Schema):
     state = fields.Boolean()
     name = fields.Str()
     last_name = fields.Str()
+    country = fields.Str()
     role_id = fields.UUID()
 
 
 schema = UserSchema()
+schema_detail = UserDetailSchema()
 schema_list = UserListSchema()
 schema_update = UserUpdate()
 schema_create = UserCreateSchema()
@@ -69,7 +84,7 @@ def save_new_user(role_code, data, id_group=None):
                            'status': 'fail',
                            'message': 'Wrong user parameters',
                        }, 409
-            return make_response(jsonify(schema.dump(new_user)), 201)
+            return make_response(jsonify(schema_detail.dump(new_user)), 201)
         else:
             return {
                        'status': 'fail',
@@ -171,4 +186,4 @@ def get_users():
 
 
 def get_user(id_user):
-    return jsonify(schema.dump(User.query.filter_by(id_user=id_user).filter_by(state=True).first()))
+    return jsonify(schema_detail.dump(User.query.filter_by(id_user=id_user).filter_by(state=True).first()))

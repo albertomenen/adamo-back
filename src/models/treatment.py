@@ -10,7 +10,7 @@ class Treatment(db.Model):
 
     id_treatment = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     id_patient = db.Column(UUID(as_uuid=True), ForeignKey('palias.id_palias'), nullable=False)
-    medic_name = db.Column(db.String(50), nullable=False)
+    medic = db.Column(UUID(as_uuid=True), ForeignKey('user.id_user'), nullable=False)
     name = db.Column(db.String(45), nullable=False)
     sessions_number = db.Column(db.SmallInteger(), nullable=False)
     current_session_number = db.Column(db.SmallInteger(), nullable=False)
@@ -18,7 +18,7 @@ class Treatment(db.Model):
     temperature = db.Column(db.SmallInteger(), nullable=False)
     ts_creation_date = db.Column(db.DateTime(), nullable=False)
     heating_duration = db.Column(db.REAL(), nullable=False)
-    points = db.Column(db.String(10000), nullable=False)
+    points = db.Column(db.JSON())
     # image_3D_color = db.Column(db.String(150), nullable=False)
     # image_3D_depth = db.Column(db.String(150), nullable=False)
     # image_thermic = db.Column(db.String(150), nullable=False)
@@ -38,15 +38,16 @@ class Treatment(db.Model):
     extrinsics = db.Column(db.String(200), nullable=False)
     next_session_station_id = db.Column(UUID(as_uuid=True), ForeignKey('station.id_station'))
     status = db.Column(db.String(12), nullable=False, default='new')
+    last_session_date = db.Column(db.DateTime(), default=None)
 
     next_session_station = relationship('Station')
 
-    def __init__(self, id_patient, medic_name, name, sessions_number, current_session_number, notes, temperature,
-                 ts_creation_date, heating_duration, points, ts_next_session, ts_end, width, height, ppx, ppy,
-                 fx, fy, model, coeff, depth_scale, mode, extrinsics, next_session_station_id):
+    def __init__(self, id_patient, medic, name, sessions_number, current_session_number, notes, temperature,
+                 ts_creation_date, heating_duration, ts_next_session, ts_end, width, height, ppx, ppy,
+                 fx, fy, model, coeff, depth_scale, mode, extrinsics, next_session_station_id, points=None):
         self.id_treatment = uuid.uuid4()
         self.id_patient = id_patient
-        self.medic_name = medic_name
+        self.medic = medic
         self.name = name
         self.sessions_number = sessions_number
         self.current_session_number = current_session_number
@@ -70,6 +71,7 @@ class Treatment(db.Model):
         self.mode = mode
         self.extrinsics = extrinsics
         self.next_session_station_id = next_session_station_id
+        self.last_session_date = None
 
     def __repr__(self):
         return '<Treatment Name: {} >'.format(self.name)

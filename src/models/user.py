@@ -21,11 +21,12 @@ class User(db.Model):
     password = db.Column(db.String(64), nullable=False)
     name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
+    country = db.Column(db.String(50))
     role_id = db.Column(UUID(as_uuid=True), ForeignKey('role.id_role'), nullable=False)
 
     role = relationship("Role")
 
-    def __init__(self, user_name, phone, email, password, name, last_name, role_id, id_group=None):
+    def __init__(self, user_name, phone, country, email, password, name, last_name, role_id, id_group=None):
         self.id_user = uuid.uuid4()
         self.user_name = user_name
         self.role_id = role_id
@@ -35,6 +36,7 @@ class User(db.Model):
         self.phone = phone
         self.state = True
         self.email = email
+        self.country = country
         self.password = flask_bcrypt.generate_password_hash(password).decode('utf-8')
 
     def check_password(self, password):
