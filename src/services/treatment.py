@@ -1,4 +1,4 @@
-from flask import jsonify
+from flask import jsonify, make_response
 from src import db
 from .common import save_changes, update_changes
 from ..models import Treatment, User, Patient, PAlias
@@ -53,10 +53,10 @@ class TreatmentUpdateSchema(Schema):
     current_session_number = fields.Integer()
     notes = fields.Str()
     temperature = fields.Float()
-    heating_duration = fields.Integer()
-    state = fields.Str()
+    heating_duration = fields.Float()
     next_session_station_id = fields.UUID()
     last_session_date = fields.Str()
+    state = fields.Str()
 
 
 class TreatmentListSchema(Schema):
@@ -84,13 +84,13 @@ def save_new_treatment(id_group, patient_id, data):
             data['id_patient'] = palias.id_palias
             new_treatment = Treatment(**data)
             save_changes(new_treatment)
-        except:
+        except Exception as e:
             response_object = {
                 'status': 'fail',
-                'message': 'Bad parameters',
+                'message': str(e),
             }
             return response_object, 409
-        return jsonify(schema.dump(new_treatment)), 201
+        return make_response(jsonify(schema.dump(new_treatment)), 201)
     else:
         response_object = {
             'status': 'fail',
@@ -133,14 +133,14 @@ def update_treatment(id_group, id_patient, id_treatment, data):
         new_values = schema_update.dump(data)
         if new_values:
             try:
-                stmt = update(Patient).where(Patient.id_patient == id_patient).values(new_values). \
+                stmt = update(Treatment).where(Treatment.id_treatment == id_treatment).values(new_values). \
                     execution_options(synchronize_session=False)
                 update_changes(stmt)
                 return jsonify({**schema.dump(treatment), **new_values})
-            except:
+            except Exception as e:
                 return {
                            'status': 'fail',
-                           'message': 'Update failed',
+                           'message': str(e),
                        }, 401
         else:
             return {

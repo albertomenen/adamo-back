@@ -22,7 +22,7 @@ class Treatment(db.Model):
     # image_3D_color = db.Column(db.String(150), nullable=False)
     # image_3D_depth = db.Column(db.String(150), nullable=False)
     # image_thermic = db.Column(db.String(150), nullable=False)
-    state = db.Column(db.Boolean(), default=True, nullable=False)
+    state = db.Column(db.String(12), nullable=False, default='new')
     ts_next_session = db.Column(db.REAL(), nullable=False)
     ts_end = db.Column(db.REAL(), nullable=False)
     width = db.Column(db.REAL(), nullable=False)
@@ -37,20 +37,19 @@ class Treatment(db.Model):
     mode = db.Column(db.String(45), nullable=False)
     extrinsics = db.Column(db.String(200), nullable=False)
     next_session_station_id = db.Column(UUID(as_uuid=True), ForeignKey('station.id_station'))
-    status = db.Column(db.String(12), nullable=False, default='new')
     last_session_date = db.Column(db.DateTime(), default=None)
 
     next_session_station = relationship('Station')
 
-    def __init__(self, id_patient, medic, name, sessions_number, current_session_number, notes, temperature,
+    def __init__(self, id_patient, medic, name, sessions_number, temperature,
                  ts_creation_date, heating_duration, ts_next_session, ts_end, width, height, ppx, ppy,
-                 fx, fy, model, coeff, depth_scale, mode, extrinsics, next_session_station_id, points=None):
+                 fx, fy, model, coeff, depth_scale, mode, extrinsics, notes=None, next_session_station_id=None, points=None):
         self.id_treatment = uuid.uuid4()
         self.id_patient = id_patient
         self.medic = medic
         self.name = name
         self.sessions_number = sessions_number
-        self.current_session_number = current_session_number
+        self.current_session_number = 0
         self.notes = notes
         self.temperature = temperature
         self.ts_creation_date = ts_creation_date
