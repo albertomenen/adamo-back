@@ -1,29 +1,26 @@
 from flask import request, Blueprint
 from flask_restful import Resource, Api
-from ..services.station import save_new_station, get_station, update_station, delete_station, get_stations
+from ..services.treatment import get_treatment, get_treatments_by_patient, update_treatment, save_new_treatment
 
-bp = Blueprint('Station', __name__)
+bp = Blueprint('Treatment', __name__)
 api = Api(bp)
 
 
-class StationList(Resource):
-    def get(self, id_group, id_location):
-        return get_stations(id_group, id_location)
+class TreatmentList(Resource):
+    def get(self, group_id, patient_id):
+        return get_treatments_by_patient(group_id, patient_id)
 
-    def post(self, id_group, id_location):
-        return save_new_station(id_group, id_location, request.json)
-
-
-class Station(Resource):
-    def get(self, id_group, location_id, id_station):
-        return get_station(id_group, location_id, id_station)
-
-    def put(self, id_group, location_id, id_station):
-        return update_station(id_group, location_id, id_station, request.json)
-
-    def delete(self, id_group, location_id, id_station):
-        return delete_station(id_group, location_id, id_station)
+    def post(self, group_id, patient_id):
+        return save_new_treatment(group_id, patient_id, request.json)
 
 
-api.add_resource(StationList, '/group/<id_group>/location/<location_id>/station')
-api.add_resource(Station, '/group/<id_group>/location/<location_id>/station/<station_id>')
+class Treatment(Resource):
+    def get(self, patient_id, group_id, treatment_id):
+        return get_treatment(group_id, patient_id, treatment_id)
+
+    def put(self, patient_id, group_id, treatment_id):
+        return update_treatment(group_id, patient_id, treatment_id, request.json)
+
+
+api.add_resource(TreatmentList, '/group/<group_id>/patient/<patient_id>/treatment')
+api.add_resource(Treatment, '/group/<group_id>/patient/<patient_id>/treatment/<treatment_id>')

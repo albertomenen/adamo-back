@@ -25,8 +25,6 @@ class Session(db.Model):
     station_id = db.Column(UUID(as_uuid=True), ForeignKey('station.id_station'), nullable=False)
     treatment_id = db.Column(UUID(as_uuid=True), ForeignKey('treatment.id_treatment'), nullable=False)
 
-    station = relationship('Station')
-
     def __init__(self, medic, temperature, session_number, device_id, station_id, treatment_id,
                  ts_creation_date=datetime.datetime, notes=None, points=None):
         self.id_device = uuid.uuid4()
