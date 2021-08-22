@@ -14,6 +14,7 @@ class User(db.Model):
 
     id_user = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     id_group = db.Column(UUID(as_uuid=True), ForeignKey('group.id_group'))
+    id_location = db.Column(UUID(as_uuid=True), ForeignKey('location.id_location'))
     user_name = db.Column(db.String(50), nullable=False)
     phone = db.Column(db.String(12), nullable=False)
     state = db.Column(db.Boolean(), default=True, nullable=False)
@@ -26,11 +27,13 @@ class User(db.Model):
 
     role = relationship("Role")
 
-    def __init__(self, user_name, phone, country, email, password, name, last_name, role_id, id_group=None):
+    def __init__(self, user_name, phone, country, email, password, name, last_name, role_id, id_group=None,
+                 id_location=None):
         self.id_user = uuid.uuid4()
         self.user_name = user_name
         self.role_id = role_id
         self.id_group = id_group
+        self.id_location = id_location
         self.name = name
         self.last_name = last_name
         self.phone = phone

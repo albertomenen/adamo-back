@@ -18,7 +18,7 @@ def check_source(source, user):
                 .filter(Location.id_group == user.id_group) \
                 .filter(Station.id_location == Location.id_location) \
                 .filter(Station.id_station == source).first()
-            return bool(station and user.role.login_in_station)
+            return station and user.role.login_in_station
         except Exception as e:
             return str(e)
 

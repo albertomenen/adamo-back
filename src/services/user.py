@@ -2,7 +2,7 @@ from flask import jsonify, make_response
 from marshmallow import Schema, fields
 from .common import update_changes, save_changes
 from .. import db
-from ..models import User, Patient, Role, Group
+from ..models import User, Patient, Role, Group, Location
 from .role import RoleSchema
 from sqlalchemy import update
 
@@ -10,6 +10,7 @@ from sqlalchemy import update
 class UserDetailSchema(Schema):
     id_user = fields.UUID()
     id_group = fields.UUID()
+    id_location = fields.UUID()
     user_name = fields.Str()
     phone = fields.Str()
     email = fields.Email()
@@ -22,6 +23,7 @@ class UserDetailSchema(Schema):
 class UserSchema(Schema):
     id_user = fields.UUID()
     id_group = fields.UUID()
+    id_location = fields.UUID()
     user_name = fields.Str()
     phone = fields.Str()
     email = fields.Email()
@@ -32,6 +34,7 @@ class UserSchema(Schema):
 
 class UserCreateSchema(Schema):
     id_group = fields.UUID()
+    id_location = fields.UUID()
     user_name = fields.Str()
     phone = fields.Str()
     email = fields.Email()
@@ -53,6 +56,7 @@ class UserListSchema(Schema):
 
 class UserUpdate(Schema):
     id_group = fields.UUID()
+    id_location = fields.UUID()
     user_name = fields.Str()
     phone = fields.Str()
     state = fields.Boolean()
@@ -69,20 +73,26 @@ schema_update = UserUpdate()
 schema_create = UserCreateSchema()
 
 
-def save_new_user(role_code, data, id_group=None):
+def save_new_user(role_code, data, id_group=None, id_location=None):
     user = User.query.filter_by(email=data['email']).first()
     role = Role.query.filter_by(role_code=role_code).first()
     if not user:
+        if id_location and not Location.query.filter_by(id_location=id_location).filter_by(id_group=id_group).first():
+            return {
+                       'status': 'fail',
+                       'message': 'Location not foundd',
+                   }, 404
         if role:
             try:
                 data['role_id'] = role.id_role
                 data['id_group'] = id_group
+                data['id_location'] = id_location
                 new_user = User(**schema_create.dump(data))
                 save_changes(new_user)
-            except:
+            except Exception as e:
                 return {
                            'status': 'fail',
-                           'message': 'Wrong user parameters',
+                           'message': str(e),
                        }, 409
             return make_response(jsonify(schema_detail.dump(new_user)), 201)
         else:
@@ -98,32 +108,33 @@ def save_new_user(role_code, data, id_group=None):
         return response_object, 409
 
 
-def get_users_role(role_code, id_group=None):
-    users = db.session.query(User).join(Role)\
+def get_users_role(role_code, id_group=None, id_location=None):
+    users = db.session.query(User).join(Role) \
         .filter(Role.role_code == role_code) \
-        .filter(User.role_id == Role.id_role)\
-        .filter(User.id_group == id_group)\
+        .filter(User.role_id == Role.id_role) \
+        .filter(User.id_location == id_location) \
+        .filter(User.id_group == id_group) \
         .filter(User.state == True).all()
     return jsonify([schema_list.dump(user) for user in users])
 
 
-def get_user_role(role_code, user_id, id_group=None):
-    user = db.session.query(User).join(Role) \
+def get_user_query(role_code, user_id, id_group=None, id_location=None):
+    return db.session.query(User).join(Role) \
         .filter(Role.role_code == role_code) \
         .filter(User.role_id == Role.id_role) \
-        .filter(User.id_group == id_group)\
+        .filter(User.id_group == id_group) \
+        .filter(User.id_location == id_location) \
         .filter(User.state == True) \
         .filter(User.id_user == user_id).first()
+
+
+def get_user_role(role_code, user_id, id_group=None, id_location=None):
+    user = get_user_query(role_code, user_id, id_group, id_location)
     return jsonify(schema.dump(user))
 
 
-def update_user(role_code, user_id, data, id_group=None):
-    user = db.session.query(User).join(Role) \
-        .filter(Role.role_code == role_code) \
-        .filter(User.role_id == Role.id_role) \
-        .filter(User.id_user == user_id) \
-        .filter(User.id_group == id_group)\
-        .filter(User.state == True).first()
+def update_user(role_code, user_id, data, id_group=None, id_location=None):
+    user = get_user_query(role_code, user_id, id_group, id_location)
     if user:
         new_values = schema_update.dump(data)
         if new_values:
@@ -150,13 +161,8 @@ def update_user(role_code, user_id, data, id_group=None):
                }, 404
 
 
-def delete_user(role_code, user_id, id_group=None):
-    user = db.session.query(User).join(Role) \
-        .filter(Role.role_code == role_code) \
-        .filter(User.role_id == Role.id_role) \
-        .filter(User.id_user == user_id) \
-        .filter(User.id_group == id_group)\
-        .filter(User.state == True).first()
+def delete_user(role_code, user_id, id_group=None, id_location=None):
+    user = get_user_query(role_code, user_id, id_group, id_location)
     if user:
         try:
             stmt_user = update(User).where(User.id_user == user_id).values(state=False). \
