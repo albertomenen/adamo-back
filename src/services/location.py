@@ -1,5 +1,6 @@
 from .common import save_changes, update_changes
-from ..models import Location, Group, Station, Device
+from .timetable import TimetableListSchema
+from ..models import Location, Group, Station, Device, Timetable
 from flask import jsonify, make_response
 from marshmallow import Schema, fields
 from sqlalchemy import update
@@ -16,6 +17,11 @@ class LocationSchema(Schema):
     email = fields.Email()
     state = fields.Boolean()
     id_group = fields.UUID()
+
+
+class LocationTimetableSchema(Schema):
+    id_location = fields.UUID()
+    timetables = fields.List(fields.Nested(TimetableListSchema()))
 
 
 class LocationListSchema(Schema):
@@ -35,6 +41,7 @@ class LocationUpdateSchema(Schema):
 schema = LocationSchema()
 schema_list = LocationListSchema()
 schema_update = LocationUpdateSchema()
+schema_timetable = LocationTimetableSchema()
 
 
 def save_new_location(id_group, data):
@@ -105,6 +112,33 @@ def update_location(id_group, id_location, data):
             'status': 'fail',
             'message': 'user not found',
         }, 404
+
+
+def set_location_timetable(id_group, id_location, id_timetable):
+    location = Location.query.filter_by(id_group=id_group).filter_by(id_location=id_location).first()
+    timetable = Timetable.query.filter_by(id_group=id_group).filter_by(id_timetable=id_timetable).first()
+    if location:
+        if timetable:
+            try:
+                location.timetables.append(timetable)
+                save_changes(location)
+                return jsonify(schema_timetable.dump(location))
+            except:
+                return {
+                           'status': 'fail',
+                           'message': 'Update failed',
+                       }, 401
+        else:
+            return {
+                       'status': 'fail',
+                       'message': 'timetable not found',
+                   }, 401
+
+    else:
+        return {
+                   'status': 'fail',
+                   'message': 'location not found',
+               }, 404
 
 
 def delete_location(id_group, id_location):

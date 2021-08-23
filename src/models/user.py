@@ -1,6 +1,7 @@
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 from .blacklist import BlacklistToken
+from .timetable import user_timetable
 from .. import db, flask_bcrypt
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
@@ -25,6 +26,7 @@ class User(db.Model):
     country = db.Column(db.String(50))
     role_id = db.Column(UUID(as_uuid=True), ForeignKey('role.id_role'), nullable=False)
 
+    timetables = db.relationship('Timetable', secondary=user_timetable, backref=db.backref('users'))
     role = relationship("Role")
 
     def __init__(self, user_name, phone, country, email, password, name, last_name, role_id, id_group=None,

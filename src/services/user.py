@@ -1,8 +1,9 @@
 from flask import jsonify, make_response
 from marshmallow import Schema, fields
 from .common import update_changes, save_changes
+from .timetable import TimetableSchema, TimetableListSchema
 from .. import db
-from ..models import User, Patient, Role, Group, Location
+from ..models import User, Patient, Role, Group, Location, Timetable
 from .role import RoleSchema
 from sqlalchemy import update
 
@@ -18,6 +19,11 @@ class UserDetailSchema(Schema):
     last_name = fields.Str()
     country = fields.Str()
     role = fields.Nested(RoleSchema())
+
+
+class UserTimetableSchema(Schema):
+    id_user = fields.UUID()
+    timetables = fields.List(fields.Nested(TimetableListSchema()))
 
 
 class UserSchema(Schema):
@@ -71,6 +77,7 @@ schema_detail = UserDetailSchema()
 schema_list = UserListSchema()
 schema_update = UserUpdate()
 schema_create = UserCreateSchema()
+schema_timetable = UserTimetableSchema()
 
 
 def save_new_user(role_code, data, id_group=None, id_location=None):
@@ -152,6 +159,33 @@ def update_user(role_code, user_id, data, id_group=None, id_location=None):
             return {
                        'status': 'fail',
                        'message': 'Nothin to update',
+                   }, 401
+
+    else:
+        return {
+                   'status': 'fail',
+                   'message': 'user not found',
+               }, 404
+
+
+def set_user_timetable(user_id, id_group, id_location, id_timetable):
+    user = User.query.filter_by(id_group=id_group).filter_by(id_location=id_location).filter_by(id_user=user_id).first()
+    timetable = Timetable.query.filter_by(id_group=id_group).filter_by(id_timetable=id_timetable).first()
+    if user:
+        if timetable:
+            try:
+                user.timetables.append(timetable)
+                save_changes(user)
+                return jsonify(schema_timetable.dump(user))
+            except:
+                return {
+                           'status': 'fail',
+                           'message': 'Update failed',
+                       }, 401
+        else:
+            return {
+                       'status': 'fail',
+                       'message': 'timetable not found',
                    }, 401
 
     else:

@@ -1,6 +1,7 @@
 from flask import request, Blueprint
 from flask_restful import Resource, Api
-from ..services.user import save_new_user, get_users_role, get_user_role, update_user, delete_user, get_users
+from ..services.user import save_new_user, get_users_role, get_user_role, update_user, delete_user, get_users, \
+    set_user_timetable
 from ..utils.decorators import manage_sysadmin, manage_dev, manage_practice_manager, manage_mp, manage_nmp
 
 bp = Blueprint('User', __name__)
@@ -33,6 +34,15 @@ class SysAdmin(Resource):
 
 api.add_resource(SysAdminList, '/system_admin')
 api.add_resource(SysAdmin, '/system_admin/<id_user>')
+
+
+class PacticeManagerSetTimetable(Resource):
+    def put(self, id_user, id_group, id_location):
+        id_timetable = request.json.get('id_timetable')
+        return set_user_timetable(id_user, id_group, id_location, id_timetable)
+
+
+api.add_resource(PacticeManagerSetTimetable, '/group/<id_group>/location/<id_location>/medic/<id_user>/set_timetable')
 
 
 class DeveloperList(Resource):
@@ -117,6 +127,7 @@ class MP(Resource):
 
 api.add_resource(MPList, '/group/<id_group>/location/<id_location>/mp')
 api.add_resource(MP, '/group/<id_group>/location/<id_location>/mp/<id_user>')
+#api.add_resource(UserSetTimetable, '/group/<id_group>/location/<id_location>/mp/<id_user>/set_timetable')
 
 
 class NMPList(Resource):
@@ -145,4 +156,5 @@ class NMP(Resource):
 
 api.add_resource(NMPList, '/group/<id_group>/location/<id_location>/nmp')
 api.add_resource(NMP, '/group/<id_group>/location/<id_location>/nmp/<id_user>')
+#api.add_resource(UserSetTimetable, '/group/<id_group>/location/<id_location>/nmp/<id_user>/set_timetable')
 

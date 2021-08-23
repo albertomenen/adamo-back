@@ -30,8 +30,6 @@ class GroupUpdateSchema(Schema):
     contact_name = fields.Str()
 
 
-
-
 schema = GroupSchema()
 schema_list = GroupListSchema()
 schema_update = GroupUpdateSchema()
@@ -45,9 +43,9 @@ def save_new_group(data):
             save_changes(new_group)
         except:
             return {
-                'status': 'fail',
-                'message': 'wrong parameters passed',
-                    }, 401
+                       'status': 'fail',
+                       'message': 'wrong parameters passed',
+                   }, 401
         return make_response(jsonify(schema.dump(new_group)), 201)
     else:
         response_object = {
@@ -71,7 +69,7 @@ def update_group(id_group, data):
         new_values = schema_update.dump(data)
         if new_values:
             try:
-                stmt = update(Group).where(Group.id_group == id_group).values(new_values).\
+                stmt = update(Group).where(Group.id_group == id_group).values(new_values). \
                     execution_options(synchronize_session=False)
                 update_changes(stmt)
                 return jsonify({**schema.dump(group), **new_values})
@@ -82,15 +80,15 @@ def update_group(id_group, data):
                        }, 401
         else:
             return {
-                'status': 'fail',
-                'message': 'Nothin to update',
-            }, 401
+                       'status': 'fail',
+                       'message': 'Nothing to update',
+                   }, 401
 
     else:
         return {
-            'status': 'fail',
-            'message': 'user not found',
-        }, 404
+                   'status': 'fail',
+                   'message': 'user not found',
+               }, 404
 
 
 def delete_group(group_id):
@@ -103,8 +101,8 @@ def delete_group(group_id):
                     execution_options(synchronize_session=False)
                 stmt_location = update(Location).where(Location.id_group == group_id).values(state=False). \
                     execution_options(synchronize_session=False)
-                stmt_station = update(Station).where(Station.id_location == Location.id_location)\
-                    .where(Location.id_group == group_id).values(state=False)\
+                stmt_station = update(Station).where(Station.id_location == Location.id_location) \
+                    .where(Location.id_group == group_id).values(state=False) \
                     .execution_options(synchronize_session=False)
                 stmt_device = update(Device).where(Device.station_id == Station.id_station) \
                     .where(Station.id_location == Location.id_location) \
@@ -112,21 +110,21 @@ def delete_group(group_id):
                     execution_options(synchronize_session=False)
                 update_changes(stmt_user, stmt_location, stmt_station, stmt_device)
                 return {
-                    'status': 'success',
-                    'message': 'user deleted',
-                }, 203
+                           'status': 'success',
+                           'message': 'user deleted',
+                       }, 203
             except Exception as e:
                 return {
-                    'status': 'fail',
-                    'message': str(e),
-                }, 401
+                           'status': 'fail',
+                           'message': str(e),
+                       }, 401
         else:
             return {
-                    'status': 'fail',
-                    'message': 'Can\'t delete a group in use'
-                }, 401
+                       'status': 'fail',
+                       'message': 'Can\'t delete a group in use'
+                   }, 401
     else:
         return {
-            'status': 'fail',
-            'message': 'user not found',
-        }, 404
+                   'status': 'fail',
+                   'message': 'user not found',
+               }, 404
