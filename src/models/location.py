@@ -1,6 +1,5 @@
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
-from .timetable import location_timetable
 
 from .. import db
 from sqlalchemy.dialects.postgresql import UUID
@@ -20,8 +19,6 @@ class Location(db.Model):
     contact_name = db.Column(db.String(100), nullable=False)
     state = db.Column(db.Boolean(), default=True, nullable=False)
     email = db.Column(db.String(120), nullable=False, unique=True)
-
-    timetables = db.relationship('Timetable', secondary=location_timetable, backref=db.backref('locations'))
 
     def __init__(self, location_name, id_group, address, city, town, phone, contact_name, email):
         self.id_location = uuid.uuid4()

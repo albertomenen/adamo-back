@@ -1,7 +1,6 @@
 from flask import jsonify, make_response
 from src import db
 from .common import save_changes
-from ..models import Timetable
 from marshmallow import Schema, fields
 from sqlalchemy import update
 import datetime

@@ -3,7 +3,7 @@ from marshmallow import Schema, fields
 from .common import update_changes, save_changes
 from .timetable import TimetableSchema, TimetableListSchema
 from .. import db
-from ..models import User, Patient, Role, Group, Location, Timetable
+from ..models import User, Patient, Role, Group, Location
 from .role import RoleSchema
 from sqlalchemy import update
 
@@ -168,31 +168,31 @@ def update_user(role_code, user_id, data, id_group=None, id_location=None):
                }, 404
 
 
-def set_user_timetable(user_id, id_group, id_location, id_timetable):
-    user = User.query.filter_by(id_group=id_group).filter_by(id_location=id_location).filter_by(id_user=user_id).first()
-    timetable = Timetable.query.filter_by(id_group=id_group).filter_by(id_timetable=id_timetable).first()
-    if user:
-        if timetable:
-            try:
-                user.timetables.append(timetable)
-                save_changes(user)
-                return jsonify(schema_timetable.dump(user))
-            except:
-                return {
-                           'status': 'fail',
-                           'message': 'Update failed',
-                       }, 401
-        else:
-            return {
-                       'status': 'fail',
-                       'message': 'timetable not found',
-                   }, 401
-
-    else:
-        return {
-                   'status': 'fail',
-                   'message': 'user not found',
-               }, 404
+# def set_user_timetable(user_id, id_group, id_location, id_timetable):
+#     user = User.query.filter_by(id_group=id_group).filter_by(id_location=id_location).filter_by(id_user=user_id).first()
+#     timetable = Timetable.query.filter_by(id_group=id_group).filter_by(id_timetable=id_timetable).first()
+#     if user:
+#         if timetable:
+#             try:
+#                 user.timetables.append(timetable)
+#                 save_changes(user)
+#                 return jsonify(schema_timetable.dump(user))
+#             except:
+#                 return {
+#                            'status': 'fail',
+#                            'message': 'Update failed',
+#                        }, 401
+#         else:
+#             return {
+#                        'status': 'fail',
+#                        'message': 'timetable not found',
+#                    }, 401
+#
+#     else:
+#         return {
+#                    'status': 'fail',
+#                    'message': 'user not found',
+#                }, 404
 
 
 def delete_user(role_code, user_id, id_group=None, id_location=None):

@@ -33,7 +33,6 @@ class Role(db.Model):
     manage_location = db.Column(db.Boolean())
     manage_devices = db.Column(db.Boolean())
     manage_roles = db.Column(db.Boolean())
-    manage_timetables = db.Column(db.Boolean())
     manage_dates = db.Column(db.Boolean())
 
     def __init__(self, role_name, role_code, login_in_station=False, manage_practice_manager=False, manage_mp=False,
@@ -42,7 +41,7 @@ class Role(db.Model):
                  user_logout=False, app_login=False, app_select_patient=False, session_adjustment=False,
                  app_detail_patient=False, debug_app_hmi=False, manage_station=False, manage_group=False,
                  manage_location=False, session_stop=False, manage_devices=False, manage_roles=False,
-                 manage_timetables=False, manage_dates=False):
+                 manage_dates=False):
         self.id_role = uuid.uuid4()
         self.role_name = role_name
         self.role_code = role_code
@@ -70,7 +69,6 @@ class Role(db.Model):
         self.session_stop = session_stop
         self.manage_devices = manage_devices
         self.manage_roles = manage_roles
-        self.manage_timetables = manage_timetables
         self.manage_dates = manage_dates
 
     def __repr__(self):

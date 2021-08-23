@@ -9,7 +9,7 @@ from .station import bp as station_api
 from .device import bp as device_api
 from .treatment import bp as treatment_api
 from .session import bp as session_api
-from .timetable import bp as timetable_api
+#from .timetable import bp as timetable_api
 
 
 def register_controllers(app):
@@ -24,4 +24,4 @@ def register_controllers(app):
     app.register_blueprint(device_api, url_prefix='/device')
     app.register_blueprint(treatment_api)
     app.register_blueprint(session_api)
-    app.register_blueprint(timetable_api)
+#    app.register_blueprint(timetable_api)

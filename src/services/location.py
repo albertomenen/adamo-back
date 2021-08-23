@@ -1,6 +1,6 @@
 from .common import save_changes, update_changes
 from .timetable import TimetableListSchema
-from ..models import Location, Group, Station, Device, Timetable
+from ..models import Location, Group, Station, Device
 from flask import jsonify, make_response
 from marshmallow import Schema, fields
 from sqlalchemy import update

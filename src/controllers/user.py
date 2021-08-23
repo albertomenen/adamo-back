@@ -1,7 +1,6 @@
 from flask import request, Blueprint
 from flask_restful import Resource, Api
-from ..services.user import save_new_user, get_users_role, get_user_role, update_user, delete_user, get_users, \
-    set_user_timetable
+from ..services.user import save_new_user, get_users_role, get_user_role, update_user, delete_user, get_users
 from ..utils.decorators import manage_sysadmin, manage_dev, manage_practice_manager, manage_mp, manage_nmp
 
 bp = Blueprint('User', __name__)
@@ -36,13 +35,13 @@ api.add_resource(SysAdminList, '/system_admin')
 api.add_resource(SysAdmin, '/system_admin/<id_user>')
 
 
-class PacticeManagerSetTimetable(Resource):
-    def put(self, id_user, id_group, id_location):
-        id_timetable = request.json.get('id_timetable')
-        return set_user_timetable(id_user, id_group, id_location, id_timetable)
-
-
-api.add_resource(PacticeManagerSetTimetable, '/group/<id_group>/location/<id_location>/medic/<id_user>/set_timetable')
+# class PacticeManagerSetTimetable(Resource):
+#     def put(self, id_user, id_group, id_location):
+#         id_timetable = request.json.get('id_timetable')
+#         return set_user_timetable(id_user, id_group, id_location, id_timetable)
+#
+#
+# api.add_resource(PacticeManagerSetTimetable, '/group/<id_group>/location/<id_location>/medic/<id_user>/set_timetable')
 
 
 class DeveloperList(Resource):
