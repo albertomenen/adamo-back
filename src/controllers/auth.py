@@ -8,7 +8,7 @@ api = Api(bp)
 
 class UserLogin(Resource):
     def post(self):
-        return Auth.login_user(data=request.json)
+        return Auth.login_user(data=request.get_json(force=True))
 
 
 class LogoutAPI(Resource):

@@ -14,7 +14,7 @@ class SessionList(Resource):
 
     @run_sesion
     def post(self, group_id, patient_id, treatment_id):
-        return save_new_session(group_id, patient_id, treatment_id, request.json)
+        return save_new_session(group_id, patient_id, treatment_id, request.get_json(force=True))
 
 
 class Session(Resource):

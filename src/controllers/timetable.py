@@ -1,7 +1,6 @@
 from flask import request, Blueprint, jsonify
 from flask_restful import Resource, Api
 
-from ..models import Timetable
 from ..services.timetable import get_timetable, get_timetables, save_new_timetable, TimetableSchema, \
     get_week_timetable_from_medic
 
@@ -14,7 +13,7 @@ class TimetableList(Resource):
         return get_timetables(id_group)
 
     def post(self, id_group):
-        return save_new_timetable(id_group, request.json)
+        return save_new_timetable(id_group, request.get_json(force=True))
 
 
 class TimetableDetail(Resource):

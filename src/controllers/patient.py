@@ -15,7 +15,7 @@ class PatientList(Resource):
 
     @manage_patient
     def post(self, group_id):
-        return save_new_patient(group_id, request.json)
+        return save_new_patient(group_id, request.get_json(force=True))
 
 
 class Patient(Resource):
@@ -25,7 +25,7 @@ class Patient(Resource):
 
     @manage_patient
     def put(self, patient_id, group_id):
-        return update_patient(group_id, patient_id, request.json)
+        return update_patient(group_id, patient_id, request.get_json(force=True))
 
     @manage_patient
     def delete(self, patient_id, group_id):

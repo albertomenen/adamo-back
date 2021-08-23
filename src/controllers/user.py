@@ -14,7 +14,7 @@ class SysAdminList(Resource):
 
     @manage_sysadmin
     def post(self):
-        return save_new_user('sys_admin', request.json)
+        return save_new_user('sys_admin', request.get_json(force=True))
 
 
 class SysAdmin(Resource):
@@ -24,7 +24,7 @@ class SysAdmin(Resource):
 
     @manage_sysadmin
     def put(self, id_user):
-        return update_user('sys_admin', id_user, request.json)
+        return update_user('sys_admin', id_user, request.get_json(force=True))
 
     @manage_sysadmin
     def delete(self, id_user):
@@ -37,7 +37,7 @@ api.add_resource(SysAdmin, '/system_admin/<id_user>')
 
 # class PacticeManagerSetTimetable(Resource):
 #     def put(self, id_user, id_group, id_location):
-#         id_timetable = request.json.get('id_timetable')
+#         id_timetable = request.get_json(force=True).get('id_timetable')
 #         return set_user_timetable(id_user, id_group, id_location, id_timetable)
 #
 #
@@ -51,7 +51,7 @@ class DeveloperList(Resource):
 
     @manage_dev
     def post(self):
-        return save_new_user('dev', request.json)
+        return save_new_user('dev', request.get_json(force=True))
 
 
 class Developer(Resource):
@@ -61,7 +61,7 @@ class Developer(Resource):
 
     @manage_dev
     def put(self, id_user):
-        return update_user('dev', id_user, request.json)
+        return update_user('dev', id_user, request.get_json(force=True))
 
     @manage_dev
     def delete(self, id_user):
@@ -79,7 +79,7 @@ class PacticeManagerList(Resource):
 
     @manage_practice_manager
     def post(self, id_group, id_location):
-        return save_new_user('practice_manager', request.json, id_group, id_location)
+        return save_new_user('practice_manager', request.get_json(force=True), id_group, id_location)
 
 
 class PacticeManager(Resource):
@@ -89,7 +89,7 @@ class PacticeManager(Resource):
 
     @manage_practice_manager
     def put(self, id_user, id_group, id_location):
-        return update_user('practice_manager', id_user, request.json, id_group, id_location)
+        return update_user('practice_manager', id_user, request.get_json(force=True), id_group, id_location)
 
     @manage_practice_manager
     def delete(self, id_user, id_group, id_location):
@@ -107,7 +107,7 @@ class MPList(Resource):
 
     @manage_mp
     def post(self, id_group, id_location):
-        return save_new_user('mp', request.json, id_group, id_location)
+        return save_new_user('mp', request.get_json(force=True), id_group, id_location)
 
 
 class MP(Resource):
@@ -117,7 +117,7 @@ class MP(Resource):
 
     @manage_mp
     def put(self, id_user, id_group, id_location):
-        return update_user('mp', id_user, request.json, id_group, id_location)
+        return update_user('mp', id_user, request.get_json(force=True), id_group, id_location)
 
     @manage_mp
     def delete(self, id_user, id_group, id_location):
@@ -126,7 +126,6 @@ class MP(Resource):
 
 api.add_resource(MPList, '/group/<id_group>/location/<id_location>/mp')
 api.add_resource(MP, '/group/<id_group>/location/<id_location>/mp/<id_user>')
-#api.add_resource(UserSetTimetable, '/group/<id_group>/location/<id_location>/mp/<id_user>/set_timetable')
 
 
 class NMPList(Resource):
@@ -136,7 +135,7 @@ class NMPList(Resource):
 
     @manage_nmp
     def post(self, id_group, id_location):
-        return save_new_user('nmp', request.json, id_group, id_location)
+        return save_new_user('nmp', request.get_json(force=True), id_group, id_location)
 
 
 class NMP(Resource):
@@ -146,7 +145,7 @@ class NMP(Resource):
 
     @manage_nmp
     def put(self, id_user, id_group, id_location):
-        return update_user('nmp', id_user, request.json, id_group, id_location)
+        return update_user('nmp', id_user, request.get_json(force=True), id_group, id_location)
 
     @manage_nmp
     def delete(self, id_user, id_group, id_location):
@@ -155,5 +154,4 @@ class NMP(Resource):
 
 api.add_resource(NMPList, '/group/<id_group>/location/<id_location>/nmp')
 api.add_resource(NMP, '/group/<id_group>/location/<id_location>/nmp/<id_user>')
-#api.add_resource(UserSetTimetable, '/group/<id_group>/location/<id_location>/nmp/<id_user>/set_timetable')
 

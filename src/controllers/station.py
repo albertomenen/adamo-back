@@ -14,7 +14,7 @@ class StationList(Resource):
 
     @manage_station
     def post(self, id_group, location_id):
-        return save_new_station(id_group, location_id, request.json)
+        return save_new_station(id_group, location_id, request.get_json(force=True))
 
 
 class Station(Resource):
@@ -24,7 +24,7 @@ class Station(Resource):
 
     @manage_station
     def put(self, id_group, location_id, id_station):
-        return update_station(id_group, location_id, id_station, request.json)
+        return update_station(id_group, location_id, id_station, request.get_json(force=True))
 
     @manage_station
     def delete(self, id_group, location_id, id_station):

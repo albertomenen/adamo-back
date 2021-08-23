@@ -14,7 +14,7 @@ class RoleList(Resource):
 
     @manage_roles
     def post(self):
-        return save_new_role(request.json)
+        return save_new_role(request.get_json(force=True))
 
 
 class Role(Resource):
@@ -24,7 +24,7 @@ class Role(Resource):
 
     @manage_roles
     def put(self, role_id):
-        return update_role(role_id, request.json)
+        return update_role(role_id, request.get_json(force=True))
 
     @manage_roles
     def delete(self, role_id):

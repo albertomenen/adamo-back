@@ -14,7 +14,7 @@ class TreatmentList(Resource):
 
     @manage_treatment
     def post(self, group_id, patient_id):
-        return save_new_treatment(group_id, patient_id, request.json)
+        return save_new_treatment(group_id, patient_id, request.get_json(force=True))
 
 
 class Treatment(Resource):
@@ -24,7 +24,7 @@ class Treatment(Resource):
 
     @manage_treatment
     def put(self, patient_id, group_id, treatment_id):
-        return update_treatment(group_id, patient_id, treatment_id, request.json)
+        return update_treatment(group_id, patient_id, treatment_id, request.get_json(force=True))
 
 
 api.add_resource(TreatmentList, '/group/<group_id>/patient/<patient_id>/treatment')

@@ -10,7 +10,7 @@ api = Api(bp)
 
 class LocationSetTimetable(Resource):
     def put(self, id_group, location_id):
-        id_timetable = request.json.get('id_timetable')
+        id_timetable = request.get_json(force=True).get('id_timetable')
         return set_location_timetable(id_group, location_id, id_timetable)
 
 
@@ -21,7 +21,7 @@ class LocationList(Resource):
 
     @manage_location
     def post(self, id_group):
-        return save_new_location(id_group, request.json)
+        return save_new_location(id_group, request.get_json(force=True))
 
 
 class Location(Resource):
@@ -31,7 +31,7 @@ class Location(Resource):
 
     @manage_location
     def put(self, id_group, location_id):
-        return update_location(id_group, location_id, request.json)
+        return update_location(id_group, location_id, request.get_json(force=True))
 
     @manage_location
     def delete(self, id_group, location_id):

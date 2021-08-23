@@ -14,7 +14,7 @@ class GroupList(Resource):
 
     @manage_group
     def post(self):
-        return save_new_group(request.json)
+        return save_new_group(request.get_json(force=True))
 
 
 class Group(Resource):
@@ -24,7 +24,7 @@ class Group(Resource):
 
     @manage_group
     def put(self, group_id):
-        return update_group(group_id, request.json)
+        return update_group(group_id, request.get_json(force=True))
 
     @manage_group
     def delete(self, group_id):

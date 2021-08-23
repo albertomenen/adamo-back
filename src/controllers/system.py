@@ -14,7 +14,7 @@ class SystemList(Resource):
 
     @manage_sysadmin
     def post(self):
-        return save_new_system(request.json)
+        return save_new_system(request.get_json(force=True))
 
 
 class System(Resource):
