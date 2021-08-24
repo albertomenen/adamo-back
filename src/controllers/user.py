@@ -102,7 +102,7 @@ api.add_resource(PacticeManager, '/group/<id_group>/location/<id_location>/pract
 
 
 class MPList(Resource):
-    @manage_mp
+    @manage_treatment
     def get(self, id_group, id_location):
         return get_users_role('mp', id_group, id_location)
 
@@ -112,7 +112,7 @@ class MPList(Resource):
 
 
 class MP(Resource):
-    @manage_treatment
+    @manage_mp
     def get(self, id_user, id_group, id_location):
         return get_user_role('mp', id_user, id_group, id_location)
 
