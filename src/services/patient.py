@@ -2,7 +2,7 @@ from flask import jsonify, make_response
 from src import db, pagination
 from .common import update_changes, save_changes
 from .treatment import TreatmentListSchema
-from .user import UserSchema, UserCreateSchema
+from .user import UserSchema, UserCreateSchema, UserUpdate
 from ..models import Patient, User, PAlias, Role, Group, Treatment
 from marshmallow import Schema, fields
 from sqlalchemy import update
@@ -64,7 +64,6 @@ class PatientListSchema(Schema):
     name = fields.Str()
     last_name = fields.Str()
     active_treatments = fields.Integer()
-    id_user = fields.UUID()
 
 
 class PatientUpdateSchema(Schema):
@@ -165,11 +164,14 @@ def update_patient(id_group, patient_id, data):
         .filter(User.id_group == id_group).first()
     if patient:
         new_values = schema_update.dump(data)
+        new_values_user = UserUpdate().dump(data)
         if new_values:
             try:
                 stmt = update(Patient).where(Patient.id_patient == patient_id).values(new_values). \
                     execution_options(synchronize_session=False)
-                update_changes(stmt)
+                stmt_user = update(User).where(Patient.id_patient == patient_id).where(Patient.id_user == User.id_user)\
+                    .values(new_values_user).execution_options(synchronize_session=False)
+                update_changes(stmt, stmt_user)
                 return jsonify({**schema.dump(patient), **new_values})
             except:
                 return {

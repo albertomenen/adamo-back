@@ -20,9 +20,9 @@ class LocationSchema(Schema):
     id_group = fields.UUID()
 
 
-class LocationTimetableSchema(Schema):
-    id_location = fields.UUID()
-    timetables = fields.List(fields.Nested(TimetableListSchema()))
+# class LocationTimetableSchema(Schema):
+#     id_location = fields.UUID()
+#     timetables = fields.List(fields.Nested(TimetableListSchema()))
 
 
 class LocationListSchema(Schema):
@@ -42,7 +42,7 @@ class LocationUpdateSchema(Schema):
 schema = LocationSchema()
 schema_list = LocationListSchema()
 schema_update = LocationUpdateSchema()
-schema_timetable = LocationTimetableSchema()
+#schema_timetable = LocationTimetableSchema()
 
 
 def save_new_location(id_group, data):
