@@ -17,6 +17,7 @@ class Session(db.Model):
     # image_thermic = db.Column(db.String(12), nullable=False)
     # image_3D_depth = db.Column(db.String(150), nullable=False)
     points = db.Column(db.JSON())
+    points_number = db.Column(db.Integer())
     ts_creation_date = db.Column(db.REAL(), nullable=False)
     temperature = db.Column(db.SmallInteger(), nullable=False)
     session_number = db.Column(db.SmallInteger(), nullable=False)
@@ -26,7 +27,9 @@ class Session(db.Model):
     treatment_id = db.Column(UUID(as_uuid=True), ForeignKey('treatment.id_treatment'), nullable=False)
 
     def __init__(self, medic, temperature, session_number, device_id, station_id, treatment_id,
-                 ts_creation_date, notes=None, points=None):
+                 ts_creation_date, notes=None, points=()):
+        if points is None:
+            points = []
         self.id_session = uuid.uuid4()
         self.medic = medic
         self.points = points
@@ -37,6 +40,7 @@ class Session(db.Model):
         self.device_id = device_id
         self.station_id = station_id
         self.treatment_id = treatment_id
+        self.points_number = len(points)
 
     def __repr__(self):
         return '<Session Number: {} >'.format(self.session_number)

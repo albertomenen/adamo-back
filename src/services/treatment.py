@@ -70,11 +70,12 @@ class TreatmentUpdateSchema(Schema):
 
 class TreatmentListSchema(Schema):
     id_treatment = fields.UUID()
-    medic_name = fields.Str()
     name = fields.Str()
     state = fields.Str()
     sessions_number = fields.Integer()
     current_session_number = fields.Integer()
+    mode = fields.Str()
+    last_session_date = fields.Str()
 
 
 schema = TreatmentSchema()
