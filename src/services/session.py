@@ -2,9 +2,9 @@ import datetime
 
 from flask import jsonify, make_response
 from src import db, pagination
-from .common import save_changes
+from .common import save_changes, Points
 from .device import DeviceListSchema
-from .treatment import Points, TreatmentListSchema, update_treatment
+from .treatment import update_treatment
 from ..models import Session, Treatment, PAlias, Patient, User, Station, Location
 from ..services.station import StationListSchema, StationSchema
 from marshmallow import Schema, fields
@@ -18,16 +18,16 @@ class SessionSchema(Schema):
     temperature = fields.Float()
     ts_creation_date = fields.Str()
     heating_duration = fields.Integer()
-    points = fields.List(fields.Nested(Points))
+    points = fields.List(fields.Nested(Points()))
     id_device = fields.Nested(DeviceListSchema())
     id_station = fields.Nested(StationListSchema())
-    id_treatment = fields.Nested(TreatmentListSchema())
 
 
 class SessionListSchema(Schema):
     id_session = fields.UUID()
-    medic_name = fields.Str()
+    medic = fields.Str()
     session_number = fields.Integer()
+    ts_creation_date = fields.Str()
 
 
 schema = SessionSchema()

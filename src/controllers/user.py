@@ -1,7 +1,8 @@
 from flask import request, Blueprint
 from flask_restful import Resource, Api
 from ..services.user import save_new_user, get_users_role, get_user_role, update_user, delete_user, get_users
-from ..utils.decorators import manage_sysadmin, manage_dev, manage_practice_manager, manage_mp, manage_nmp
+from ..utils.decorators import manage_sysadmin, manage_dev, manage_practice_manager, manage_mp, manage_nmp, \
+    manage_treatment
 
 bp = Blueprint('User', __name__)
 api = Api(bp)
@@ -111,7 +112,7 @@ class MPList(Resource):
 
 
 class MP(Resource):
-    @manage_mp
+    @manage_treatment
     def get(self, id_user, id_group, id_location):
         return get_user_role('mp', id_user, id_group, id_location)
 

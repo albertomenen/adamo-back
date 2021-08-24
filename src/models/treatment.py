@@ -25,7 +25,7 @@ class Treatment(db.Model):
     state = db.Column(db.String(12), nullable=False, default='new')
     ts_next_session = db.Column(db.REAL(), nullable=False)
     ts_end = db.Column(db.REAL(), nullable=False)
-    width = db.Column(db.REAL(), nullable=False)
+    weight = db.Column(db.REAL())
     height = db.Column(db.REAL(), nullable=False)
     ppx = db.Column(db.REAL(), nullable=False)
     ppy = db.Column(db.REAL(), nullable=False)
@@ -38,12 +38,17 @@ class Treatment(db.Model):
     extrinsics = db.Column(db.String(200), nullable=False)
     next_session_station_id = db.Column(UUID(as_uuid=True), ForeignKey('station.id_station'))
     last_session_date = db.Column(db.DateTime(), default=None)
+    injury = db.Column(db.String(100))
+    injury_kind = db.Column(db.String(100))
+    injury_cause = db.Column(db.String(100))
 
+    sessions = relationship('Session')
     next_session_station = relationship('Station')
 
-    def __init__(self, id_patient, medic, name, sessions_number, temperature,
-                 ts_creation_date, heating_duration, ts_next_session, ts_end, width, height, ppx, ppy,
-                 fx, fy, model, coeff, depth_scale, mode, extrinsics, notes=None, next_session_station_id=None, points=None):
+    def __init__(self, id_patient, medic, name, temperature, ts_creation_date, heating_duration,
+                 ts_next_session, ts_end, weight, height, ppx, ppy, fx, fy, model, coeff, depth_scale, mode, extrinsics,
+                 sessions_number, notes=None, next_session_station_id=None, points=None, injury=None,
+                 injury_kind=None, injury_cause=None):
         self.id_treatment = uuid.uuid4()
         self.id_patient = id_patient
         self.medic = medic
@@ -58,7 +63,7 @@ class Treatment(db.Model):
         self.state = 'new'
         self.ts_next_session = ts_next_session
         self.ts_end = ts_end
-        self.width = width
+        self.weight = weight
         self.height = height
         self.ppx = ppx
         self.ppy = ppy
@@ -71,6 +76,9 @@ class Treatment(db.Model):
         self.extrinsics = extrinsics
         self.next_session_station_id = next_session_station_id
         self.last_session_date = None
+        self.injury_cause = injury_cause
+        self.injury = injury
+        self.injury_kind = injury_kind
 
     def __repr__(self):
         return '<Treatment Name: {} >'.format(self.name)

@@ -29,7 +29,7 @@ class Patient(db.Model):
     gender = db.Column(db.String(20))
     race = db.Column(db.String(20))
     complexity = db.Column(db.String(100))
-    width = db.Column(db.REAL())
+    weight = db.Column(db.REAL())
     height = db.Column(db.REAL())
     allergies = db.Column(db.String(500))
     medication = db.Column(db.String(500))

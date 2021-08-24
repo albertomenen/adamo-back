@@ -1,22 +1,16 @@
 from flask import jsonify, make_response
 from src import db, pagination
-from .common import save_changes, update_changes
+from .common import save_changes, update_changes, Points
 from ..models import Treatment, User, Patient, PAlias
 from marshmallow import Schema, fields
 from sqlalchemy import update
 
 
-class Points(Schema):
-    duration = fields.Float()
-    gradual = fields.Boolean()
-    x = fields.Float()
-    y = fields.Float()
-    z = fields.Float()
-    rx = fields.Float()
-    ry = fields.Float()
-    rz = fields.Float()
-    height = fields.Float()
-    pressure = fields.Float()
+class SessionListSchema(Schema):
+    id_session = fields.UUID()
+    medic = fields.Str()
+    session_number = fields.Integer()
+    ts_creation_date = fields.Str()
 
 
 class PatientListSchema(Schema):
@@ -38,7 +32,7 @@ class TreatmentSchema(Schema):
     temperature = fields.Float()
     ts_creation_date = fields.Date()
     heating_duration = fields.Integer()
-    points = fields.List(fields.Nested(Points))
+    points = fields.List(fields.Nested(Points()))
     ts_next_session = fields.Float()
     ts_end = fields.Float()
     width = fields.Float()
@@ -55,6 +49,11 @@ class TreatmentSchema(Schema):
     next_session_station_id = fields.UUID()
     last_session_date = fields.Str()
     state = fields.Str()
+    injury = fields.Str()
+    injury_cause = fields.Str()
+    injury_kind = fields.Str()
+
+    sessions = fields.List(fields.Nested(SessionListSchema()))
 
 
 class TreatmentUpdateSchema(Schema):
