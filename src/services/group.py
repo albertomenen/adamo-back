@@ -1,4 +1,5 @@
 from .common import update_changes, save_changes
+from .. import pagination
 from ..models import Group, User, Location, Station, Device
 from flask import jsonify, make_response
 from marshmallow import Schema, fields
@@ -56,7 +57,7 @@ def save_new_group(data):
 
 
 def get_groups():
-    return jsonify([schema_list.dump(group) for group in Group.query.all()])
+    return pagination.paginate(Group.query.all(), schema_list, True)
 
 
 def get_group(id_group):

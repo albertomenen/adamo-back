@@ -1,4 +1,5 @@
 from .common import save_changes, update_changes
+from .. import pagination
 from ..models import Device
 from flask import jsonify, make_response
 from marshmallow import Schema, fields
@@ -53,12 +54,12 @@ def get_device_from_station(station_id):
 
 
 def get_all_devices():
-    return jsonify([schema_list.dump(device) for device in Device.query.all()])
+    return pagination.paginate(Device.query.all(), schema_list, True)
 
 
 def get_all_free_devices():
-    return jsonify([schema_list.dump(device) for device in
-                    Device.query.filter_by(station_id=None).all()])
+    free_devices = Device.query.filter_by(station_id=None).all()
+    return pagination.paginate(free_devices, schema_list, True)
 
 
 def get_device(id_device):

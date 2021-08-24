@@ -1,5 +1,5 @@
 from flask import jsonify, make_response
-from src import db
+from src import db, pagination
 from .common import update_changes, save_changes
 from .treatment import TreatmentListSchema
 from .user import UserSchema, UserCreateSchema
@@ -60,6 +60,7 @@ class PatientCreateSchema(Schema):
 class PatientListSchema(Schema):
     id_patient = fields.Str()
     email = fields.Str()
+    phone = fields.Str()
     name = fields.Str()
     last_name = fields.Str()
     active_treatments = fields.Integer()
@@ -132,7 +133,7 @@ def get_patients():
     patient_list = db.session.query(Patient).join(User)\
         .filter(User.id_user == Patient.id_user)\
         .filter(User.state == True).all()
-    return jsonify([schema_list.dump(patient) for patient in patient_list])
+    return pagination.paginate(patient_list, schema_list, True)
 
 
 def get_patients_by_group(id_group):
@@ -140,7 +141,7 @@ def get_patients_by_group(id_group):
         .filter(User.id_user == Patient.id_user)\
         .filter(User.state == True)\
         .filter(User.id_group == id_group).all()
-    return jsonify([schema_list.dump(patient) for patient in patient_list])
+    return pagination.paginate(patient_list, schema_list, True)
 
 
 def get_patient(id_group, id_patient):

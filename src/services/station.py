@@ -1,7 +1,7 @@
 from flask import jsonify, make_response
 from sqlalchemy.orm import lazyload
 
-from src import db
+from src import db, pagination
 from .common import save_changes, update_changes
 from .device import DeviceListSchema
 from ..models import Station, Location, Group, Device
@@ -60,7 +60,7 @@ def get_stations(id_group, id_location):
     stations = db.session.query(Station).join(Location)\
         .filter(Location.id_group == id_group)\
         .filter(Station.id_location == id_location).all()
-    return jsonify([schema_list.dump(station) for station in stations])
+    return pagination.paginate(stations, schema_list, True)
 
 
 def get_station(id_group, id_location, id_station):

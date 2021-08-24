@@ -1,7 +1,7 @@
 import datetime
 
 from flask import jsonify, make_response
-from src import db
+from src import db, pagination
 from .common import save_changes
 from .device import DeviceListSchema
 from .treatment import Points, TreatmentListSchema, update_treatment
@@ -87,7 +87,7 @@ def save_new_session(id_group, patient_id, id_treatment, data):
 
 
 def get_sessions():
-    return jsonify([schema_list.dump(session) for session in Session.query.all()])
+    return pagination.paginate(Session.query.all(), schema_list, True)
 
 
 def get_session(id_session):
@@ -107,11 +107,11 @@ def get_session_treatment(id_group, id_patient, id_treatment, id_session):
 
 
 def get_sessions_treatment(id_group, patient_id, id_treatment):
-    treatments = db.session.query(Session).join(Treatment).join(PAlias).join(Patient).join(User) \
+    sessions = db.session.query(Session).join(Treatment).join(PAlias).join(Patient).join(User) \
         .filter(Session.treatment_id == id_treatment) \
         .filter(Treatment.id_patient == PAlias.id_palias) \
         .filter(PAlias.patient == patient_id) \
         .filter(Patient.id_patient == patient_id) \
         .filter(User.id_user == Patient.id_user) \
         .filter(User.id_group == id_group).filter(User.state == True).all()
-    return jsonify([schema_list.dump(treatment) for treatment in treatments])
+    return pagination.paginate(sessions, schema_list, True)

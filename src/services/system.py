@@ -1,5 +1,6 @@
 from flask import jsonify, make_response
-from src import db
+from src import db, pagination
+from .common import save_changes
 from ..models import System
 from marshmallow import Schema, fields
 from sqlalchemy import update
@@ -48,13 +49,9 @@ def save_new_system(data):
 
 
 def get_systems():
-    return jsonify([schema_list.dump(system) for system in System.query.all()])
+    return pagination.paginate(System.query.all(), schema_list, True)
 
 
 def get_system(id_system):
     return jsonify(schema.dump(System.query.filter_by(id_system=id_system).first()))
 
-
-def save_changes(data):
-    db.session.add(data)
-    db.session.commit()

@@ -1,5 +1,5 @@
 from flask import jsonify, make_response
-from src import db
+from src import db, pagination
 from .common import save_changes, update_changes
 from ..models import Treatment, User, Patient, PAlias
 from marshmallow import Schema, fields
@@ -19,8 +19,17 @@ class Points(Schema):
     pressure = fields.Float()
 
 
+class PatientListSchema(Schema):
+    id_patient = fields.UUID()
+    email = fields.Str()
+    phone = fields.Str()
+    name = fields.Str()
+    last_name = fields.Str()
+
+
 class TreatmentSchema(Schema):
     id_treatment = fields.UUID()
+    id_patient = fields.UUID()
     medic = fields.UUID()
     name = fields.Str()
     sessions_number = fields.Integer()
@@ -119,12 +128,16 @@ def get_treatments_by_patient(id_group, patient_id):
         .filter(Patient.id_patient == patient_id) \
         .filter(User.id_user == Patient.id_user) \
         .filter(User.id_group == id_group).filter(User.state == True).all()
-    return jsonify([schema_list.dump(treatment) for treatment in treatments])
+
+    return pagination.paginate(treatments, schema_list, True)
 
 
 def get_treatment(id_group, id_patient, id_treatment):
-    treatment = get_query_treatment(id_group, id_patient, id_treatment)
-    return jsonify(schema.dump(treatment))
+    treatment = schema.dump(get_query_treatment(id_group, id_patient, id_treatment))
+    patient = db.session.query(Patient).join(PAlias)\
+        .filter(Patient.id_patient == PAlias.patient).filter(PAlias.id_palias == treatment['id_patient']).first()
+    treatment['patient'] = PatientListSchema().dump(patient)
+    return jsonify(treatment)
 
 
 def update_treatment(id_group, id_patient, id_treatment, data):

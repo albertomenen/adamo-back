@@ -1,4 +1,4 @@
-from src import db
+from src import db, pagination
 from .common import update_changes, save_changes
 from ..models import Role, User
 from flask import jsonify, make_response
@@ -93,7 +93,7 @@ def get_role_from_user(user_id):
 
 
 def get_all_roles():
-    return jsonify([schema.dump(role) for role in Role.query.all()])
+    return pagination.paginate(Role.query.all(), schema, True)
 
 
 def get_role(id_role):

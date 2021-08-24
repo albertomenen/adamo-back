@@ -2,7 +2,7 @@ from flask import jsonify, make_response
 from marshmallow import Schema, fields
 from .common import update_changes, save_changes
 from .timetable import TimetableSchema, TimetableListSchema
-from .. import db
+from .. import db, pagination
 from ..models import User, Patient, Role, Group, Location
 from .role import RoleSchema
 from sqlalchemy import update
@@ -122,7 +122,7 @@ def get_users_role(role_code, id_group=None, id_location=None):
         .filter(User.id_location == id_location) \
         .filter(User.id_group == id_group) \
         .filter(User.state == True).all()
-    return jsonify([schema_list.dump(user) for user in users])
+    return pagination.paginate(users, schema_list, True)
 
 
 def get_user_query(role_code, user_id, id_group=None, id_location=None):
@@ -222,7 +222,7 @@ def delete_user(role_code, user_id, id_group=None, id_location=None):
 
 
 def get_users():
-    return jsonify([schema_list.dump(user) for user in User.query.all()])
+    return pagination.paginate(User.query.all(), schema_list, True)
 
 
 def get_user(id_user):
