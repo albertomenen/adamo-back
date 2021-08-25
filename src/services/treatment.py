@@ -35,7 +35,7 @@ class TreatmentSchema(Schema):
     points = fields.List(fields.Nested(Points()))
     ts_next_session = fields.Float()
     ts_end = fields.Float()
-    width = fields.Float()
+    weight = fields.Float()
     height = fields.Float()
     ppx = fields.Float()
     ppy = fields.Float()

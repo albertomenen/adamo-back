@@ -2,7 +2,7 @@ from flask import request, Blueprint
 from flask_restful import Resource, Api
 from ..services.user import save_new_user, get_users_role, get_user_role, update_user, delete_user, get_users
 from ..utils.decorators import manage_sysadmin, manage_dev, manage_practice_manager, manage_mp, manage_nmp, \
-    manage_treatment
+    manage_treatment, list_patient
 
 bp = Blueprint('User', __name__)
 api = Api(bp)
@@ -102,7 +102,7 @@ api.add_resource(PacticeManager, '/group/<id_group>/location/<id_location>/pract
 
 
 class MPList(Resource):
-    @manage_treatment
+    @list_patient
     def get(self, id_group, id_location):
         return get_users_role('mp', id_group, id_location)
 
