@@ -25,6 +25,7 @@ class DateListSchema(Schema):
     to_hour = fields.Str()
     id_patient = fields.UUID()
     id_station = fields.UUID()
+    id_medic = fields.UUID()
 
 
 schema = DateSchema()
