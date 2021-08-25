@@ -41,13 +41,15 @@ class Treatment(db.Model):
     injury = db.Column(db.String(100))
     injury_kind = db.Column(db.String(100))
     injury_cause = db.Column(db.String(100))
+    move = db.Column(db.String(10))
 
     sessions = relationship('Session')
 
-    def __init__(self, id_patient, medic, name, temperature, heating_duration,
+    def __init__(self, id_patient, move, medic, name, temperature, heating_duration,
                  weight, height, ppx, ppy, fx, fy, model, coeff, depth_scale, mode, extrinsics,
                  sessions_number, notes=None, points=None, injury=None,
                  injury_kind=None, injury_cause=None):
+        self.move = move
         self.id_treatment = uuid.uuid4()
         self.id_patient = id_patient
         self.medic = medic

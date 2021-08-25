@@ -6,6 +6,7 @@ from .user import UserSchema, UserCreateSchema, UserUpdate
 from ..models import Patient, User, PAlias, Role, Group, Treatment
 from marshmallow import Schema, fields
 from sqlalchemy import update
+from ..utils.filter import filtering
 
 
 class PatientSchema(Schema):
@@ -30,6 +31,7 @@ class PatientSchema(Schema):
     weight = fields.Float()
     height = fields.Float()
     allergies = fields.Str()
+    move = fields.Str()
     medication = fields.Str()
     treatments = fields.List(fields.Nested(TreatmentListSchema()))
 
@@ -129,38 +131,39 @@ def save_new_patient(id_group, data):
 
 
 def get_patients():
-    patient_list = db.session.query(Patient).join(User)\
-        .filter(User.id_user == Patient.id_user)\
+    patient_list = db.session.query(Patient).join(User) \
+        .filter(User.id_user == Patient.id_user) \
         .filter(User.state == True).all()
     return pagination.paginate(patient_list, schema_list, True)
 
 
-def get_patients_by_group(id_group):
-    patient_list = db.session.query(Patient).join(User)\
-        .filter(User.id_user == Patient.id_user)\
-        .filter(User.state == True)\
+def get_patients_by_group(id_group, filters=()):
+    patient_list = db.session.query(Patient).join(User) \
+        .filter(User.id_user == Patient.id_user) \
+        .filter(User.state == True) \
         .filter(User.id_group == id_group).all()
+    patient_list = filtering(patient_list, filters)
     return pagination.paginate(patient_list, schema_list, True)
 
 
 def get_patient(id_group, id_patient):
-    patient = db.session.query(Patient).join(User)\
-        .filter(Patient.id_patient == id_patient)\
-        .filter(User.id_user == Patient.id_user)\
-        .filter(User.state == True)\
+    patient = db.session.query(Patient).join(User) \
+        .filter(Patient.id_patient == id_patient) \
+        .filter(User.id_user == Patient.id_user) \
+        .filter(User.state == True) \
         .filter(User.id_group == id_group).first()
     patient = schema.dump(patient)
-    treatments = db.session.query(Treatment).join(PAlias)\
+    treatments = db.session.query(Treatment).join(PAlias) \
         .filter(Treatment.id_patient == PAlias.id_palias).filter(PAlias.patient == id_patient).all()
     patient['treatments'] = [TreatmentListSchema().dump(treatment) for treatment in treatments]
     return jsonify(patient)
 
 
 def update_patient(id_group, patient_id, data):
-    patient = db.session.query(Patient).join(User)\
-        .filter(Patient.id_patient == patient_id)\
-        .filter(User.id_user == Patient.id_user)\
-        .filter(User.state == True)\
+    patient = db.session.query(Patient).join(User) \
+        .filter(Patient.id_patient == patient_id) \
+        .filter(User.id_user == Patient.id_user) \
+        .filter(User.state == True) \
         .filter(User.id_group == id_group).first()
     if patient:
         new_values = schema_update.dump(data)
@@ -169,7 +172,7 @@ def update_patient(id_group, patient_id, data):
             try:
                 stmt = update(Patient).where(Patient.id_patient == patient_id).values(new_values). \
                     execution_options(synchronize_session=False)
-                stmt_user = update(User).where(Patient.id_patient == patient_id).where(Patient.id_user == User.id_user)\
+                stmt_user = update(User).where(Patient.id_patient == patient_id).where(Patient.id_user == User.id_user) \
                     .values(new_values_user).execution_options(synchronize_session=False)
                 update_changes(stmt, stmt_user)
                 return jsonify({**schema.dump(patient), **new_values})
@@ -192,15 +195,15 @@ def update_patient(id_group, patient_id, data):
 
 
 def delete_patient(id_group, patient_id):
-    patient = db.session.query(Patient).join(User)\
-        .filter(Patient.id_patient == patient_id)\
-        .filter(User.id_user == Patient.id_user)\
-        .filter(User.state == True)\
+    patient = db.session.query(Patient).join(User) \
+        .filter(Patient.id_patient == patient_id) \
+        .filter(User.id_user == Patient.id_user) \
+        .filter(User.state == True) \
         .filter(User.id_group == id_group).first()
     if patient:
         try:
             stmt_user = update(User).where(User.id_user == patient.id_user).values(state=False). \
-                            execution_options(synchronize_session=False)
+                execution_options(synchronize_session=False)
             stmt_patient = update(Patient).where(Patient.id_patient == patient_id).values(state=False). \
                 execution_options(synchronize_session=False)
             update_changes(stmt_user, stmt_patient)
@@ -219,4 +222,3 @@ def delete_patient(id_group, patient_id):
                    'status': 'fail',
                    'message': 'user not found',
                }, 404
-

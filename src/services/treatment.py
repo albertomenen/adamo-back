@@ -3,7 +3,7 @@ from src import db, pagination
 from .common import save_changes, update_changes, Points
 from ..models import Treatment, User, Patient, PAlias
 from marshmallow import Schema, fields
-from sqlalchemy import update
+from sqlalchemy import update, delete
 
 
 class SessionListSchema(Schema):
@@ -45,6 +45,7 @@ class TreatmentSchema(Schema):
     coeff = fields.Str()
     depth_scale = fields.Float()
     mode = fields.Str()
+    move = fields.Str()
     extrinsics = fields.Str()
     next_session_station_id = fields.UUID()
     last_session_date = fields.Str()
@@ -171,19 +172,34 @@ def update_treatment(id_group, id_patient, id_treatment, data):
 def delete_treatment(id_group, id_patient, id_treatment):
     treatment = get_query_treatment(id_group, id_patient, id_treatment)
     if treatment:
-        try:
-            stmt = update(Treatment).where(Treatment.id_treatment == id_treatment).values({'state': 'canceled'}). \
-                execution_options(synchronize_session=False)
-            update_changes(stmt)
-            return {
-                'status': 'success',
-                'message': 'treatment canceled',
-            }, 203
-        except Exception as e:
-            return {
-                'status': 'fail',
-                'message': str(e),
-            }, 401
+        if treatment.current_session_number == 0:
+            try:
+                stmt = delete(Treatment).where(Treatment.id_treatment == id_treatment)\
+                    .execution_options(synchronize_session=False)
+                update_changes(stmt)
+                return {
+                           'status': 'success',
+                           'message': 'treatment deleted',
+                       }, 203
+            except Exception as e:
+                return {
+                           'status': 'fail',
+                           'message': str(e),
+                       }, 401
+        else:
+            try:
+                stmt = update(Treatment).where(Treatment.id_treatment == id_treatment).values({'state': 'canceled'}). \
+                    execution_options(synchronize_session=False)
+                update_changes(stmt)
+                return {
+                    'status': 'success',
+                    'message': 'treatment interrupted',
+                }, 203
+            except Exception as e:
+                return {
+                    'status': 'fail',
+                    'message': str(e),
+                }, 401
     else:
         return {
             'status': 'fail',
