@@ -8,8 +8,7 @@ api = Api(bp)
 
 class DateList(Resource):
     def get(self, id_station):
-        data = request.get_json(force=True)
-        return get_dates_medic_station(id_station, data.get('from_date'), data.get('to_date'))
+        return get_dates_medic_station(id_station, request.args.get('from_date'), request.args.get('to_date'))
 
 class DateDetail(Resource):
     def get(self, id_station, id_date):
