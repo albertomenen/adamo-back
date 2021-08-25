@@ -1,3 +1,5 @@
+import datetime
+
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 from .. import db
@@ -16,15 +18,15 @@ class Treatment(db.Model):
     current_session_number = db.Column(db.SmallInteger(), nullable=False)
     notes = db.Column(db.String(4000))
     temperature = db.Column(db.SmallInteger(), nullable=False)
-    ts_creation_date = db.Column(db.DateTime(), nullable=False)
+    ts_creation_date = db.Column(db.DateTime())
     heating_duration = db.Column(db.REAL(), nullable=False)
     points = db.Column(db.JSON())
     # image_3D_color = db.Column(db.String(150), nullable=False)
     # image_3D_depth = db.Column(db.String(150), nullable=False)
     # image_thermic = db.Column(db.String(150), nullable=False)
     state = db.Column(db.String(12), nullable=False, default='new')
-    ts_next_session = db.Column(db.REAL(), nullable=False)
-    ts_end = db.Column(db.REAL(), nullable=False)
+    ts_next_session = db.Column(db.DateTime())
+    ts_end = db.Column(db.DateTime())
     weight = db.Column(db.REAL())
     height = db.Column(db.REAL(), nullable=False)
     ppx = db.Column(db.REAL(), nullable=False)
@@ -45,8 +47,8 @@ class Treatment(db.Model):
     sessions = relationship('Session')
     next_session_station = relationship('Station')
 
-    def __init__(self, id_patient, medic, name, temperature, ts_creation_date, heating_duration,
-                 ts_next_session, ts_end, weight, height, ppx, ppy, fx, fy, model, coeff, depth_scale, mode, extrinsics,
+    def __init__(self, id_patient, medic, name, temperature, heating_duration,
+                 weight, height, ppx, ppy, fx, fy, model, coeff, depth_scale, mode, extrinsics,
                  sessions_number, notes=None, next_session_station_id=None, points=None, injury=None,
                  injury_kind=None, injury_cause=None):
         self.id_treatment = uuid.uuid4()
@@ -57,12 +59,10 @@ class Treatment(db.Model):
         self.current_session_number = 0
         self.notes = notes
         self.temperature = temperature
-        self.ts_creation_date = ts_creation_date
+        self.ts_creation_date = datetime.datetime.now()
         self.heating_duration = heating_duration
         self.points = points
         self.state = 'new'
-        self.ts_next_session = ts_next_session
-        self.ts_end = ts_end
         self.weight = weight
         self.height = height
         self.ppx = ppx
