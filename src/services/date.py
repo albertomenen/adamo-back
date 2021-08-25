@@ -54,10 +54,9 @@ def save_new_date(id_group, id_patient, id_treatment, data):
             }
 
 
-def get_dates_medic_station(id_medic, id_station, from_date, to_date):
+def get_dates_medic_station(id_station, from_date, to_date):
     dates = Date.query.filter(Date.day >= from_date) \
         .filter(Date.day <= to_date) \
-        .filter(Date.id_medic == id_medic)\
         .filter(Date.id_station == id_station).all()
     return jsonify([schema_list.dump(date) for date in dates])
 

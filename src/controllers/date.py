@@ -7,9 +7,9 @@ api = Api(bp)
 
 
 class DateList(Resource):
-    def get(self, id_station, id_medic):
+    def get(self, id_station):
         data = request.get_json(force=True)
-        return get_dates_medic_station(id_medic, id_station, data.get('from_date'), data.get('to_date'))
+        return get_dates_medic_station(id_station, data.get('from_date'), data.get('to_date'))
 
 class DateDetail(Resource):
     def get(self, id_station, id_date):
@@ -21,6 +21,6 @@ class DateCreate(Resource):
         return save_new_date(group_id, patient_id, treatment_id, request.get_json(force=True))
 
 
-api.add_resource(DateList, '/station/<id_station>/medic/<id_medic>/date')
+api.add_resource(DateList, '/station/<id_station>/date')
 api.add_resource(DateDetail, '/station/<id_station>/date/<id_date>')
 api.add_resource(DateCreate, '/group/<group_id>/patient/<patient_id>/treatment/<treatment_id>/date')
