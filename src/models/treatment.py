@@ -25,8 +25,7 @@ class Treatment(db.Model):
     # image_3D_depth = db.Column(db.String(150), nullable=False)
     # image_thermic = db.Column(db.String(150), nullable=False)
     state = db.Column(db.String(12), nullable=False, default='new')
-    ts_next_session = db.Column(db.DateTime())
-    ts_end = db.Column(db.DateTime())
+    next_session = db.Column(UUID(as_uuid=True), ForeignKey('date.id_date'))
     weight = db.Column(db.REAL())
     height = db.Column(db.REAL(), nullable=False)
     ppx = db.Column(db.REAL(), nullable=False)
@@ -38,18 +37,16 @@ class Treatment(db.Model):
     depth_scale = db.Column(db.REAL(), nullable=False)
     mode = db.Column(db.String(45), nullable=False)
     extrinsics = db.Column(db.String(200), nullable=False)
-    next_session_station_id = db.Column(UUID(as_uuid=True), ForeignKey('station.id_station'))
     last_session_date = db.Column(db.DateTime(), default=None)
     injury = db.Column(db.String(100))
     injury_kind = db.Column(db.String(100))
     injury_cause = db.Column(db.String(100))
 
     sessions = relationship('Session')
-    next_session_station = relationship('Station')
 
     def __init__(self, id_patient, medic, name, temperature, heating_duration,
                  weight, height, ppx, ppy, fx, fy, model, coeff, depth_scale, mode, extrinsics,
-                 sessions_number, notes=None, next_session_station_id=None, points=None, injury=None,
+                 sessions_number, notes=None, points=None, injury=None,
                  injury_kind=None, injury_cause=None):
         self.id_treatment = uuid.uuid4()
         self.id_patient = id_patient
@@ -74,7 +71,6 @@ class Treatment(db.Model):
         self.depth_scale = depth_scale
         self.mode = mode
         self.extrinsics = extrinsics
-        self.next_session_station_id = next_session_station_id
         self.last_session_date = None
         self.injury_cause = injury_cause
         self.injury = injury
