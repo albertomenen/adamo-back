@@ -37,7 +37,7 @@ class Patient(db.Model):
     user = relationship('User')
 
     def __init__(self, id_user, address, city, town, phone, email, birthdate, name, last_name, identification, country,
-                 gender, race, complexity, width, height, allergies, medication, profession=None, observations=None):
+                 gender, race, complexity, weight, height, allergies, medication, profession=None, observations=None):
         self.id_patient = uuid.uuid4()
         self.id_user = id_user
         self.address = address
@@ -57,7 +57,7 @@ class Patient(db.Model):
         self.gender = gender
         self.race = race
         self.complexity = complexity
-        self.width = width
+        self.weight = weight
         self.height = height
         self.allergies = allergies
         self.medication = medication
