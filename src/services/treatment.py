@@ -166,3 +166,26 @@ def update_treatment(id_group, id_patient, id_treatment, data):
                    'status': 'fail',
                    'message': 'treatment not found',
                }, 404
+
+
+def delete_treatment(id_group, id_patient, id_treatment):
+    treatment = get_query_treatment(id_group, id_patient, id_treatment)
+    if treatment:
+        try:
+            stmt = update(Treatment).where(Treatment.id_treatment == id_treatment).values({'state': 'canceled'}). \
+                execution_options(synchronize_session=False)
+            update_changes(stmt)
+            return {
+                'status': 'success',
+                'message': 'treatment canceled',
+            }, 203
+        except Exception as e:
+            return {
+                'status': 'fail',
+                'message': str(e),
+            }, 401
+    else:
+        return {
+            'status': 'fail',
+            'message': 'treatment not found',
+        }, 404
