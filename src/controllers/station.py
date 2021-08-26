@@ -18,7 +18,6 @@ class StationList(Resource):
 
 
 class Station(Resource):
-    @manage_station
     def get(self, id_group, location_id, id_station):
         return get_station(id_group, location_id, id_station)
 

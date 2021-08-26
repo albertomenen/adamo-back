@@ -1,10 +1,10 @@
 from flask import jsonify, make_response
 from src import db
-from .common import save_changes
+from .common import save_changes, update_changes
 from .treatment import get_query_treatment, update_treatment
 from ..models import Date, Location, Group
 from marshmallow import Schema, fields
-from sqlalchemy import update
+from sqlalchemy import update, delete
 
 
 class DateSchema(Schema):
@@ -28,8 +28,17 @@ class DateListSchema(Schema):
     id_medic = fields.UUID()
 
 
+class DateUpdateSchema(Schema):
+    day = fields.Str()
+    from_hour = fields.Str()
+    to_hour = fields.Str()
+    id_station = fields.UUID()
+    id_medic = fields.UUID()
+
+
 schema = DateSchema()
 schema_list = DateListSchema()
+schema_update = DateUpdateSchema()
 
 
 def save_new_date(id_group, id_patient, id_treatment, data):
@@ -65,3 +74,53 @@ def get_dates_medic_station(id_station, from_date, to_date):
 def get_date(id_station, id_date):
     date = Date.query.filter_by(id_date=id_date).filter_by(id_station=id_station).first()
     return jsonify(schema.dump(date))
+
+
+def update_date(id_station, id_date, data):
+    date = Date.query.filter_by(id_date=id_date).filter_by(id_station=id_station).first()
+    if date:
+        new_values = schema_update.dump(data)
+        if new_values:
+            try:
+                stmt = update(Date).where(Date.id_date == id_date).values(new_values).\
+                    execution_options(synchronize_session=False)
+                update_changes(stmt)
+                return jsonify({**schema.dump(date), **new_values})
+            except Exception as e:
+                return {
+                           'status': 'fail',
+                           'message': str(e),
+                       }, 401
+        else:
+            return {
+                'status': 'fail',
+                'message': 'Nothin to update',
+            }, 401
+
+    else:
+        return {
+            'status': 'fail',
+            'message': 'date not found',
+        }, 404
+
+
+def delete_date(id_station, id_date):
+    date = Date.query.filter_by(id_date=id_date).filter_by(id_station=id_station).first()
+    if date:
+        try:
+            stmt = delete(Date).where(Date.id_date == id_date).execution_options(synchronize_session=False)
+            update_changes(stmt)
+            return {
+                'status': 'success',
+                'message': 'date deleted',
+            }, 203
+        except Exception as e:
+            return {
+                'status': 'fail',
+                'message': str(e),
+            }, 401
+    else:
+        return {
+            'status': 'fail',
+            'message': 'date not found',
+        }, 404
