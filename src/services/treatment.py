@@ -48,7 +48,8 @@ class TreatmentSchema(Schema):
     move = fields.Str()
     extrinsics = fields.Str()
     next_session_station_id = fields.UUID()
-    last_session_date = fields.Str()
+    last_session_date = fields.Date()
+    next_session_date = fields.Date()
     state = fields.Str()
     injury = fields.Str()
     injury_cause = fields.Str()
@@ -63,8 +64,8 @@ class TreatmentUpdateSchema(Schema):
     notes = fields.Str()
     temperature = fields.Float()
     heating_duration = fields.Float()
-    next_session_station_id = fields.UUID()
-    last_session_date = fields.Str()
+    next_session_date = fields.Date()
+    last_session_date = fields.Date()
     state = fields.Str()
 
 
@@ -75,7 +76,7 @@ class TreatmentListSchema(Schema):
     sessions_number = fields.Integer()
     current_session_number = fields.Integer()
     mode = fields.Str()
-    last_session_date = fields.Str()
+    last_session_date = fields.Date()
 
 
 schema = TreatmentSchema()

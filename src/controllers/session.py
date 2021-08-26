@@ -8,7 +8,6 @@ api = Api(bp)
 
 
 class SessionList(Resource):
-    @session_adjustment
     def get(self, group_id, patient_id, treatment_id):
         return get_sessions_treatment(group_id, patient_id, treatment_id)
 
@@ -18,7 +17,6 @@ class SessionList(Resource):
 
 
 class Session(Resource):
-    @session_adjustment
     def get(self, patient_id, group_id, treatment_id, session_id):
         return get_session_treatment(group_id, patient_id, treatment_id, session_id)
 

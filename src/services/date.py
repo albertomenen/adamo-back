@@ -49,7 +49,7 @@ def save_new_date(id_group, id_patient, id_treatment, data):
             data['id_treatment'] = id_treatment
             new_date = Date(**data)
             save_changes(new_date)
-            update_treatment(id_group, id_patient, id_treatment, {'next_session': new_date.id_date})
+            update_treatment(id_group, id_patient, id_treatment, {'next_session_date': new_date.day})
             return make_response(jsonify(schema.dump(new_date)), 201)
         except Exception as e:
             response_object = {

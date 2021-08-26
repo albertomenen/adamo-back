@@ -68,7 +68,8 @@ def save_new_session(id_group, patient_id, id_treatment, data):
             new_data_treatment = {
                 'last_session_date': datetime.datetime.utcnow(),
                 'state': 'started' if treatment.current_session_number < treatment.sessions_number - 1 else 'finished',
-                'current_session_number': treatment.current_session_number + 1
+                'current_session_number': treatment.current_session_number + 1,
+                'next_session_date': None
             }
             update_treatment(id_group, patient_id, id_treatment, new_data_treatment)
         except Exception as e:
