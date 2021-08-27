@@ -14,7 +14,7 @@ class SessionListSchema(Schema):
 
 
 class PatientListSchema(Schema):
-    id_patient = fields.UUID()
+    #id_patient = fields.UUID()
     email = fields.Str()
     phone = fields.Str()
     name = fields.Str()
@@ -23,7 +23,7 @@ class PatientListSchema(Schema):
 
 class TreatmentSchema(Schema):
     id_treatment = fields.UUID()
-    id_patient = fields.UUID()
+    #id_patient = fields.UUID()
     medic = fields.UUID()
     name = fields.Str()
     sessions_number = fields.Integer()
@@ -152,6 +152,17 @@ def update_treatment(id_group, id_patient, id_treatment, data):
                 stmt = update(Treatment).where(Treatment.id_treatment == id_treatment).values(new_values). \
                     execution_options(synchronize_session=False)
                 update_changes(stmt)
+                if new_values.get('state') == 'started':
+                    patient = Patient.query.filter(Patient.id_patient == id_patient).first
+                    stmt = update(Patient).where(Patient.id_patient == id_patient).values({'active_treatments': patient.active_treatments + 1}). \
+                        execution_options(synchronize_session=False)
+                    update_changes(stmt)
+                elif new_values.get('state') == 'finished':
+                    patient = Patient.query.filter(Patient.id_patient == id_patient).first
+                    stmt = update(Patient).where(Patient.id_patient == id_patient).values(
+                        {'active_treatments': patient.active_treatments - 1}). \
+                        execution_options(synchronize_session=False)
+                    update_changes(stmt)
                 return jsonify({**schema.dump(treatment), **new_values})
             except Exception as e:
                 return {
@@ -179,6 +190,11 @@ def delete_treatment(id_group, id_patient, id_treatment):
                 stmt = delete(Treatment).where(Treatment.id_treatment == id_treatment)\
                     .execution_options(synchronize_session=False)
                 update_changes(stmt)
+                patient = Patient.query.filter(Patient.id_patient == id_patient).first
+                stmt = update(Patient).where(Patient.id_patient == id_patient).values(
+                    {'active_treatments': patient.active_treatments - 1}). \
+                    execution_options(synchronize_session=False)
+                update_changes(stmt)
                 return {
                            'status': 'success',
                            'message': 'treatment deleted',
@@ -191,6 +207,11 @@ def delete_treatment(id_group, id_patient, id_treatment):
         else:
             try:
                 stmt = update(Treatment).where(Treatment.id_treatment == id_treatment).values({'state': 'canceled'}). \
+                    execution_options(synchronize_session=False)
+                update_changes(stmt)
+                patient = Patient.query.filter(Patient.id_patient == id_patient).first
+                stmt = update(Patient).where(Patient.id_patient == id_patient).values(
+                    {'active_treatments': patient.active_treatments - 1}). \
                     execution_options(synchronize_session=False)
                 update_changes(stmt)
                 return {

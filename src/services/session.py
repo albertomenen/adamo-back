@@ -72,14 +72,17 @@ def save_new_session(id_group, patient_id, id_treatment, data):
                 'current_session_number': treatment.current_session_number + 1,
                 'next_session_date': None
             }
+            if new_data_treatment['current_session_number'] > 1 and new_data_treatment['state'] != 'finished':
+                new_data_treatment.pop('state', None)
+
             update_treatment(id_group, patient_id, id_treatment, new_data_treatment)
+            return make_response(jsonify(schema.dump(new_session)), 201)
         except Exception as e:
             response_object = {
                 'status': 'fail',
                 'message': str(e),
             }
             return response_object, 409
-        return make_response(jsonify(schema.dump(new_session)), 201)
     else:
         response_object = {
             'status': 'fail',
