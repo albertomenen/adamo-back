@@ -36,6 +36,7 @@ schema_list = SessionListSchema()
 
 def save_new_session(id_group, patient_id, id_treatment, data):
     treatment = db.session.query(Treatment).join(PAlias).join(Patient).join(User) \
+        .filter(Treatment.id_patient == PAlias.id_palias) \
         .filter(Treatment.id_treatment == id_treatment) \
         .filter(PAlias.patient == patient_id) \
         .filter(Patient.id_patient == patient_id) \
