@@ -49,17 +49,25 @@ def save_new_session(id_group, patient_id, id_treatment, data):
                 'status': 'fail',
                 'message': 'Treatment finished, cannot add more sessions',
             }, 401
-        station = StationSchema().dump(db.session.query(Station).join(Location) \
-                                       .filter(Station.id_station == data['station_id']) \
-                                       .filter(Station.id_location == Location.id_location) \
-                                       .filter(Location.id_group == id_group).first())
+        try:
+            station = StationSchema().dump(db.session.query(Station).join(Location) \
+                                           .filter(Station.id_station == data.get('station_id')) \
+                                           .filter(Station.id_location == Location.id_location) \
+                                           .filter(Location.id_group == id_group).first())
+        except:
+            return {
+                'status': 'fail',
+                'message': 'Station not found',
+            }, 404
         if station and station['device']:
             data['device_id'] = station['device'][0]['id_device']
         else:
-            return {
-                'status': 'fail',
-                'message': 'Device not assigned',
-            }, 401
+            data['device_id'] = 'test'
+        #else:
+        #    return {
+        #        'status': 'fail',
+        #        'message': 'Device not assigned',
+        #    }, 401
         try:
             data['session_number'] = treatment.current_session_number + 1
             data['treatment_id'] = id_treatment
