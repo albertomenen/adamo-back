@@ -23,7 +23,7 @@ class PatientListSchema(Schema):
 
 class TreatmentSchema(Schema):
     id_treatment = fields.UUID()
-    #id_patient = fields.UUID()
+    id_patient = fields.UUID()
     medic = fields.UUID()
     name = fields.Str()
     sessions_number = fields.Integer()
@@ -153,12 +153,12 @@ def update_treatment(id_group, id_patient, id_treatment, data):
                     execution_options(synchronize_session=False)
                 update_changes(stmt)
                 if new_values.get('state') == 'started':
-                    patient = Patient.query.filter(Patient.id_patient == id_patient).first
+                    patient = Patient.query.filter(Patient.id_patient == id_patient).first()
                     stmt = update(Patient).where(Patient.id_patient == id_patient).values({'active_treatments': patient.active_treatments + 1}). \
                         execution_options(synchronize_session=False)
                     update_changes(stmt)
                 elif new_values.get('state') == 'finished':
-                    patient = Patient.query.filter(Patient.id_patient == id_patient).first
+                    patient = Patient.query.filter(Patient.id_patient == id_patient).first()
                     stmt = update(Patient).where(Patient.id_patient == id_patient).values(
                         {'active_treatments': patient.active_treatments - 1}). \
                         execution_options(synchronize_session=False)
@@ -190,7 +190,7 @@ def delete_treatment(id_group, id_patient, id_treatment):
                 stmt = delete(Treatment).where(Treatment.id_treatment == id_treatment)\
                     .execution_options(synchronize_session=False)
                 update_changes(stmt)
-                patient = Patient.query.filter(Patient.id_patient == id_patient).first
+                patient = Patient.query.filter(Patient.id_patient == id_patient).first()
                 stmt = update(Patient).where(Patient.id_patient == id_patient).values(
                     {'active_treatments': patient.active_treatments - 1}). \
                     execution_options(synchronize_session=False)
@@ -209,7 +209,7 @@ def delete_treatment(id_group, id_patient, id_treatment):
                 stmt = update(Treatment).where(Treatment.id_treatment == id_treatment).values({'state': 'canceled'}). \
                     execution_options(synchronize_session=False)
                 update_changes(stmt)
-                patient = Patient.query.filter(Patient.id_patient == id_patient).first
+                patient = Patient.query.filter(Patient.id_patient == id_patient).first()
                 stmt = update(Patient).where(Patient.id_patient == id_patient).values(
                     {'active_treatments': patient.active_treatments - 1}). \
                     execution_options(synchronize_session=False)
