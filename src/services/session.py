@@ -17,7 +17,7 @@ class SessionSchema(Schema):
     notes = fields.Str()
     temperature = fields.Float()
     ts_creation_date = fields.Str()
-    heating_duration = fields.Integer()
+    heating_duration = fields.Float()
     points = fields.List(fields.Nested(Points()))
     id_device = fields.Nested(DeviceListSchema())
     id_station = fields.Nested(StationListSchema())

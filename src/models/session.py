@@ -13,6 +13,7 @@ class Session(db.Model):
 
     id_session = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     medic = db.Column(UUID(as_uuid=True), ForeignKey('user.id_user'), nullable=False)
+    heating_duration = db.Column(db.REAL())
     # image_3D_color = db.Column(db.String(50), nullable=False, unique=True)
     # image_thermic = db.Column(db.String(12), nullable=False)
     # image_3D_depth = db.Column(db.String(150), nullable=False)
@@ -26,10 +27,12 @@ class Session(db.Model):
     station_id = db.Column(UUID(as_uuid=True), ForeignKey('station.id_station'), nullable=False)
     treatment_id = db.Column(UUID(as_uuid=True), ForeignKey('treatment.id_treatment'), nullable=False)
 
-    def __init__(self, medic, temperature, session_number, device_id, station_id, treatment_id,
+    def __init__(self, medic, temperature, session_number, device_id, station_id, treatment_id,heating_duration=None,
                 notes=None, points=()):
         if points is None:
             points = []
+
+        self.heating_duration = heating_duration
         self.id_session = uuid.uuid4()
         self.medic = medic
         self.points = points
