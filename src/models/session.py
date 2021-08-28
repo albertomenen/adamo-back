@@ -26,12 +26,14 @@ class Session(db.Model):
     device_id = db.Column(UUID(as_uuid=True), ForeignKey('device.id_device'), nullable=False)
     station_id = db.Column(UUID(as_uuid=True), ForeignKey('station.id_station'), nullable=False)
     treatment_id = db.Column(UUID(as_uuid=True), ForeignKey('treatment.id_treatment'), nullable=False)
+    pressure = db.Column(db.REAL())
 
-    def __init__(self, medic, temperature, session_number, device_id, station_id, treatment_id,heating_duration=None,
+    def __init__(self, medic, temperature, session_number, device_id, station_id, treatment_id, pressure=None, heating_duration=None,
                 notes=None, points=()):
         if points is None:
             points = []
 
+        self.pressure = pressure
         self.heating_duration = heating_duration
         self.id_session = uuid.uuid4()
         self.medic = medic

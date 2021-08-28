@@ -6,7 +6,7 @@ from .common import save_changes, Points
 from .device import DeviceListSchema
 from .treatment import update_treatment
 from ..models import Session, Treatment, PAlias, Patient, User, Station, Location
-from ..services.station import StationListSchema, StationSchema
+from ..services.station import StationSchema
 from marshmallow import Schema, fields
 
 
@@ -19,8 +19,9 @@ class SessionSchema(Schema):
     ts_creation_date = fields.Str()
     heating_duration = fields.Float()
     points = fields.List(fields.Nested(Points()))
-    id_device = fields.Nested(DeviceListSchema())
-    id_station = fields.Nested(StationListSchema())
+    pressure = fields.Float()
+    id_device = fields.UUID()
+    id_station = fields.UUID()
 
 
 class SessionListSchema(Schema):

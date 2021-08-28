@@ -21,6 +21,7 @@ class Treatment(db.Model):
     ts_creation_date = db.Column(db.DateTime())
     heating_duration = db.Column(db.REAL(), nullable=False)
     points = db.Column(db.JSON())
+    pressure = db.Column(db.REAL())
     # image_3D_color = db.Column(db.String(150), nullable=False)
     # image_3D_depth = db.Column(db.String(150), nullable=False)
     # image_thermic = db.Column(db.String(150), nullable=False)
@@ -48,7 +49,8 @@ class Treatment(db.Model):
     def __init__(self, id_patient, move, medic, name, temperature, heating_duration,
                  weight, height, ppx, ppy, fx, fy, model, coeff, depth_scale, mode, extrinsics,
                  sessions_number, notes=None, points=None, injury=None,
-                 injury_kind=None, injury_cause=None):
+                 injury_kind=None, injury_cause=None, pressure=None):
+        self.pressure = pressure
         self.move = move
         self.id_treatment = uuid.uuid4()
         self.id_patient = id_patient

@@ -6,11 +6,18 @@ from marshmallow import Schema, fields
 from sqlalchemy import update, delete
 
 
-class SessionListSchema(Schema):
+class SessionSchema(Schema):
     id_session = fields.UUID()
     medic = fields.Str()
     session_number = fields.Integer()
+    notes = fields.Str()
+    temperature = fields.Float()
     ts_creation_date = fields.Str()
+    heating_duration = fields.Float()
+    points = fields.List(fields.Nested(Points()))
+    pressure = fields.Float()
+    id_device = fields.UUID()
+    id_station = fields.UUID()
 
 
 class PatientListSchema(Schema):
@@ -55,7 +62,7 @@ class TreatmentSchema(Schema):
     injury_cause = fields.Str()
     injury_kind = fields.Str()
 
-    sessions = fields.List(fields.Nested(SessionListSchema()))
+    sessions = fields.List(fields.Nested(SessionSchema()))
 
 
 class TreatmentUpdateSchema(Schema):
