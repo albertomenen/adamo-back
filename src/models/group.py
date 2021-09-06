@@ -19,6 +19,8 @@ class Group(db.Model):
     state = db.Column(db.Boolean(), default=True)
     email = db.Column(db.String(120), nullable=False, unique=True)
 
+    locations = relationship("Location")
+
     def __init__(self, group_name, id_system, address, city, town, phone, contact_name, email):
         self.id_group = uuid.uuid4()
         self.group_name = group_name

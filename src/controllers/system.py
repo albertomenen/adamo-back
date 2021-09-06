@@ -23,5 +23,5 @@ class System(Resource):
         return get_system(id_system)
 
 
-api.add_resource(SystemList, '/')
+api.add_resource(SystemList)
 api.add_resource(System, '/<system_id>')

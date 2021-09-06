@@ -5,6 +5,8 @@ from flask import jsonify, make_response
 from marshmallow import Schema, fields
 from sqlalchemy import update, delete
 
+from ..utils.schemas.location import location_schema_list
+
 
 class GroupSchema(Schema):
     id_group = fields.UUID()
@@ -18,8 +20,14 @@ class GroupSchema(Schema):
 
 
 class GroupListSchema(Schema):
+    address = fields.Str()
+    city = fields.Str()
+    town = fields.Str()
+    phone = fields.Str()
+    email = fields.Str()
     id_group = fields.UUID()
     group_name = fields.Str()
+    locations = fields.List(fields.Nested(location_schema_list))
 
 
 class GroupUpdateSchema(Schema):
