@@ -31,5 +31,5 @@ class Group(Resource):
         return delete_group(group_id)
 
 
-api.add_resource(GroupList)
-api.add_resource(Group, '/<group_id>')
+api.add_resource(GroupList, '/group')
+api.add_resource(Group, '/group/<group_id>')

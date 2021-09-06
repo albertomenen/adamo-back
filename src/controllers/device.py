@@ -37,6 +37,6 @@ class Device(Resource):
         return delete_device(device_id)
 
 
-api.add_resource(DeviceList)
-api.add_resource(DeviceFreeList, '/free')
-api.add_resource(Device, '/<device_id>')
+api.add_resource(DeviceList, '/device')
+api.add_resource(DeviceFreeList, '/device/free')
+api.add_resource(Device, '/device/<device_id>')

@@ -31,5 +31,5 @@ class Role(Resource):
         return delete_role(role_id)
 
 
-api.add_resource(RoleList)
-api.add_resource(Role, '/<role_id>')
+api.add_resource(RoleList, '/role')
+api.add_resource(Role, '/role/<role_id>')
