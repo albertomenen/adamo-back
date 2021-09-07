@@ -38,4 +38,4 @@ class SessionCreateSchema(Schema):
 
 session_schema_detail = SessionDetailSchema()
 session_schema_list = SessionListSchema()
-session_schema_createer = SessionCreateSchema()
+session_schema_create = SessionCreateSchema()
