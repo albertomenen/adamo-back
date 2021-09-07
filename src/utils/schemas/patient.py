@@ -1,5 +1,6 @@
 from marshmallow import Schema, fields
 from .user import user_detail_schema
+from .treatment import treatment_schema_list
 
 
 class PatientDetailSchema(Schema):
@@ -26,7 +27,7 @@ class PatientDetailSchema(Schema):
     allergies = fields.Str()
     move = fields.Str()
     medication = fields.Str()
-    # treatments = fields.List(fields.Nested(treatment_schema_list)
+    treatments = fields.List(fields.Nested(treatment_schema_list))
 
 
 class PatientCreateSchema(Schema):
