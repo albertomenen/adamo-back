@@ -29,6 +29,10 @@ class LocationDetailSchema(Schema):
 class LocationListSchema(Schema):
     id_location = fields.UUID()
     location_name = fields.Str()
+    address = fields.Str()
+    phone = fields.Str()
+    email = fields.Str()
+
 
 
 class LocationUpdateSchema(Schema):
