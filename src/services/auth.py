@@ -1,12 +1,9 @@
 from flask import make_response
 from .. import db
-from ..models import User, Patient, Station, Location
+from ..models import User, Station, Location
 from ..services.blacklist import save_token
-from ..services.user import UserDetailSchema
+from ..utils.schemas.user import user_role_schema
 from flask import jsonify
-
-
-user_schema = UserDetailSchema()
 
 
 def check_source(source, user):
@@ -37,7 +34,7 @@ class Auth:
                             'status': 'success',
                             'message': 'Successfully logged in.',
                             'Authorization': str(auth_token),
-                            'user': user_schema.dump(user)
+                            'user': user_role_schema.dump(user)
                         }
                         return make_response(jsonify(response_object), 200)
                 else:

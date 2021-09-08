@@ -1,4 +1,3 @@
-from sqlalchemy import ForeignKey
 from .. import db
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
@@ -9,7 +8,6 @@ class Group(db.Model):
     __tablename__ = 'group'
 
     id_group = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    id_system = db.Column(UUID(as_uuid=True), ForeignKey('system.id_system'), nullable=False)
     group_name = db.Column(db.String(50), nullable=False)
     address = db.Column(db.String(150), nullable=False)
     city = db.Column(db.String(100), nullable=False)
@@ -21,10 +19,9 @@ class Group(db.Model):
 
     locations = relationship("Location")
 
-    def __init__(self, group_name, id_system, address, city, town, phone, contact_name, email):
+    def __init__(self, group_name, address, city, town, phone, contact_name, email):
         self.id_group = uuid.uuid4()
         self.group_name = group_name
-        self.id_system = id_system
         self.address = address
         self.city = city
         self.town = town

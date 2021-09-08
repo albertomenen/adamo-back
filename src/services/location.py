@@ -1,48 +1,9 @@
 from .common import save_changes, update_changes
-from .timetable import TimetableListSchema
 from .. import pagination
 from ..models import Location, Group, Station, Device
 from flask import jsonify, make_response
-from marshmallow import Schema, fields
 from sqlalchemy import update
-
-
-class LocationSchema(Schema):
-    id_location = fields.UUID()
-    location_name = fields.Str()
-    address = fields.Str()
-    city = fields.Str()
-    town = fields.Str()
-    phone = fields.Str()
-    contact_name = fields.Str()
-    email = fields.Email()
-    state = fields.Boolean()
-    id_group = fields.UUID()
-
-
-# class LocationTimetableSchema(Schema):
-#     id_location = fields.UUID()
-#     timetables = fields.List(fields.Nested(TimetableListSchema()))
-
-
-class LocationListSchema(Schema):
-    id_location = fields.UUID()
-    location_name = fields.Str()
-
-
-class LocationUpdateSchema(Schema):
-    location_name = fields.Str()
-    address = fields.Str()
-    city = fields.Str()
-    town = fields.Str()
-    phone = fields.Str()
-    contact_name = fields.Str()
-
-
-schema = LocationSchema()
-schema_list = LocationListSchema()
-schema_update = LocationUpdateSchema()
-#schema_timetable = LocationTimetableSchema()
+from ..utils.schemas.location import location_schema_list, location_schema_update, location_schema_detail, location_schema_create
 
 
 def save_new_location(id_group, data):
@@ -56,14 +17,14 @@ def save_new_location(id_group, data):
                    }, 401
         try:
             data['id_group'] = id_group
-            new_location = Location(**data)
+            new_location = Location(**location_schema_create.dump(data))
             save_changes(new_location)
         except:
             return {
                        'status': 'fail',
                        'message': 'Wrong parameters',
                    }, 401
-        return make_response(jsonify(schema.dump(new_location)), 201)
+        return make_response(jsonify(location_schema_detail.dump(new_location)), 201)
     else:
         response_object = {
             'status': 'fail',
@@ -74,15 +35,15 @@ def save_new_location(id_group, data):
 
 def get_location_from_group(group_id):
     locations = Location.query.filter_by(id_group=group_id).filter_by(state=True).all()
-    return pagination.paginate(locations, schema_list, True)
+    return pagination.paginate(locations, location_schema_list, True)
 
 
 def get_all_locations():
-    return pagination.paginate(Location.query.all(), schema_list, True)
+    return pagination.paginate(Location.query.all(), location_schema_list, True)
 
 
 def get_location(id_group, id_location):
-    return jsonify(schema.dump(Location.query.filter_by(id_location=id_location)
+    return jsonify(location_schema_detail.dump(Location.query.filter_by(id_location=id_location)
                                .filter_by(id_group=id_group).filter_by(state=True).first()))
 
 
@@ -90,13 +51,13 @@ def update_location(id_group, id_location, data):
     location = Location.query.filter_by(id_location=id_location).filter_by(id_group=id_group)\
         .filter_by(state=True).first()
     if location:
-        new_values = schema_update.dump(data)
+        new_values = location_schema_update.dump(data)
         if new_values:
             try:
                 stmt = update(Location).where(Location.id_location == id_location).values(new_values).\
                     execution_options(synchronize_session=False)
                 update_changes(stmt)
-                return jsonify({**schema.dump(location), **new_values})
+                return jsonify({**location_schema_detail.dump(location), **new_values})
             except Exception as e:
                 return {
                            'status': 'fail',
@@ -113,33 +74,6 @@ def update_location(id_group, id_location, data):
             'status': 'fail',
             'message': 'user not found',
         }, 404
-
-
-# def set_location_timetable(id_group, id_location, id_timetable):
-#     location = Location.query.filter_by(id_group=id_group).filter_by(id_location=id_location).first()
-#     timetable = Timetable.query.filter_by(id_group=id_group).filter_by(id_timetable=id_timetable).first()
-#     if location:
-#         if timetable:
-#             try:
-#                 location.timetables.append(timetable)
-#                 save_changes(location)
-#                 return jsonify(schema_timetable.dump(location))
-#             except:
-#                 return {
-#                            'status': 'fail',
-#                            'message': 'Update failed',
-#                        }, 401
-#         else:
-#             return {
-#                        'status': 'fail',
-#                        'message': 'timetable not found',
-#                    }, 401
-#
-#     else:
-#         return {
-#                    'status': 'fail',
-#                    'message': 'location not found',
-#                }, 404
 
 
 def delete_location(id_group, id_location):

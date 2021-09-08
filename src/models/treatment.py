@@ -22,11 +22,12 @@ class Treatment(db.Model):
     heating_duration = db.Column(db.REAL(), nullable=False)
     points = db.Column(db.JSON())
     pressure = db.Column(db.REAL())
-    # image_3D = db.Column(db.String(150), nullable=False)
-    # image_thermic = db.Column(db.String(150), nullable=False)
-    # image_thermic_width = db.Column(db.String(150), nullable=)
-    # image_thermic_height = db.Column(db.String(150), nullable=)
-    # image_thermic_depht = db.Column(db.String(150), nullable=)
+    image_3D = db.Column(db.String(150))
+    image_thermic = db.Column(db.String(150))
+    image_thermic_bin = db.Column(db.String(150))
+    image_thermic_width = db.Column(db.Integer())
+    image_thermic_height = db.Column(db.Integer())
+    image_thermic_depht = db.Column(db.Integer())
     state = db.Column(db.String(12), nullable=False, default='new')
     weight = db.Column(db.REAL())
     height = db.Column(db.REAL(), nullable=False)
@@ -51,7 +52,8 @@ class Treatment(db.Model):
     def __init__(self, id_patient, move, medic, name, temperature, heating_duration,
                  weight, height, ppx, ppy, fx, fy, model, coeff, depth_scale, mode, extrinsics,
                  sessions_number, notes=None, points=None, injury=None,
-                 injury_kind=None, injury_cause=None, pressure=None):
+                 injury_kind=None, injury_cause=None, pressure=None, image_thermic_width=None,
+                 image_thermic_height=None, image_thermic_depht=None):
         self.pressure = pressure
         self.move = move
         self.id_treatment = uuid.uuid4()
@@ -81,6 +83,9 @@ class Treatment(db.Model):
         self.injury_cause = injury_cause
         self.injury = injury
         self.injury_kind = injury_kind
+        self.image_thermic_width = image_thermic_width
+        self.image_thermic_height = image_thermic_height
+        self.image_thermic_depht = image_thermic_depht
 
     def __repr__(self):
         return '<Treatment Name: {} >'.format(self.name)

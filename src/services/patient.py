@@ -1,99 +1,12 @@
 from flask import jsonify, make_response
 from src import db, pagination
 from .common import update_changes, save_changes
-from .treatment import TreatmentListSchema
-from .user import UserSchema, UserCreateSchema, UserUpdate
 from ..models import Patient, User, PAlias, Role, Group, Treatment
-from marshmallow import Schema, fields
+from ..utils.schemas.treatment import treatment_schema_list
+from ..utils.schemas.user import user_create_schema, user_update_schema
+from ..utils.schemas.patient import patient_schema_list, patient_schema_update, patient_schema_create, patient_schema_detail
 from sqlalchemy import update
 from ..utils.filter import filtering
-
-
-class PatientSchema(Schema):
-    id_patient = fields.Str()
-    address = fields.Str()
-    city = fields.Str()
-    town = fields.Str()
-    phone = fields.Str()
-    profession = fields.Str()
-    observations = fields.Str()
-    birthdate = fields.Str()
-    identification = fields.Str()
-    email = fields.Str()
-    name = fields.Str()
-    last_name = fields.Str()
-    active_treatments = fields.Integer()
-    user = fields.Nested(UserSchema())
-    country = fields.Str()
-    gender = fields.Str()
-    race = fields.Str()
-    complexity = fields.Str()
-    weight = fields.Float()
-    height = fields.Float()
-    allergies = fields.Str()
-    move = fields.Str()
-    medication = fields.Str()
-    treatments = fields.List(fields.Nested(TreatmentListSchema()))
-
-
-class PatientCreateSchema(Schema):
-    id_user = fields.UUID()
-    address = fields.Str()
-    city = fields.Str()
-    town = fields.Str()
-    phone = fields.Str()
-    email = fields.Str()
-    birthdate = fields.Str()
-    name = fields.Str()
-    last_name = fields.Str()
-    identification = fields.Str()
-    profession = fields.Str()
-    observations = fields.Str()
-    country = fields.Str()
-    gender = fields.Str()
-    race = fields.Str()
-    complexity = fields.Str()
-    weight = fields.Float()
-    height = fields.Float()
-    allergies = fields.Str()
-    medication = fields.Str()
-
-
-class PatientListSchema(Schema):
-    id_patient = fields.Str()
-    email = fields.Str()
-    phone = fields.Str()
-    name = fields.Str()
-    last_name = fields.Str()
-    active_treatments = fields.Integer()
-
-
-class PatientUpdateSchema(Schema):
-    address = fields.Str()
-    city = fields.Str()
-    town = fields.Str()
-    phone = fields.Str()
-    profession = fields.Str()
-    observations = fields.Str()
-    birthdate = fields.Str()
-    identification = fields.Str()
-    name = fields.Str()
-    last_name = fields.Str()
-    country = fields.Str()
-    gender = fields.Str()
-    race = fields.Str()
-    complexity = fields.Str()
-    weight = fields.Float()
-    height = fields.Float()
-    allergies = fields.Str()
-    medication = fields.Str()
-
-
-schema = PatientSchema()
-schema_list = PatientListSchema()
-schema_update = PatientUpdateSchema()
-schema_create = PatientCreateSchema()
-user_create_schema = UserCreateSchema()
 
 
 def save_new_patient(id_group, data):
@@ -110,7 +23,7 @@ def save_new_patient(id_group, data):
             data['role_id'] = Role.query.filter_by(role_code='patient').first().id_role
             new_user = User(**user_create_schema.dump(data))
             data['id_user'] = new_user.id_user
-            new_patient = Patient(**schema_create.dump(data))
+            new_patient = Patient(**patient_schema_create.dump(data))
             new_palias = PAlias(patient=new_patient.id_patient)
             save_changes(new_user)
             save_changes(new_patient)
@@ -121,7 +34,7 @@ def save_new_patient(id_group, data):
                 'message': str(e),
             }
             return response_object, 409
-        return make_response(jsonify(schema.dump(new_patient)), 201)
+        return make_response(jsonify(patient_schema_detail.dump(new_patient)), 201)
     else:
         response_object = {
             'status': 'fail',
@@ -134,7 +47,7 @@ def get_patients():
     patient_list = db.session.query(Patient).join(User) \
         .filter(User.id_user == Patient.id_user) \
         .filter(User.state == True).all()
-    return pagination.paginate(patient_list, schema_list, True)
+    return pagination.paginate(patient_list, patient_schema_list, True)
 
 
 def get_patients_by_group(id_group, filters=()):
@@ -143,7 +56,7 @@ def get_patients_by_group(id_group, filters=()):
         .filter(User.state == True) \
         .filter(User.id_group == id_group).all()
     patient_list = filtering(patient_list, filters)
-    return pagination.paginate(patient_list, schema_list, True)
+    return pagination.paginate(patient_list, patient_schema_list, True)
 
 
 def get_patient(id_group, id_patient):
@@ -152,10 +65,10 @@ def get_patient(id_group, id_patient):
         .filter(User.id_user == Patient.id_user) \
         .filter(User.state == True) \
         .filter(User.id_group == id_group).first()
-    patient = schema.dump(patient)
+    patient = patient_schema_detail.dump(patient)
     treatments = db.session.query(Treatment).join(PAlias) \
         .filter(Treatment.id_patient == PAlias.id_palias).filter(PAlias.patient == id_patient).all()
-    patient['treatments'] = [TreatmentListSchema().dump(treatment) for treatment in treatments]
+    patient['treatments'] = [treatment_schema_list().dump(treatment) for treatment in treatments]
     return jsonify(patient)
 
 
@@ -166,8 +79,8 @@ def update_patient(id_group, patient_id, data):
         .filter(User.state == True) \
         .filter(User.id_group == id_group).first()
     if patient:
-        new_values = schema_update.dump(data)
-        new_values_user = UserUpdate().dump(data)
+        new_values = patient_schema_update.dump(data)
+        new_values_user = user_update_schema.dump(data)
         if new_values:
             try:
                 stmt = update(Patient).where(Patient.id_patient == patient_id).values(new_values). \
@@ -175,7 +88,7 @@ def update_patient(id_group, patient_id, data):
                 stmt_user = update(User).where(Patient.id_patient == patient_id).where(Patient.id_user == User.id_user) \
                     .values(new_values_user).execution_options(synchronize_session=False)
                 update_changes(stmt, stmt_user)
-                return jsonify({**schema.dump(patient), **new_values})
+                return jsonify({**patient_schema_detail.dump(patient), **new_values})
             except:
                 return {
                            'status': 'fail',

@@ -1,39 +1,9 @@
 from flask import jsonify, make_response
-from sqlalchemy.orm import lazyload
-
 from src import db, pagination
 from .common import save_changes, update_changes
-from .device import DeviceListSchema
 from ..models import Station, Location, Group, Device
-from marshmallow import Schema, fields
 from sqlalchemy import update
-
-
-class StationSchema(Schema):
-    id_station = fields.UUID()
-    id_location = fields.UUID()
-    station_name = fields.Str()
-    placed = fields.Str()
-    installation_date = fields.Str()
-    version = fields.Str()
-    device = fields.List(fields.Nested(DeviceListSchema()))
-
-
-class StationListSchema(Schema):
-    id_station = fields.UUID()
-    station_name = fields.Str()
-
-
-class StationUpdateSchema(Schema):
-    station_name = fields.Str()
-    placed = fields.Str()
-    installation_date = fields.Str()
-    version = fields.Str()
-
-
-schema = StationSchema()
-schema_list = StationListSchema()
-schema_update = StationUpdateSchema()
+from ..utils.schemas.station import station_schema_detail, station_schema_list, station_schema_update, station_schema_create
 
 
 def save_new_station(id_group, id_location, data):
@@ -45,7 +15,7 @@ def save_new_station(id_group, id_location, data):
                }, 401
     try:
         data['id_location'] = location.id_location
-        new_station = Station(**data)
+        new_station = Station(**station_schema_create.dump(data))
         save_changes(new_station)
     except:
         response_object = {
@@ -53,14 +23,14 @@ def save_new_station(id_group, id_location, data):
             'message': 'Bad parameters',
         }
         return response_object, 409
-    return make_response(jsonify(schema.dump(new_station)), 201)
+    return make_response(jsonify(station_schema_detail.dump(new_station)), 201)
 
 
 def get_stations(id_group, id_location):
     stations = db.session.query(Station).join(Location)\
         .filter(Location.id_group == id_group)\
         .filter(Station.id_location == id_location).all()
-    return pagination.paginate(stations, schema_list, True)
+    return pagination.paginate(stations, station_schema_list, True)
 
 
 def get_station(id_group, id_location, id_station):
@@ -69,7 +39,7 @@ def get_station(id_group, id_location, id_station):
         .filter(Station.id_location == id_location)\
         .filter(Station.id_station == id_station)\
         .filter(Station.state == True).first()
-    return jsonify(schema.dump(station))
+    return jsonify(station_schema_detail.dump(station))
 
 
 def update_station(id_group, id_location, id_station, data):
@@ -79,13 +49,13 @@ def update_station(id_group, id_location, id_station, data):
         .filter(Station.id_station == id_station)\
         .filter(Station.state == True).first()
     if station:
-        new_values = schema_update.dump(data)
+        new_values = station_schema_update.dump(data)
         if new_values:
             try:
                 stmt = update(Station).where(Station.id_station == id_station).values(new_values).\
                     execution_options(synchronize_session=False)
                 update_changes(stmt)
-                return jsonify({**schema.dump(station), **new_values})
+                return jsonify({**station_schema_detail.dump(station), **new_values})
             except Exception as e:
                 return {
                            'status': 'fail',

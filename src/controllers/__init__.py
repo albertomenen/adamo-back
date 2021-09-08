@@ -1,4 +1,3 @@
-from .system import bp as system_api
 from .auth import bp as auth_api
 from .role import bp as role_api
 from .user import bp as user_api
@@ -14,7 +13,6 @@ from .date import bp as date_api
 
 def register_controllers(app):
     app.register_blueprint(auth_api)
-    app.register_blueprint(system_api)
     app.register_blueprint(role_api)
     app.register_blueprint(user_api)
     app.register_blueprint(location_api)

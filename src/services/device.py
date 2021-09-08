@@ -2,45 +2,16 @@ from .common import save_changes, update_changes
 from .. import pagination
 from ..models import Device
 from flask import jsonify, make_response
-from marshmallow import Schema, fields
 from sqlalchemy import update, delete
-
-
-class DeviceSchema(Schema):
-    id_device = fields.UUID()
-    group_id = fields.UUID()
-    mac = fields.Str()
-    station_id = fields.UUID()
-    serial_number = fields.Str()
-    hw_version = fields.Str()
-    sw_version = fields.Str()
-    device_name = fields.Str()
-
-
-class DeviceUpdateSchema(Schema):
-    hw_version = fields.Str()
-    sw_version = fields.Str()
-    device_name = fields.Str()
-    station_id = fields.UUID()
-    group_id = fields.UUID()
-
-
-class DeviceListSchema(Schema):
-    id_device = fields.UUID()
-    device_name = fields.Str()
-
-
-schema = DeviceSchema()
-schema_list = DeviceListSchema()
-schema_update = DeviceUpdateSchema()
+from ..utils.schemas.device import device_schema_list, device_schema_detail, device_schema_update, device_schema_create
 
 
 def save_new_device(data):
     device = Device.query.filter_by(mac=data['mac']).first()
     if not device:
-        new_device = Device(**data)
+        new_device = Device(**device_schema_create.dump(data))
         save_changes(new_device)
-        return make_response(jsonify(schema.dump(new_device)), 201)
+        return make_response(jsonify(device_schema_detail.dump(new_device)), 201)
     else:
         response_object = {
             'status': 'fail',
@@ -50,32 +21,32 @@ def save_new_device(data):
 
 
 def get_device_from_station(station_id):
-    return jsonify(schema.dump(Device.query.filter_by(station_id=station_id).first()))
+    return jsonify(device_schema_detail.dump(Device.query.filter_by(station_id=station_id).first()))
 
 
 def get_all_devices():
-    return pagination.paginate(Device.query.all(), schema_list, True)
+    return pagination.paginate(Device.query.all(), device_schema_list, True)
 
 
 def get_all_free_devices():
     free_devices = Device.query.filter_by(station_id=None).all()
-    return pagination.paginate(free_devices, schema_list, True)
+    return pagination.paginate(free_devices, device_schema_list, True)
 
 
 def get_device(id_device):
-    return jsonify(schema.dump(Device.query.filter_by(id_device=id_device).first()))
+    return jsonify(device_schema_detail.dump(Device.query.filter_by(id_device=id_device).first()))
 
 
 def update_device(id_device, data):
     device = Device.query.filter_by(id_device=id_device).first()
     if device:
-        new_values = schema_update.dump(data)
+        new_values = device_schema_update.dump(data)
         if new_values:
             try:
                 stmt = update(Device).where(Device.id_device == id_device).values(new_values).\
                     execution_options(synchronize_session=False)
                 update_changes(stmt)
-                return jsonify({**schema.dump(device), **new_values})
+                return jsonify({**device_schema_detail.dump(device), **new_values})
             except Exception as e:
                 return {
                            'status': 'fail',

@@ -9,6 +9,11 @@ class Config(object):
     TESTING = False
     CSRF_ENABLED = True
     SECRET_KEY = os.environ['SECRET_KEY']
+    S3_Credentials = {
+        'ACCESS_KEY': os.environ.get('S3_ACCESS_KEY'),
+        'SECRET_KEY': os.environ.get('S3_SECRET_KEY'),
+        'BUCKET': os.environ.get('S3_BUCKET')
+    }
     SQLALCHEMY_DATABASE_URI = 'postgresql://{}:{}@{}:{}/{}'.format(os.environ['POSTGRES_USER'],
                                                                    os.environ['POSTGRES_PASSWORD'],
                                                                    os.environ['POSTGRES_HOST'],
@@ -42,3 +47,4 @@ config_by_name = dict(
 )
 
 key = Config.SECRET_KEY
+S3_Credentials = Config.S3_Credentials

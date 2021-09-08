@@ -1,83 +1,9 @@
 from flask import jsonify, make_response
-from marshmallow import Schema, fields
 from .common import update_changes, save_changes
-from .timetable import TimetableSchema, TimetableListSchema
 from .. import db, pagination
-from ..models import User, Patient, Role, Group, Location
-from .role import RoleSchema
+from ..models import User, Patient, Role, Location
 from sqlalchemy import update
-
-
-class UserDetailSchema(Schema):
-    id_user = fields.UUID()
-    id_group = fields.UUID()
-    id_location = fields.UUID()
-    user_name = fields.Str()
-    phone = fields.Str()
-    email = fields.Email()
-    name = fields.Str()
-    last_name = fields.Str()
-    country = fields.Str()
-    role = fields.Nested(RoleSchema())
-
-
-class UserTimetableSchema(Schema):
-    id_user = fields.UUID()
-    timetables = fields.List(fields.Nested(TimetableListSchema()))
-
-
-class UserSchema(Schema):
-    id_user = fields.UUID()
-    id_group = fields.UUID()
-    id_location = fields.UUID()
-    user_name = fields.Str()
-    phone = fields.Str()
-    email = fields.Email()
-    name = fields.Str()
-    country = fields.Str()
-    last_name = fields.Str()
-
-
-class UserCreateSchema(Schema):
-    id_group = fields.UUID()
-    id_location = fields.UUID()
-    user_name = fields.Str()
-    phone = fields.Str()
-    email = fields.Email()
-    password = fields.Str()
-    name = fields.Str()
-    last_name = fields.Str()
-    country = fields.Str()
-    role_id = fields.UUID()
-
-
-class UserListSchema(Schema):
-    id_user = fields.UUID()
-    user_name = fields.Str()
-    email = fields.Email()
-    name = fields.Str()
-    last_name = fields.Str()
-    id_group = fields.UUID()
-
-
-class UserUpdate(Schema):
-    id_group = fields.UUID()
-    id_location = fields.UUID()
-    user_name = fields.Str()
-    phone = fields.Str()
-    state = fields.Boolean()
-    name = fields.Str()
-    last_name = fields.Str()
-    country = fields.Str()
-    role_id = fields.UUID()
-
-
-schema = UserSchema()
-schema_detail = UserDetailSchema()
-schema_list = UserListSchema()
-schema_update = UserUpdate()
-schema_create = UserCreateSchema()
-schema_timetable = UserTimetableSchema()
+from ..utils.schemas.user import user_update_schema, user_create_schema, user_detail_schema, user_list_schema
 
 
 def save_new_user(role_code, data, id_group=None, id_location=None):
@@ -94,14 +20,14 @@ def save_new_user(role_code, data, id_group=None, id_location=None):
                 data['role_id'] = role.id_role
                 data['id_group'] = id_group
                 data['id_location'] = id_location
-                new_user = User(**schema_create.dump(data))
+                new_user = User(**user_create_schema.dump(data))
                 save_changes(new_user)
             except Exception as e:
                 return {
                            'status': 'fail',
                            'message': str(e),
                        }, 409
-            return make_response(jsonify(schema_detail.dump(new_user)), 201)
+            return make_response(jsonify(user_detail_schema.dump(new_user)), 201)
         else:
             return {
                        'status': 'fail',
@@ -122,7 +48,7 @@ def get_users_role(role_code, id_group=None, id_location=None):
         .filter(User.id_location == id_location) \
         .filter(User.id_group == id_group) \
         .filter(User.state == True).all()
-    return pagination.paginate(users, schema_list, True)
+    return pagination.paginate(users, user_list_schema, True)
 
 
 def get_user_query(role_code, user_id, id_group=None, id_location=None):
@@ -137,19 +63,19 @@ def get_user_query(role_code, user_id, id_group=None, id_location=None):
 
 def get_user_role(role_code, user_id, id_group=None, id_location=None):
     user = get_user_query(role_code, user_id, id_group, id_location)
-    return jsonify(schema.dump(user))
+    return jsonify(user_detail_schema.dump(user))
 
 
 def update_user(role_code, user_id, data, id_group=None, id_location=None):
     user = get_user_query(role_code, user_id, id_group, id_location)
     if user:
-        new_values = schema_update.dump(data)
+        new_values = user_update_schema.dump(data)
         if new_values:
             try:
                 stmt = update(User).where(User.id_user == user_id).values(new_values). \
                     execution_options(synchronize_session=False)
                 update_changes(stmt)
-                return jsonify({**schema.dump(user), **new_values})
+                return jsonify({**user_detail_schema.dump(user), **new_values})
             except:
                 return {
                            'status': 'fail',
@@ -166,33 +92,6 @@ def update_user(role_code, user_id, data, id_group=None, id_location=None):
                    'status': 'fail',
                    'message': 'user not found',
                }, 404
-
-
-# def set_user_timetable(user_id, id_group, id_location, id_timetable):
-#     user = User.query.filter_by(id_group=id_group).filter_by(id_location=id_location).filter_by(id_user=user_id).first()
-#     timetable = Timetable.query.filter_by(id_group=id_group).filter_by(id_timetable=id_timetable).first()
-#     if user:
-#         if timetable:
-#             try:
-#                 user.timetables.append(timetable)
-#                 save_changes(user)
-#                 return jsonify(schema_timetable.dump(user))
-#             except:
-#                 return {
-#                            'status': 'fail',
-#                            'message': 'Update failed',
-#                        }, 401
-#         else:
-#             return {
-#                        'status': 'fail',
-#                        'message': 'timetable not found',
-#                    }, 401
-#
-#     else:
-#         return {
-#                    'status': 'fail',
-#                    'message': 'user not found',
-#                }, 404
 
 
 def delete_user(role_code, user_id, id_group=None, id_location=None):
@@ -222,8 +121,8 @@ def delete_user(role_code, user_id, id_group=None, id_location=None):
 
 
 def get_users():
-    return pagination.paginate(User.query.all(), schema_list, True)
+    return pagination.paginate(User.query.all(), user_list_schema, True)
 
 
 def get_user(id_user):
-    return jsonify(schema_detail.dump(User.query.filter_by(id_user=id_user).filter_by(state=True).first()))
+    return jsonify(user_detail_schema.dump(User.query.filter_by(id_user=id_user).filter_by(state=True).first()))

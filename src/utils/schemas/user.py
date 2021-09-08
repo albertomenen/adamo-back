@@ -63,6 +63,6 @@ class UserUpdate(Schema):
 
 user_role_schema = UserRoleSchema()
 user_detail_schema = UserDetailSchema()
-user_list_schema_schema = UserListSchema()
+user_list_schema = UserListSchema()
 user_update_schema = UserUpdate()
 user_create_schema = UserCreateSchema()

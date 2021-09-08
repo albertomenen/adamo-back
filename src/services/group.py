@@ -2,60 +2,22 @@ from .common import update_changes, save_changes
 from .. import pagination
 from ..models import Group, User, Location, Station, Device
 from flask import jsonify, make_response
-from marshmallow import Schema, fields
-from sqlalchemy import update, delete
-
-from ..utils.schemas.location import location_schema_list
-
-
-class GroupSchema(Schema):
-    id_group = fields.UUID()
-    group_name = fields.Str()
-    address = fields.Str()
-    city = fields.Str()
-    town = fields.Str()
-    phone = fields.Str()
-    contact_name = fields.Str()
-    email = fields.Email()
-
-
-class GroupListSchema(Schema):
-    address = fields.Str()
-    city = fields.Str()
-    town = fields.Str()
-    phone = fields.Str()
-    email = fields.Str()
-    id_group = fields.UUID()
-    group_name = fields.Str()
-    locations = fields.List(fields.Nested(location_schema_list))
-
-
-class GroupUpdateSchema(Schema):
-    group_name = fields.Str()
-    address = fields.Str()
-    city = fields.Str()
-    town = fields.Str()
-    phone = fields.Str()
-    contact_name = fields.Str()
-
-
-schema = GroupSchema()
-schema_list = GroupListSchema()
-schema_update = GroupUpdateSchema()
+from sqlalchemy import update
+from ..utils.schemas.group import group_schema_list, group_schema_update, group_schema_create, group_schema_detail
 
 
 def save_new_group(data):
     group = Group.query.filter_by(email=data['email']).first()
     if not group:
         try:
-            new_group = Group(**data)
+            new_group = Group(**group_schema_create.dump(data))
             save_changes(new_group)
-        except:
+        except Exception as e:
             return {
                        'status': 'fail',
-                       'message': 'wrong parameters passed',
+                       'message': str(e),
                    }, 401
-        return make_response(jsonify(schema.dump(new_group)), 201)
+        return make_response(jsonify(group_schema_detail.dump(new_group)), 201)
     else:
         response_object = {
             'status': 'fail',
@@ -65,23 +27,23 @@ def save_new_group(data):
 
 
 def get_groups():
-    return pagination.paginate(Group.query.all(), schema_list, True)
+    return pagination.paginate(Group.query.all(), group_schema_list, True)
 
 
 def get_group(id_group):
-    return jsonify(schema.dump(Group.query.filter_by(id_group=id_group).first()))
+    return jsonify(group_schema_detail.dump(Group.query.filter_by(id_group=id_group).first()))
 
 
 def update_group(id_group, data):
     group = Group.query.filter_by(id_group=id_group).first()
     if group:
-        new_values = schema_update.dump(data)
+        new_values = group_schema_update.dump(data)
         if new_values:
             try:
                 stmt = update(Group).where(Group.id_group == id_group).values(new_values). \
                     execution_options(synchronize_session=False)
                 update_changes(stmt)
-                return jsonify({**schema.dump(group), **new_values})
+                return jsonify({**group_schema_detail.dump(group), **new_values})
             except Exception as e:
                 return {
                            'status': 'fail',

@@ -1,44 +1,9 @@
 from flask import jsonify, make_response
-from src import db
 from .common import save_changes, update_changes
 from .treatment import get_query_treatment, update_treatment
-from ..models import Date, Location, Group
-from marshmallow import Schema, fields
+from ..models import Date
 from sqlalchemy import update, delete
-
-
-class DateSchema(Schema):
-    id_date = fields.UUID()
-    id_medic = fields.UUID()
-    id_patient = fields.UUID()
-    id_station = fields.UUID()
-    day = fields.Str()
-    from_hour = fields.Str()
-    to_hour = fields.Str()
-    presented = fields.Boolean()
-
-
-class DateListSchema(Schema):
-    id_date = fields.UUID()
-    day = fields.Str()
-    from_hour = fields.Str()
-    to_hour = fields.Str()
-    id_patient = fields.UUID()
-    id_station = fields.UUID()
-    id_medic = fields.UUID()
-
-
-class DateUpdateSchema(Schema):
-    day = fields.Str()
-    from_hour = fields.Str()
-    to_hour = fields.Str()
-    id_station = fields.UUID()
-    id_medic = fields.UUID()
-
-
-schema = DateSchema()
-schema_list = DateListSchema()
-schema_update = DateUpdateSchema()
+from ..utils.schemas.date import date_schema_list, date_schema_detail, date_schema_update, date_schema_create
 
 
 def save_new_date(id_group, id_patient, id_treatment, data):
@@ -47,10 +12,10 @@ def save_new_date(id_group, id_patient, id_treatment, data):
         try:
             data['id_patient'] = id_patient
             data['id_treatment'] = id_treatment
-            new_date = Date(**data)
+            new_date = Date(**date_schema_create.dump(data))
             save_changes(new_date)
             update_treatment(id_group, id_patient, id_treatment, {'next_session_date': new_date.day})
-            return make_response(jsonify(schema.dump(new_date)), 201)
+            return make_response(jsonify(date_schema_detail.dump(new_date)), 201)
         except Exception as e:
             response_object = {
                 'status': 'fail',
@@ -68,24 +33,24 @@ def get_dates_medic_station(id_station, from_date, to_date):
     dates = Date.query.filter(Date.day >= from_date) \
         .filter(Date.day <= to_date) \
         .filter(Date.id_station == id_station).all()
-    return jsonify([schema_list.dump(date) for date in dates])
+    return jsonify([date_schema_list.dump(date) for date in dates])
 
 
 def get_date(id_station, id_date):
     date = Date.query.filter_by(id_date=id_date).filter_by(id_station=id_station).first()
-    return jsonify(schema.dump(date))
+    return jsonify(date_schema_detail.dump(date))
 
 
 def update_date(id_station, id_date, data):
     date = Date.query.filter_by(id_date=id_date).filter_by(id_station=id_station).first()
     if date:
-        new_values = schema_update.dump(data)
+        new_values = date_schema_update.dump(data)
         if new_values:
             try:
                 stmt = update(Date).where(Date.id_date == id_date).values(new_values).\
                     execution_options(synchronize_session=False)
                 update_changes(stmt)
-                return jsonify({**schema.dump(date), **new_values})
+                return jsonify({**date_schema_detail.dump(date), **new_values})
             except Exception as e:
                 return {
                            'status': 'fail',
