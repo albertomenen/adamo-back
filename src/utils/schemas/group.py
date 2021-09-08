@@ -22,6 +22,7 @@ class GroupDetailSchema(Schema):
     contact_name = fields.Str()
     email = fields.Email()
     logo = fields.Str()
+    locations = fields.List(fields.Nested(location_schema_list))
 
 
 class GroupListSchema(Schema):
