@@ -8,15 +8,6 @@ bp = Blueprint('Location', __name__)
 api = Api(bp)
 
 
-# class LocationSetTimetable(Resource):
-#     def put(self, id_group, location_id):
-#         id_timetable = request.get_json(force=True).get('id_timetable')
-#         return set_location_timetable(id_group, location_id, id_timetable)
-
-
-# api.add_resource(LocationSetTimetable, '/group/<id_group>/location/<location_id>/set_timetable')
-
-
 class LocationList(Resource):
     @manage_location
     def get(self, id_group):

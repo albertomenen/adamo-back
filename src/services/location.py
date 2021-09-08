@@ -72,7 +72,7 @@ def update_location(id_group, id_location, data):
     else:
         return {
             'status': 'fail',
-            'message': 'user not found',
+            'message': 'location not found',
         }, 404
 
 

@@ -36,11 +36,16 @@ def save_new_group(data):
 
 
 def get_groups():
-    return pagination.paginate(Group.query.all(), group_schema_list, True)
+    groups = Group.query.all()
+    for group in groups:
+        group.locations = [location for location in group.locations if location.state]
+    return pagination.paginate(groups, group_schema_list, True)
 
 
 def get_group(id_group):
-    group = group_schema_detail.dump(Group.query.filter_by(id_group=id_group).first())
+    group = Group.query.filter_by(id_group=id_group).first()
+    group.locations = [location for location in group.locations if location.state]
+    group = group_schema_detail.dump(group)
     if group.get('logo'):
         group['logo'] = get_from_aws(group.get('logo'))
     return jsonify(group)
@@ -49,6 +54,7 @@ def get_group(id_group):
 def update_group(id_group, data):
     group = Group.query.filter_by(id_group=id_group).first()
     if group:
+        group.locations = [location for location in group.locations if location.state]
         new_values = group_schema_update.dump(data)
         if new_values:
             try:
