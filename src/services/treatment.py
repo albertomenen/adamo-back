@@ -2,7 +2,6 @@ from flask import jsonify, make_response
 from src import db, pagination
 from .common import save_changes, update_changes
 from ..models import Treatment, User, Patient, PAlias
-from marshmallow import Schema, fields
 from sqlalchemy import update, delete
 from ..utils.s3 import upload_to_aws, get_from_aws
 from ..utils.schemas.patient import patient_schema_list
@@ -19,19 +18,16 @@ def save_new_treatment(id_group, patient_id, data):
     if palias:
         try:
             data['id_patient'] = palias.id_palias
-            data = treatment_schema_create.dump(data)
-            new_treatment = Treatment(**treatment_schema_create.dump(data))
+            treatment_data = treatment_schema_create.dump(data)
+            new_treatment = Treatment(**treatment_schema_create.dump(treatment_data))
 
-            # images_directory = '{}/{}/'.format(palias.id_palias, new_treatment.id_treatment)
-            # for image in ['image_3D', 'image_thermic', 'image_thermic_bin']:
-            #    if upload_to_aws(data[image], images_directory + image):
-            #        new_treatment.__dict__[image] = images_directory + image
-            #    else:
-            #        raise Exception('Cant upload ' + image)
-
-            # data['image_thermic_width']
-            # data['image_thermic_height']
-            # data['image_thermic_depht']
+            images_directory = '{}/{}/'.format(palias.id_palias, new_treatment.id_treatment)
+            for image in ['image_3D', 'image_thermic', 'image_thermic_data']:
+                if image in data:
+                    if upload_to_aws(data[image], images_directory + image + '.bin'):
+                        new_treatment.__dict__[image] = images_directory + image + '.bin'
+                    else:
+                        raise Exception('Cant upload ' + image + '.bin')
 
             save_changes(new_treatment)
         except Exception as e:
@@ -80,8 +76,8 @@ def get_treatment(id_group, id_patient, id_treatment):
         .filter(Patient.id_patient == PAlias.patient).filter(PAlias.id_palias == treatment['id_patient']).first()
     treatment['patient'] = patient_schema_list.dump(patient)
 
-    # palias = PAlias.query.filter_by(PAlias.patient == id_patient).first()
-    # treatment['image_thermic'] = get_from_aws('{}/{}/image_thermic'.format(palias.id_palias, id_treatment))
+    if treatment.get('image_thermic'):
+        treatment['image_thermic'] = get_from_aws(treatment.get('image_thermic'))
     return jsonify(treatment)
 
 

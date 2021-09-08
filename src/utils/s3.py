@@ -4,8 +4,8 @@ from botocore.exceptions import NoCredentialsError
 from ..config import S3_Credentials
 
 bucket = S3_Credentials.get('BUCKET')
-s3 = boto3.client('s3', aws_access_key_id=S3_Credentials.get('ACCESS_KEY'),
-                  aws_secret_access_key=S3_Credentials.get('SECRET_KEY'))
+s3 = boto3.resource('s3', aws_access_key_id=S3_Credentials.get('ACCESS_KEY'),
+                    aws_secret_access_key=S3_Credentials.get('SECRET_KEY'))
 
 
 def upload_to_aws(data, s3_filename, from_base64=False):
@@ -26,4 +26,3 @@ def get_from_aws(s3_filename, to_base64=False):
         return result.decode('ascii')
     else:
         return None
-

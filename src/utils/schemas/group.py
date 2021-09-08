@@ -21,6 +21,7 @@ class GroupDetailSchema(Schema):
     phone = fields.Str()
     contact_name = fields.Str()
     email = fields.Email()
+    logo = fields.Str()
 
 
 class GroupListSchema(Schema):

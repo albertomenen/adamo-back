@@ -12,6 +12,7 @@ class Points(Schema):
     rz = fields.Float()
     height = fields.Float()
     pressure = fields.Float()
+    alias = fields.Str()
 
 
 point_schema = Points()

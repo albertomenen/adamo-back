@@ -5,6 +5,7 @@ from src import db, pagination
 from .common import save_changes
 from .treatment import update_treatment
 from ..models import Session, Treatment, PAlias, Patient, User, Station, Location
+from ..utils.s3 import get_from_aws, upload_to_aws
 from ..utils.schemas.session import session_schema_list, session_schema_create, session_schema_detail
 from ..utils.schemas.station import station_schema_detail
 
@@ -47,6 +48,15 @@ def save_new_session(id_group, patient_id, id_treatment, data):
             data['session_number'] = treatment.current_session_number + 1
             data['treatment_id'] = id_treatment
             new_session = Session(**session_schema_create.dump(data))
+
+            palias = PAlias.query.filter_by(PAlias.patient == patient_id).first()
+            images_directory = '{}/{}/{}/'.format(palias.id_palias, id_treatment, new_session.id_session)
+            for image in ['image_3D', 'image_thermic', 'image_thermic_data']:
+                if image in data:
+                    if upload_to_aws(data[image], images_directory + image + '.bin'):
+                        new_session.__dict__[image] = images_directory + image + '.bin'
+                    else:
+                        raise Exception('Cant upload ' + image + '.bin')
             save_changes(new_session)
 
             new_data_treatment = {
@@ -83,7 +93,7 @@ def get_session(id_session):
 
 
 def get_session_treatment(id_group, id_patient, id_treatment, id_session):
-    return session_schema_detail.dump(db.session.query(Session).join(Treatment).join(PAlias).join(Patient).join(User) \
+    session = session_schema_detail.dump(db.session.query(Session).join(Treatment).join(PAlias).join(Patient).join(User) \
                        .filter(Session.id_session == id_session) \
                        .filter(Session.treatment_id == id_treatment) \
                        .filter(Treatment.id_treatment == id_treatment) \
@@ -92,6 +102,10 @@ def get_session_treatment(id_group, id_patient, id_treatment, id_session):
                        .filter(Patient.id_patient == id_patient) \
                        .filter(User.id_user == Patient.id_user) \
                        .filter(User.id_group == id_group).filter(User.state == True).first())
+
+    if session.get('image_thermic'):
+        session['image_thermic'] = get_from_aws(session.get('image_thermic'))
+    return jsonify(session)
 
 
 def get_sessions_treatment(id_group, patient_id, id_treatment):

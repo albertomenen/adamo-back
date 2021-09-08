@@ -24,7 +24,7 @@ class Treatment(db.Model):
     pressure = db.Column(db.REAL())
     image_3D = db.Column(db.String(150))
     image_thermic = db.Column(db.String(150))
-    image_thermic_bin = db.Column(db.String(150))
+    image_thermic_data = db.Column(db.String(150))
     image_thermic_width = db.Column(db.Integer())
     image_thermic_height = db.Column(db.Integer())
     image_thermic_depht = db.Column(db.Integer())

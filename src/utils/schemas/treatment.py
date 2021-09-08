@@ -27,6 +27,9 @@ class TreatmentCreateSchema(Schema):
     injury = fields.Str()
     injury_cause = fields.Str()
     injury_kind = fields.Str()
+    image_thermic_width = fields.Str()
+    image_thermic_height = fields.Str()
+    image_thermic_depth = fields.Str()
 
 
 class TreatmentDetailSchema(Schema):
@@ -62,6 +65,7 @@ class TreatmentDetailSchema(Schema):
     injury = fields.Str()
     injury_cause = fields.Str()
     injury_kind = fields.Str()
+    image_thermic = fields.Str()
 
     sessions = fields.List(fields.Nested(session_schema_list))
 

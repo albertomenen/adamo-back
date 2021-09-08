@@ -14,6 +14,7 @@ class SessionDetailSchema(Schema):
     pressure = fields.Float()
     device_id = fields.UUID()
     station_id = fields.UUID()
+    image_thermic = fields.Str()
 
 
 class SessionListSchema(Schema):
@@ -34,6 +35,9 @@ class SessionCreateSchema(Schema):
     device_id = fields.UUID()
     station_id = fields.UUID()
     treatment_id = fields.UUID()
+    image_thermic_width = fields.Str()
+    image_thermic_height = fields.Str()
+    image_thermic_depth = fields.Str()
 
 
 session_schema_detail = SessionDetailSchema()

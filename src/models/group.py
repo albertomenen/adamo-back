@@ -16,10 +16,11 @@ class Group(db.Model):
     contact_name = db.Column(db.String(100), nullable=False)
     state = db.Column(db.Boolean(), default=True)
     email = db.Column(db.String(120), nullable=False, unique=True)
+    logo = db.Column(db.String(100))
 
     locations = relationship("Location")
 
-    def __init__(self, group_name, address, city, town, phone, contact_name, email):
+    def __init__(self, group_name, address, city, town, phone, contact_name, email, logo=None):
         self.id_group = uuid.uuid4()
         self.group_name = group_name
         self.address = address
@@ -29,6 +30,7 @@ class Group(db.Model):
         self.contact_name = contact_name
         self.state = True
         self.email = email
+        self.logo = logo
 
     def __repr__(self):
         return '<Group Name: {} | email: {} >'.format(self.group_name, self.email)

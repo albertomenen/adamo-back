@@ -3,6 +3,8 @@ from .. import pagination
 from ..models import Group, User, Location, Station, Device
 from flask import jsonify, make_response
 from sqlalchemy import update
+
+from ..utils.s3 import upload_to_aws, get_from_aws
 from ..utils.schemas.group import group_schema_list, group_schema_update, group_schema_create, group_schema_detail
 
 
@@ -11,6 +13,13 @@ def save_new_group(data):
     if not group:
         try:
             new_group = Group(**group_schema_create.dump(data))
+            images_directory = '{}.png'.format(new_group.id_group)
+            if 'logo' in data:
+                if upload_to_aws(data['logo'], images_directory):
+                    new_group.logo = images_directory
+                else:
+                    raise Exception('Cant upload logo')
+
             save_changes(new_group)
         except Exception as e:
             return {
@@ -31,7 +40,10 @@ def get_groups():
 
 
 def get_group(id_group):
-    return jsonify(group_schema_detail.dump(Group.query.filter_by(id_group=id_group).first()))
+    group = group_schema_detail.dump(Group.query.filter_by(id_group=id_group).first())
+    if group.get('logo'):
+        group['logo'] = get_from_aws(group.get('logo'))
+    return jsonify(group)
 
 
 def update_group(id_group, data):
