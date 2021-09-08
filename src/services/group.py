@@ -52,11 +52,10 @@ def update_group(id_group, data):
         new_values = group_schema_update.dump(data)
         if new_values:
             try:
-
                 if 'logo' in data:
                     images_directory = '{}.png'.format(id_group)
                     if upload_to_aws(data['logo'], images_directory):
-                        new_values.logo = images_directory
+                        new_values['logo'] = images_directory
                     else:
                         raise Exception('Cant upload logo')
                 stmt = update(Group).where(Group.id_group == id_group).values(new_values). \
