@@ -23,7 +23,7 @@ def get_from_aws(s3_filename, to_base64=False):
     result = s3.Bucket(bucket).Object(s3_filename).get()
     if result and result.get('Body'):
         result = base64.b64encode(result.get('Body').read()) if to_base64 else result.get('Body').read()
+        return result.decode('ascii')
     else:
         return None
-    return result
 
