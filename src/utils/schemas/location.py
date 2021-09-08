@@ -31,7 +31,10 @@ class LocationListSchema(Schema):
     location_name = fields.Str()
     address = fields.Str()
     phone = fields.Str()
+    contact_name = fields.Str()
     email = fields.Str()
+    city = fields.Str()
+    town = fields.Str()
 
 
 
