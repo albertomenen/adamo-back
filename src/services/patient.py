@@ -68,7 +68,7 @@ def get_patient(id_group, id_patient):
     patient = patient_schema_detail.dump(patient)
     treatments = db.session.query(Treatment).join(PAlias) \
         .filter(Treatment.id_patient == PAlias.id_palias).filter(PAlias.patient == id_patient).all()
-    patient['treatments'] = [treatment_schema_list().dump(treatment) for treatment in treatments]
+    patient['treatments'] = [treatment_schema_list.dump(treatment) for treatment in treatments]
     return jsonify(patient)
 
 
