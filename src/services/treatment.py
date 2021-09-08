@@ -22,7 +22,7 @@ def save_new_treatment(id_group, patient_id, data):
             new_treatment = Treatment(**treatment_schema_create.dump(treatment_data))
 
             images_directory = '{}/{}/'.format(palias.id_palias, new_treatment.id_treatment)
-            for image in ['image_3D', 'image_thermic', 'image_thermic_data']:
+            for image in ['image_3D_depth', 'image_3D_color', 'image_thermic', 'image_thermic_data']:
                 if image in data:
                     if upload_to_aws(data[image], images_directory + image + '.bin'):
                         new_treatment.__dict__[image] = images_directory + image + '.bin'

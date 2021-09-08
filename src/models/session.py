@@ -14,12 +14,13 @@ class Session(db.Model):
     medic = db.Column(UUID(as_uuid=True), ForeignKey('user.id_user'), nullable=False)
     heating_duration = db.Column(db.REAL())
 
-    image_3D = db.Column(db.String(150))
+    image_3D_depth = db.Column(db.String(150))
+    image_3D_color = db.Column(db.String(150))
     image_thermic = db.Column(db.String(150))
     image_thermic_data = db.Column(db.String(150))
     image_thermic_width = db.Column(db.Integer())
     image_thermic_height = db.Column(db.Integer())
-    image_thermic_depht = db.Column(db.Integer())
+    image_thermic_depth = db.Column(db.Integer())
 
     points = db.Column(db.JSON())
     points_number = db.Column(db.Integer())
@@ -35,7 +36,7 @@ class Session(db.Model):
     def __init__(self, medic, temperature, session_number, device_id, station_id, treatment_id, pressure=None,
                  heating_duration=None,
                  notes=None, points=None, image_thermic_width=None, image_thermic_height=None,
-                 image_thermic_depht=None):
+                 image_thermic_depth=None):
         if not points:
             points = []
 
@@ -54,7 +55,7 @@ class Session(db.Model):
         self.points_number = len(points)
         self.image_thermic_width = image_thermic_width
         self.image_thermic_height = image_thermic_height
-        self.image_thermic_depht = image_thermic_depht
+        self.image_thermic_depth = image_thermic_depth
 
     def __repr__(self):
         return '<Session Number: {} >'.format(self.session_number)

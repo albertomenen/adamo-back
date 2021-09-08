@@ -22,13 +22,15 @@ class Treatment(db.Model):
     heating_duration = db.Column(db.REAL(), nullable=False)
     points = db.Column(db.JSON())
     pressure = db.Column(db.REAL())
-    image_3D = db.Column(db.String(150))
+
+    image_3D_depth = db.Column(db.String(150))
+    image_3D_color = db.Column(db.String(150))
     image_thermic = db.Column(db.String(150))
     image_thermic_data = db.Column(db.String(150))
     image_thermic_width = db.Column(db.Integer())
     image_thermic_height = db.Column(db.Integer())
-    image_thermic_depht = db.Column(db.Integer())
-    state = db.Column(db.String(12), nullable=False, default='new')
+    image_thermic_depth = db.Column(db.Integer())
+
     weight = db.Column(db.REAL())
     height = db.Column(db.REAL(), nullable=False)
     ppx = db.Column(db.REAL(), nullable=False)
@@ -38,8 +40,10 @@ class Treatment(db.Model):
     model = db.Column(db.String(40), nullable=False)
     coeff = db.Column(db.String(100), nullable=False)
     depth_scale = db.Column(db.REAL(), nullable=False)
-    mode = db.Column(db.String(45), nullable=False)
     extrinsics = db.Column(db.String(200), nullable=False)
+
+    state = db.Column(db.String(12), nullable=False, default='new')
+    mode = db.Column(db.String(45), nullable=False)
     last_session_date = db.Column(db.Date(), default=None)
     next_session_date = db.Column(db.Date(), default=None)
     injury = db.Column(db.String(100))
@@ -53,7 +57,7 @@ class Treatment(db.Model):
                  weight, height, ppx, ppy, fx, fy, model, coeff, depth_scale, mode, extrinsics,
                  sessions_number, notes=None, points=None, injury=None,
                  injury_kind=None, injury_cause=None, pressure=None, image_thermic_width=None,
-                 image_thermic_height=None, image_thermic_depht=None):
+                 image_thermic_height=None, image_thermic_depth=None):
         self.pressure = pressure
         self.move = move
         self.id_treatment = uuid.uuid4()
@@ -85,7 +89,7 @@ class Treatment(db.Model):
         self.injury_kind = injury_kind
         self.image_thermic_width = image_thermic_width
         self.image_thermic_height = image_thermic_height
-        self.image_thermic_depht = image_thermic_depht
+        self.image_thermic_depth = image_thermic_depth
 
     def __repr__(self):
         return '<Treatment Name: {} >'.format(self.name)
