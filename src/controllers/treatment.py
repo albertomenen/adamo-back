@@ -1,8 +1,8 @@
 from flask import request, Blueprint
 from flask_restful import Resource, Api
 from ..services.treatment import get_treatment, get_treatments_by_patient, update_treatment, save_new_treatment, \
-    delete_treatment
-from ..utils.decorators import detail_patient, manage_treatment
+    delete_treatment, get_treatment_offset
+from ..utils.decorators import detail_patient, manage_treatment, run_sesion
 
 bp = Blueprint('Treatment', __name__)
 api = Api(bp)
@@ -32,5 +32,12 @@ class Treatment(Resource):
         return delete_treatment(group_id, patient_id, treatment_id)
 
 
+class TreatmentOffset(Resource):
+    @run_sesion
+    def get(self, group_id, patient_id, treatment_id):
+        return get_treatment_offset(group_id, patient_id, treatment_id, request.get_json(force=True))
+
+
 api.add_resource(TreatmentList, '/group/<group_id>/patient/<patient_id>/treatment')
 api.add_resource(Treatment, '/group/<group_id>/patient/<patient_id>/treatment/<treatment_id>')
+api.add_resource(TreatmentOffset, '/group/<group_id>/patient/<patient_id>/treatment/<treatment_id>/offset')

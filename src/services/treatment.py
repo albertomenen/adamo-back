@@ -7,6 +7,8 @@ from ..utils.s3 import upload_to_aws, get_from_aws
 from ..utils.schemas.patient import patient_schema_list
 from ..utils.schemas.treatment import treatment_schema_list, treatment_schema_create, treatment_schema_update, \
     treatment_schema_detail
+from .offset.from_model_to_offset import from_model_to_offset
+from .offset.worker_offset import get_offset
 
 
 def save_new_treatment(id_group, patient_id, data):
@@ -167,3 +169,22 @@ def delete_treatment(id_group, id_patient, id_treatment):
                    'status': 'fail',
                    'message': 'treatment not found',
                }, 404
+
+
+def get_treatment_offset(id_group, id_patient, id_treatment, new_treatment):
+    treatment = get_query_treatment(id_group, id_patient, id_treatment)
+    if treatment:
+        try:
+            data_to_offset = from_model_to_offset(treatment, new_treatment)
+            result = get_offset(data_to_offset)
+        except Exception as e:
+            return {
+                               'status': 'fail',
+                               'message': str(e),
+                           }, 401
+        return jsonify(result)
+    else:
+        return {
+               'status': 'fail',
+               'message': 'Cant find treatment',
+           }, 404

@@ -4,8 +4,11 @@ from ...utils.schemas.treatment import treatment_offset
 
 def from_model_to_offset(old_treatment, new_treatment):
     firstImage = treatment_offset.dump(old_treatment)
-    firstImage['image_3D_depth'] = get_from_aws(firstImage['image_3D_depth'])
-    firstImage['image_3D_color'] = get_from_aws(firstImage['image_3D_color'])
+    try:
+        firstImage['image_3D_depth'] = get_from_aws(firstImage['image_3D_depth'])
+        firstImage['image_3D_color'] = get_from_aws(firstImage['image_3D_color'])
+    except:
+        raise Exception('Cant find images')
     lastImage = treatment_offset.dump(new_treatment)
     response = {
         'firstImage': {

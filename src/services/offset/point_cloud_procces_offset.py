@@ -8,7 +8,9 @@ import copy
 import numpy as np
 from numpy import linalg as LA
 from open3d import *
-#import cv2
+# from open3d.cpu.pybind.camera import PinholeCameraIntrinsic
+# from open3d.cpu.pybind.geometry import LineSet, PointCloud, Image
+# from open3d.cpu.pybind.utility import Vector3dVector, Vector2iVector
 from scipy.signal import argrelextrema
 
 """Funcion que calcula los ejes de referencia del cuerpo a partir de su media y su matriz de covarianza.

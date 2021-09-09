@@ -5,13 +5,6 @@ Created on Thu Apr 11 11:52:10 2019
 @author: pjvidal
 """
 import base64
-import json
-
-import copy
-# from skimage import io
-
-# from skimage import io as io_im #Depend
-
 import io
 
 from PIL import Image
@@ -19,12 +12,8 @@ from PIL import Image
 import numpy as np
 import cv2
 
-import point_cloud_procces_offset as pcpo
-import point_cloud_procces_offset_v2 as pcpo2
-import ellipses_process_offset as epo
-
-# from skimage.color import rgb2gray
-# from skimage import img_as_uint
+from . import point_cloud_procces_offset as pcpo
+from . import point_cloud_procces_offset_v2 as pcpo2
 
 # ----------------------------------------------------------------------
 
