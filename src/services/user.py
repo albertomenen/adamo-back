@@ -121,7 +121,7 @@ def delete_user(role_code, user_id, id_group=None, id_location=None):
 
 
 def get_users():
-    return pagination.paginate(User.query.all(), user_list_schema, True)
+    return pagination.paginate(User.query.filter_by(state=True).all(), user_list_schema, True)
 
 
 def get_user(id_user):
