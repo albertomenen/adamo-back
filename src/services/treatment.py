@@ -72,10 +72,13 @@ def get_treatments_by_patient(id_group, patient_id):
     return pagination.paginate(treatments, treatment_schema_list, True)
 
 
+def get_patient_from_alias(alias):
+    return db.session.query(Patient).join(PAlias) \
+        .filter(Patient.id_patient == PAlias.patient).filter(PAlias.id_palias == alias).first()
+
 def get_treatment(id_group, id_patient, id_treatment):
     treatment = treatment_schema_detail.dump(get_query_treatment(id_group, id_patient, id_treatment))
-    patient = db.session.query(Patient).join(PAlias) \
-        .filter(Patient.id_patient == PAlias.patient).filter(PAlias.id_palias == treatment['id_patient']).first()
+    patient = get_patient_from_alias(treatment['id_patient'])
     treatment['patient'] = patient_schema_list.dump(patient)
 
     if treatment.get('image_thermic'):
@@ -93,13 +96,13 @@ def update_treatment(id_group, id_patient, id_treatment, data):
                     execution_options(synchronize_session=False)
                 update_changes(stmt)
                 if new_values.get('state') == 'started':
-                    patient = Patient.query.filter(Patient.id_patient == id_patient).first()
+                    patient = get_patient_from_alias(treatment.id_patient)
                     stmt = update(Patient).where(Patient.id_patient == id_patient).values(
                         {'active_treatments': patient.active_treatments + 1}). \
                         execution_options(synchronize_session=False)
                     update_changes(stmt)
                 elif new_values.get('state') == 'finished':
-                    patient = Patient.query.filter(Patient.id_patient == id_patient).first()
+                    patient = get_patient_from_alias(treatment.id_patient)
                     stmt = update(Patient).where(Patient.id_patient == id_patient).values(
                         {'active_treatments': patient.active_treatments - 1}). \
                         execution_options(synchronize_session=False)
@@ -131,7 +134,7 @@ def delete_treatment(id_group, id_patient, id_treatment):
                 stmt = delete(Treatment).where(Treatment.id_treatment == id_treatment) \
                     .execution_options(synchronize_session=False)
                 update_changes(stmt)
-                patient = Patient.query.filter(Patient.id_patient == id_patient).first()
+                patient = get_patient_from_alias(treatment.id_patient)
                 stmt = update(Patient).where(Patient.id_patient == id_patient).values(
                     {'active_treatments': patient.active_treatments - 1}). \
                     execution_options(synchronize_session=False)
@@ -150,7 +153,7 @@ def delete_treatment(id_group, id_patient, id_treatment):
                 stmt = update(Treatment).where(Treatment.id_treatment == id_treatment).values({'state': 'canceled'}). \
                     execution_options(synchronize_session=False)
                 update_changes(stmt)
-                patient = Patient.query.filter(Patient.id_patient == id_patient).first()
+                patient = get_patient_from_alias(treatment.id_patient)
                 stmt = update(Patient).where(Patient.id_patient == id_patient).values(
                     {'active_treatments': patient.active_treatments - 1}). \
                     execution_options(synchronize_session=False)
