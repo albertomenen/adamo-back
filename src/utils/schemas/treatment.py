@@ -70,6 +70,22 @@ class TreatmentDetailSchema(Schema):
     sessions = fields.List(fields.Nested(session_schema_list))
 
 
+class TreatmentOffsetSchema(Schema):
+    weight = fields.Float()
+    height = fields.Float()
+    ppx = fields.Float()
+    ppy = fields.Float()
+    fx = fields.Float()
+    fy = fields.Float()
+    model = fields.Str()
+    coeff = fields.Str()
+    depth_scale = fields.Float()
+    points = fields.List(fields.Nested(point_schema))
+    extrinsics = fields.Str()
+    image_3D_depth = fields.Str()
+    image_3D_color = fields.Str()
+
+
 class TreatmentUpdateSchema(Schema):
     name = fields.Str()
     current_session_number = fields.Integer()
@@ -96,3 +112,4 @@ treatment_schema_create = TreatmentCreateSchema()
 treatment_schema_detail = TreatmentDetailSchema()
 treatment_schema_list = TreatmentListSchema()
 treatment_schema_update = TreatmentUpdateSchema()
+treatment_offset = TreatmentOffsetSchema()
