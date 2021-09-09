@@ -8,6 +8,15 @@ bp = Blueprint('User', __name__)
 api = Api(bp)
 
 
+class Users(Resource):
+    @manage_sysadmin
+    def get(self):
+        return get_users()
+
+
+api.add_resource(Users, '/users')
+
+
 class SysAdminList(Resource):
     @manage_sysadmin
     def get(self):
@@ -155,4 +164,3 @@ class NMP(Resource):
 
 api.add_resource(NMPList, '/group/<id_group>/location/<id_location>/nmp')
 api.add_resource(NMP, '/group/<id_group>/location/<id_location>/nmp/<id_user>')
-
