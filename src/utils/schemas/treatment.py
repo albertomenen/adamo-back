@@ -12,7 +12,7 @@ class TreatmentCreateSchema(Schema):
     temperature = fields.Float()
     heating_duration = fields.Integer()
     points = fields.List(fields.Nested(point_schema))
-    weight = fields.Float()
+    width = fields.Float()
     height = fields.Float()
     ppx = fields.Float()
     ppy = fields.Float()
@@ -46,7 +46,7 @@ class TreatmentDetailSchema(Schema):
     points = fields.List(fields.Nested(point_schema))
     ts_next_session = fields.Float()
     ts_end = fields.Float()
-    weight = fields.Float()
+    width = fields.Float()
     height = fields.Float()
     ppx = fields.Float()
     ppy = fields.Float()
@@ -71,7 +71,7 @@ class TreatmentDetailSchema(Schema):
 
 
 class TreatmentOffsetSchema(Schema):
-    weight = fields.Float()
+    width = fields.Float()
     height = fields.Float()
     ppx = fields.Float()
     ppy = fields.Float()

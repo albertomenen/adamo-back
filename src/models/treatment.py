@@ -31,7 +31,7 @@ class Treatment(db.Model):
     image_thermic_height = db.Column(db.Integer())
     image_thermic_depth = db.Column(db.Integer())
 
-    weight = db.Column(db.REAL())
+    width = db.Column(db.REAL())
     height = db.Column(db.REAL(), nullable=False)
     ppx = db.Column(db.REAL(), nullable=False)
     ppy = db.Column(db.REAL(), nullable=False)
@@ -54,7 +54,7 @@ class Treatment(db.Model):
     sessions = relationship('Session')
 
     def __init__(self, id_patient, move, medic, name, temperature, heating_duration,
-                 weight, height, ppx, ppy, fx, fy, model, coeff, depth_scale, mode, extrinsics,
+                 width, height, ppx, ppy, fx, fy, model, coeff, depth_scale, mode, extrinsics,
                  sessions_number, notes=None, points=None, injury=None,
                  injury_kind=None, injury_cause=None, pressure=None, image_thermic_width=None,
                  image_thermic_height=None, image_thermic_depth=None):
@@ -72,7 +72,7 @@ class Treatment(db.Model):
         self.heating_duration = heating_duration
         self.points = points
         self.state = 'new'
-        self.weight = weight
+        self.width = width
         self.height = height
         self.ppx = ppx
         self.ppy = ppy
