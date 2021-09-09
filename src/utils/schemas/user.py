@@ -45,8 +45,10 @@ class UserListSchema(Schema):
     user_name = fields.Str()
     email = fields.Email()
     name = fields.Str()
+    phone = fields.Str()
     last_name = fields.Str()
     id_group = fields.UUID()
+    role = fields.Nested(role_schema_detail)
 
 
 class UserUpdate(Schema):
