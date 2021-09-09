@@ -22,7 +22,7 @@ def from_model_to_offset(old_treatment, new_treatment):
             "fy": firstImage['fy'],
             "model": firstImage['model'],
             "coeff": firstImage['coeff'],
-            "depthScale": firstImage['depthScale']
+            "depthScale": firstImage['depth_scale']
         },
         'lastImage': {
             "idColor": lastImage['image_3D_color'],
@@ -35,7 +35,7 @@ def from_model_to_offset(old_treatment, new_treatment):
             "fy": lastImage['fy'],
             "model": lastImage['model'],
             "coeff": lastImage['coeff'],
-            "depthScale": lastImage['depthScale']
+            "depthScale": lastImage['depth_scale']
         },
         'points': firstImage['points']
     }
