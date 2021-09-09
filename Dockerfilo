@@ -1,0 +1,9 @@
+FROM python:3.8
+RUN mkdir /usr/src/app/
+COPY ./requirements.txt /usr/src/app/
+WORKDIR /usr/src/app/
+EXPOSE 5000
+RUN apt-get update && apt-get install -y python3-opencv
+RUN apt-get install -qqy x11-apps
+RUN pip3 install -r requirements.txt
+CMD ["uwsgi", "--master", "--http", "0.0.0.0:5000", "--module", "app:app"]
