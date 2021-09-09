@@ -34,7 +34,7 @@ class Treatment(Resource):
 
 class TreatmentOffset(Resource):
     @run_sesion
-    def get(self, group_id, patient_id, treatment_id):
+    def post(self, group_id, patient_id, treatment_id):
         return get_treatment_offset(group_id, patient_id, treatment_id, request.get_json(force=True))
 
 
