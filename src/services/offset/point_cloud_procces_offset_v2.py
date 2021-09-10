@@ -196,7 +196,7 @@ def refine_registration(source, target, source_fpfh, target_fpfh, voxel_size, re
             ICPConvergenceCriteria(0.00000001, 0.00000001, 40000))
     return result
 
-def calcular_offset(color_image1, depth_image1, color_image2,depth_image2, intrinsics1, intrinsics2, depth_scale1, depth_scale2, treatment_points,gui_active):
+def calcular_offset(color_image1, depth_image1, color_image2,depth_image2, intrinsics1, intrinsics2, depth_scale1, depth_scale2, treatment_points):
 
     """ Se generan las imagenes RGDB a partir de los datos recibidos."""
     color_raw1 = Image(color_image1)
@@ -241,11 +241,7 @@ def calcular_offset(color_image1, depth_image1, color_image2,depth_image2, intri
     #pcd2_raw.transform(T_rot)
     #pcd_trat.transform(T_rot)
     
-    
-    if gui_active == True:
-        ejes_ref_camara = obtain_axis() #ejes del sistema de coordenadas de la camara
-        pcd_trat.paint_uniform_color([1, 0, 0]) # Primeros eb rojo
-        draw_geometries([pcd_trat,ejes_ref_camara,pcd1_raw])   
+
 
     
     """Se filtran los puntos para quedarnos con el volumen de la espalda"""
@@ -279,10 +275,7 @@ def calcular_offset(color_image1, depth_image1, color_image2,depth_image2, intri
     if result_ransac.inlier_rmse > 0.01:
         print("No se han alineado bien los volumenes con RANSAC.")
         return False, 0
-    
-    if gui_active == True:
-        draw_registration_result(source_down, target_down,
-                                    result_ransac.transformation)
+
     
     result_icp = refine_registration(source, target,
             source_fpfh, target_fpfh, voxel_size, result_ransac)
@@ -295,15 +288,7 @@ def calcular_offset(color_image1, depth_image1, color_image2,depth_image2, intri
     if result_icp.inlier_rmse > 0.01:
         print("No se han alineado bien los volumenes con ICP.")
         return False, 0
-    
-    
-    if gui_active == True:
-        source_temp = copy.deepcopy(source)
-        target_temp = copy.deepcopy(target)
-        source_temp.paint_uniform_color([1, 0.706, 0])
-        target_temp.paint_uniform_color([0, 0.651, 0.929])
-        source_temp.transform(result_icp.transformation)
-        draw_geometries([source_temp, target_temp])
+
         
     
     pcd_trat_transf = PointCloud()
@@ -329,35 +314,8 @@ def calcular_offset(color_image1, depth_image1, color_image2,depth_image2, intri
         status = True
     else:
         status = False
-                        
+
+
     
-    """"""""""""""""VISUALIZACION"""""""""""""""""
-    if gui_active == True:
-        pcd_trat.paint_uniform_color([1, 0, 0]) # Primeros eb rojo
-        pcd_trat_transf.paint_uniform_color([0, 0, 1]) #
-        # Se crea el lineset para unir cada punto
-        points = []
-        lines = []
-        points[0:len(p_trat)] = p_trat
-        points[len(p_trat):2*len(p_trat)-1] = p_trat+offset
-        for i in range(len(p_trat)):
-            lines.append([i,i+len(p_trat)])
-        
-        colors = [[0,0,255]]
-        line_set = LineSet()
-        line_set.points = Vector3dVector(points)
-        line_set.lines = Vector2iVector(lines)
-        line_set.colors = Vector3dVector(colors)
-        
-        source1.paint_uniform_color([1, 1, 0])
-        target1.paint_uniform_color([0, 1, 1])
-    
-        draw_geometries([pcd_trat,pcd_trat_transf,source1, target1 , line_set])
-        
-        #draw_geometries([pcd1_raw,pcd_trat])
-        draw_geometries([pcd2_raw,pcd_trat_transf])
-    
-    """"""""""""""""FIN DE LA VISUALIZACION"""""""""""""""""
-    
-    return status, offset;
+    return status, offset
 

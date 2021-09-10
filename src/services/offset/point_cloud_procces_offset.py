@@ -8,9 +8,6 @@ import copy
 import numpy as np
 from numpy import linalg as LA
 from open3d import *
-# from open3d.cpu.pybind.camera import PinholeCameraIntrinsic
-# from open3d.cpu.pybind.geometry import LineSet, PointCloud, Image
-# from open3d.cpu.pybind.utility import Vector3dVector, Vector2iVector
 from scipy.signal import argrelextrema
 
 """Funcion que calcula los ejes de referencia del cuerpo a partir de su media y su matriz de covarianza.
@@ -249,10 +246,12 @@ def calcular_offset(color_image1, depth_image1, color_image2,depth_image2, intri
     depth_raw1 = Image(depth_image1)
     color_raw2 = Image(color_image2)
     depth_raw2 = Image(depth_image2)
-    
+
+    print('aqui')
     rgbd_image1 = create_rgbd_image_from_color_and_depth(color_raw1, depth_raw1)
     rgbd_image2 = create_rgbd_image_from_color_and_depth(color_raw2, depth_raw2)
-    
+    print('aqui')
+    print(rgbd_image1)
     mat_pos_ini = [[1,  0,  0, 0],
                    [0, -1,  0, 0],
                    [0,  0, -1, 0],

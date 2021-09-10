@@ -162,6 +162,9 @@ def json_to_data(response):
 
     color_image1 = cv2.flip(color_image1, 0)
     color_image2 = cv2.flip(color_image2, 0)
+    color_image1 = cv2.rotate(color_image1, cv2.cv2.ROTATE_90_CLOCKWISE)
+    color_image2 = cv2.rotate(color_image2, cv2.cv2.ROTATE_90_CLOCKWISE)
+
 
     intrinsics1 = intrinsics_params(response['firstImage']['width'], response['firstImage']['height'],
                                     response['firstImage']['ppx'], response['firstImage']['ppy'],
@@ -211,6 +214,12 @@ def areTheyParallel(offset, n_points):
 def get_offset(images_to_offset):
     color_image1, depth_image1, color_image2, depth_image2, intrinsics1, intrinsics2, depth_scale1, depth_scale2, treatment_points = json_to_data(
         images_to_offset)
+
+    print(intrinsics1.height, intrinsics1.width)
+    print(color_image1.shape)
+    print(depth_image1.shape)
+    print(color_image2.shape)
+    print(depth_image2.shape)
 
     if color_image1.shape != (intrinsics1.height, intrinsics1.width, 3):
         raise Exception("The first color image has not been received")
@@ -329,6 +338,7 @@ def get_offset(images_to_offset):
     offset_mean = np.zeros((len(p_trat_t), 3), dtype=np.float32)
     array_status = np.array([status1, status2, status3])
     array_offsets = np.array([offset_image_t, offset_pcd_t1, offset_pcd_t2])
+    error = False
     if (array_status == [False, False, False]).all():  # Fallan todos los metodos
         error = True
         print("Fallan todos los metodos.")

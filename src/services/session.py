@@ -38,12 +38,10 @@ def save_new_session(id_group, patient_id, id_treatment, data):
         if station and station['device']:
             data['device_id'] = station['device'][0]['id_device']
         else:
-            data['device_id'] = 'test'
-        # else:
-        #    return {
-        #        'status': 'fail',
-        #        'message': 'Device not assigned',
-        #    }, 401
+            return {
+                       'status': 'fail',
+                       'message': 'Not device in the station',
+                   }, 404
         try:
             data['session_number'] = treatment.current_session_number + 1
             data['treatment_id'] = id_treatment
