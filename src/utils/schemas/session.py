@@ -15,6 +15,7 @@ class SessionDetailSchema(Schema):
     device_id = fields.UUID()
     station_id = fields.UUID()
     image_thermic = fields.Str()
+    image_3D_color = fields.Str()
 
 
 class SessionListSchema(Schema):

@@ -90,7 +90,7 @@ def get_session(id_session):
     return jsonify(session_schema_detail.dump(Session.query.filter_by(id_session=id_session).first()))
 
 
-def get_session_treatment(id_group, id_patient, id_treatment, id_session):
+def get_session_treatment(id_group, id_patient, id_treatment, id_session, depth_image):
     session = session_schema_detail.dump(db.session.query(Session).join(Treatment).join(PAlias).join(Patient).join(User) \
                        .filter(Session.id_session == id_session) \
                        .filter(Session.treatment_id == id_treatment) \
@@ -103,6 +103,8 @@ def get_session_treatment(id_group, id_patient, id_treatment, id_session):
 
     if session.get('image_thermic'):
         session['image_thermic'] = get_from_aws(session.get('image_thermic'))
+    if depth_image and session.get('image_3D_color'):
+        session['image_thermic'] = get_from_aws(session.get('image_3D_color'))
     return jsonify(session)
 
 

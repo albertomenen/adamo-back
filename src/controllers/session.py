@@ -18,7 +18,8 @@ class SessionList(Resource):
 
 class Session(Resource):
     def get(self, patient_id, group_id, treatment_id, session_id):
-        return get_session_treatment(group_id, patient_id, treatment_id, session_id)
+        depth_image = bool(request.args.get('depth_image', False))
+        return get_session_treatment(group_id, patient_id, treatment_id, session_id, depth_image)
 
 
 api.add_resource(SessionList, '/group/<group_id>/patient/<patient_id>/treatment/<treatment_id>/session')
