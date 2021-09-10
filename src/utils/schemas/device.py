@@ -1,5 +1,8 @@
 from marshmallow import Schema, fields
 
+from .group import group_name
+from .station import station_schema_list
+
 
 class DeviceCreateSchema(Schema):
     group_id = fields.UUID()
@@ -20,6 +23,8 @@ class DeviceDetailSchema(Schema):
     hw_version = fields.Str()
     sw_version = fields.Str()
     device_name = fields.Str()
+    group = fields.Nested(group_name)
+    station = fields.Nested(station_schema_list)
 
 
 class DeviceUpdateSchema(Schema):
@@ -32,6 +37,8 @@ class DeviceUpdateSchema(Schema):
 
 class DeviceListSchema(Schema):
     id_device = fields.UUID()
+    group = fields.Nested(group_name)
+    station = fields.Nested(station_schema_list)
     device_name = fields.Str()
 
 

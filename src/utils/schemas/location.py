@@ -47,6 +47,12 @@ class LocationUpdateSchema(Schema):
     contact_name = fields.Str()
 
 
+class LocationName(Schema):
+    id_location = fields.UUID()
+    location_name = fields.Str()
+
+
+location_name = LocationName()
 location_schema_create = LocationCreateSchema()
 location_schema_detail = LocationDetailSchema()
 location_schema_list = LocationListSchema()

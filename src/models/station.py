@@ -18,6 +18,7 @@ class Station(db.Model):
     version = db.Column(db.String(100), nullable=False)
 
     device = relationship("Device")
+    location = relationship('Location')
 
     def __init__(self, id_location, station_name, version, placed=None, installation_date=datetime.datetime):
         self.id_station = uuid.uuid4()

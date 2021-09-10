@@ -45,6 +45,11 @@ class GroupUpdateSchema(Schema):
     contact_name = fields.Str()
 
 
+class GroupName(Schema):
+    id_group = fields.UUID()
+    group_name = fields.Str()
+
+group_name = GroupName()
 group_schema_create = GroupCreateSchema()
 group_schema_detail = GroupDetailSchema()
 group_schema_list = GroupListSchema()
