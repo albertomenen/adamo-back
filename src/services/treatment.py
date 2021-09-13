@@ -11,6 +11,18 @@ from .offset.from_model_to_offset import from_model_to_offset
 from .offset.worker_offset import get_offset
 
 
+def get_points(points, n, reverse=False):
+    result = [points]
+    if reverse:
+        result.append(points[::-1])
+        result *= n // 2
+        if n % 2 == 1:
+            result.append(points)
+    else:
+        result *= n
+    return result
+
+
 def save_new_treatment(id_group, patient_id, data):
     palias = db.session.query(PAlias).join(Patient).join(User) \
         .filter(PAlias.patient == patient_id) \
@@ -20,6 +32,7 @@ def save_new_treatment(id_group, patient_id, data):
     if palias:
         try:
             data['id_patient'] = palias.id_palias
+            data['points'] = get_points(data['points'], data.get('cicles', 1), data.get('reverse', False))
             treatment_data = treatment_schema_create.dump(data)
             new_treatment = Treatment(**treatment_schema_create.dump(treatment_data))
 
@@ -75,6 +88,7 @@ def get_treatments_by_patient(id_group, patient_id):
 def get_patient_from_alias(alias):
     return db.session.query(Patient).join(PAlias) \
         .filter(Patient.id_patient == PAlias.patient).filter(PAlias.id_palias == alias).first()
+
 
 def get_treatment(id_group, id_patient, id_treatment):
     treatment = treatment_schema_detail.dump(get_query_treatment(id_group, id_patient, id_treatment))
@@ -182,12 +196,12 @@ def get_treatment_offset(id_group, id_patient, id_treatment, new_treatment):
             result = get_offset(data_to_offset)
         except Exception as e:
             return {
-                               'status': 'fail',
-                               'message': str(e),
-                           }, 401
+                       'status': 'fail',
+                       'message': str(e),
+                   }, 401
         return jsonify(result)
     else:
         return {
-               'status': 'fail',
-               'message': 'Cant find treatment',
-           }, 404
+                   'status': 'fail',
+                   'message': 'Cant find treatment',
+               }, 404
