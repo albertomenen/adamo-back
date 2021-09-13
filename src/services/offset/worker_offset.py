@@ -391,10 +391,11 @@ def get_offset(images_to_offset):
 
         """Se comprueba que los puntos sean accesibles para el robot"""
         ptos_validos = validate_points(p_trat[:, :3], offset_final)
-        error_proximidad = False
         if not ptos_validos:
-            error = True
-            error_proximidad = True
+            raise Exception('Points out of range')
 
-    return offset_final.tolist()
+    resultado = offset_final.tolist()
+    for e in resultado:
+        e[0], e[1] = -e[1], -e[0]
+    return resultado
 
