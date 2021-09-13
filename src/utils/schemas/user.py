@@ -48,6 +48,7 @@ class UserListSchema(Schema):
     phone = fields.Str()
     last_name = fields.Str()
     id_group = fields.UUID()
+    id_location = fields.Str()
     role = fields.Nested(role_schema_detail)
 
 
