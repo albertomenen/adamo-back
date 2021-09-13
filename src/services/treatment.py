@@ -16,7 +16,7 @@ def get_points(points, n, reverse=False):
     if reverse:
         result.append(points[::-1])
         result *= n // 2
-        if n % 2 == 1:
+        if n % 2:
             result.append(points)
     else:
         result *= n
