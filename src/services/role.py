@@ -39,7 +39,7 @@ def get_role_from_user(user_id):
 
 
 def get_all_roles():
-    roles = Role.query.filter(Role.role_code not in ['master', 'patient']).all()
+    roles = Role.query.filter(Role.role_code != 'master').filter(Role.role_code != 'patient').all()
     return pagination.paginate(roles, role_schema_detail, True)
 
 

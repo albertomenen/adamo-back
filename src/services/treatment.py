@@ -22,7 +22,6 @@ def save_new_treatment(id_group, patient_id, data):
         try:
             data['id_patient'] = palias.id_palias
             treatment_data = treatment_schema_create.dump(data)
-            treatment_data['points'] = get_points(data['points'], data.get('n_cycles', 1), data.get('auto_type_move') == 'inverse_circle')
             new_treatment = Treatment(**treatment_data)
 
             images_directory = '{}/{}/'.format(palias.id_palias, new_treatment.id_treatment)
@@ -182,7 +181,7 @@ def get_treatment_offset(id_group, id_patient, id_treatment, new_treatment):
     if treatment:
         try:
             data_to_offset = from_model_to_offset(treatment, new_treatment)
-            result = get_offset(data_to_offset, treatment.auto_type_move, treatment.n_cycles)
+            result = get_offset(data_to_offset)
         except Exception as e:
             return {
                        'status': 'fail',
