@@ -11,7 +11,7 @@ class TreatmentCreateSchema(Schema):
     notes = fields.Str()
     temperature = fields.Float()
     heating_duration = fields.Integer()
-    points = fields.List(fields.List(fields.Nested(point_schema)))
+    points = fields.List(fields.Nested(point_schema))
     width = fields.Float()
     height = fields.Float()
     ppx = fields.Float()
@@ -30,6 +30,8 @@ class TreatmentCreateSchema(Schema):
     image_thermic_width = fields.Str()
     image_thermic_height = fields.Str()
     image_thermic_depth = fields.Str()
+    n_cycles = fields.Str()
+    auto_type_move = fields.Str()
 
 
 class TreatmentDetailSchema(Schema):
@@ -66,6 +68,8 @@ class TreatmentDetailSchema(Schema):
     injury_cause = fields.Str()
     injury_kind = fields.Str()
     image_thermic = fields.Str()
+    n_cycles = fields.Str()
+    auto_type_move = fields.Str()
 
     sessions = fields.List(fields.Nested(session_schema_list))
 
@@ -84,6 +88,8 @@ class TreatmentOffsetSchema(Schema):
     extrinsics = fields.Str()
     image_3D_depth = fields.Str()
     image_3D_color = fields.Str()
+    n_cycles = fields.Str()
+    auto_type_move = fields.Str()
 
 
 class TreatmentUpdateSchema(Schema):
@@ -106,6 +112,8 @@ class TreatmentListSchema(Schema):
     current_session_number = fields.Integer()
     mode = fields.Str()
     last_session_date = fields.Date()
+    n_cycles = fields.Str()
+    auto_type_move = fields.Str()
 
 
 treatment_schema_create = TreatmentCreateSchema()

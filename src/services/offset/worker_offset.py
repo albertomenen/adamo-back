@@ -14,6 +14,7 @@ import cv2
 
 from . import point_cloud_procces_offset as pcpo
 from . import point_cloud_procces_offset_v2 as pcpo2
+from ..common import get_points
 
 # ----------------------------------------------------------------------
 
@@ -211,7 +212,7 @@ def areTheyParallel(offset, n_points):
     return True
 
 
-def get_offset(images_to_offset):
+def get_offset(images_to_offset, type_treatment, n_cycles):
     color_image1, depth_image1, color_image2, depth_image2, intrinsics1, intrinsics2, depth_scale1, depth_scale2, treatment_points = json_to_data(
         images_to_offset)
 
@@ -397,5 +398,6 @@ def get_offset(images_to_offset):
     resultado = offset_final.tolist()
     for e in resultado:
         e[0], e[1] = -e[1], -e[0]
+    resultado = get_points(resultado, n_cycles, type_treatment == 'inverse_circle')
     return resultado
 

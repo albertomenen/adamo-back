@@ -50,6 +50,8 @@ class Treatment(db.Model):
     injury_kind = db.Column(db.String(100))
     injury_cause = db.Column(db.String(100))
     move = db.Column(db.String(10))
+    auto_type_move = db.Column(db.String(20))
+    n_cycles = db.Column(db.Integer())
 
     sessions = relationship('Session')
 
@@ -57,7 +59,7 @@ class Treatment(db.Model):
                  width, height, ppx, ppy, fx, fy, model, coeff, depth_scale, mode, extrinsics,
                  sessions_number, notes=None, points=None, injury=None,
                  injury_kind=None, injury_cause=None, pressure=None, image_thermic_width=None,
-                 image_thermic_height=None, image_thermic_depth=None):
+                 image_thermic_height=None, image_thermic_depth=None, auto_type_move=None, n_cycles=1):
         self.pressure = pressure
         self.move = move
         self.id_treatment = uuid.uuid4()
@@ -90,6 +92,8 @@ class Treatment(db.Model):
         self.image_thermic_width = image_thermic_width
         self.image_thermic_height = image_thermic_height
         self.image_thermic_depth = image_thermic_depth
+        self.auto_type_move = auto_type_move
+        self.n_cycles = n_cycles
 
     def __repr__(self):
         return '<Treatment Name: {} >'.format(self.name)

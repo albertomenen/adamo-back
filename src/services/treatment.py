@@ -9,18 +9,7 @@ from ..utils.schemas.treatment import treatment_schema_list, treatment_schema_cr
     treatment_schema_detail
 from .offset.from_model_to_offset import from_model_to_offset
 from .offset.worker_offset import get_offset
-
-
-def get_points(points, n, reverse=False):
-    result = [points]
-    if reverse:
-        result.append(points[::-1])
-        result *= n // 2
-        if n % 2:
-            result.append(points)
-    else:
-        result *= n
-    return result
+from .common import get_points
 
 
 def save_new_treatment(id_group, patient_id, data):
@@ -32,9 +21,9 @@ def save_new_treatment(id_group, patient_id, data):
     if palias:
         try:
             data['id_patient'] = palias.id_palias
-            data['points'] = get_points(data['points'], data.get('cicles', 1), data.get('reverse', False))
             treatment_data = treatment_schema_create.dump(data)
-            new_treatment = Treatment(**treatment_schema_create.dump(treatment_data))
+            treatment_data['points'] = get_points(data['points'], data.get('n_cycles', 1), data.get('auto_type_move') == 'inverse_circle')
+            new_treatment = Treatment(**treatment_data)
 
             images_directory = '{}/{}/'.format(palias.id_palias, new_treatment.id_treatment)
             for image in ['image_3D_depth', 'image_3D_color', 'image_thermic', 'image_thermic_data']:
@@ -193,7 +182,7 @@ def get_treatment_offset(id_group, id_patient, id_treatment, new_treatment):
     if treatment:
         try:
             data_to_offset = from_model_to_offset(treatment, new_treatment)
-            result = get_offset(data_to_offset)
+            result = get_offset(data_to_offset, treatment.auto_type_move, treatment.n_cycles)
         except Exception as e:
             return {
                        'status': 'fail',
