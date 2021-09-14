@@ -3,7 +3,7 @@ services:
   api-service:
     build: .
     ports:
-      - 5000:5000
+      - 9245:5000
     volumes:
       - ./:/usr/src/app/
     environment:
