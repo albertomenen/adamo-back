@@ -6,6 +6,7 @@ Created on Thu Apr 11 11:52:10 2019
 """
 import base64
 import io
+from io import BytesIO
 
 from PIL import Image
 
@@ -111,6 +112,11 @@ class states:
         self.expired = 'expired'  # Cuando la petición ha superado el timeout indicado y no ha sido procesada por ningún worker.
 
 
+def getI420FromBase64(codec):
+    byte_data = base64.b64decode(codec)
+    image_data = BytesIO(byte_data)
+    return Image.open(image_data).tobytes()
+
 ################################### FUNCIONES ###################################
 def image_base64_to_numpy_array_urllib(image_64, tipo):
     global resp
@@ -125,7 +131,7 @@ def image_base64_to_numpy_array_urllib(image_64, tipo):
     # resp = urllib.urlopen(url)
     ## read as 1D bytearray
     # resp_byte_array = resp.read()
-    resp_byte_array = base64.b64decode(image_64)
+    resp_byte_array = getI420FromBase64(image_64)
     ## returns a bytearray object which is a mutable sequence of integers in the range 0 <=x< 256
     mutable_byte_array = bytearray(resp_byte_array)
 
