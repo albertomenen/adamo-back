@@ -25,6 +25,7 @@ class UserDetailSchema(Schema):
     name = fields.Str()
     country = fields.Str()
     last_name = fields.Str()
+    role = fields.Nested(role_schema_detail)
 
 
 class UserCreateSchema(Schema):
