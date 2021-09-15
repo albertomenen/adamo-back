@@ -2,7 +2,7 @@ from flask import make_response
 from .. import db
 from ..models import User, Station, Location
 from ..services.blacklist import save_token
-from ..utils.schemas.user import user_role_schema
+from ..utils.schemas.user import user_detail_schema
 from flask import jsonify
 
 
@@ -34,7 +34,7 @@ class Auth:
                             'status': 'success',
                             'message': 'Successfully logged in.',
                             'Authorization': str(auth_token),
-                            'user': user_role_schema.dump(user)
+                            'user': user_detail_schema.dump(user)
                         }
                         return make_response(jsonify(response_object), 200)
                 else:

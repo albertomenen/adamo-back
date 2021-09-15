@@ -2,19 +2,6 @@ from marshmallow import Schema, fields
 from .role import role_schema_detail
 
 
-class UserRoleSchema(Schema):
-    id_user = fields.UUID()
-    id_group = fields.UUID()
-    id_location = fields.UUID()
-    user_name = fields.Str()
-    phone = fields.Str()
-    email = fields.Email()
-    name = fields.Str()
-    last_name = fields.Str()
-    country = fields.Str()
-    role = fields.Nested(role_schema_detail)
-
-
 class UserDetailSchema(Schema):
     id_user = fields.UUID()
     id_group = fields.UUID()
@@ -65,7 +52,6 @@ class UserUpdate(Schema):
     role_id = fields.UUID()
 
 
-user_role_schema = UserRoleSchema()
 user_detail_schema = UserDetailSchema()
 user_list_schema = UserListSchema()
 user_update_schema = UserUpdate()
