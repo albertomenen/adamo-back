@@ -83,11 +83,14 @@ def update_patient(id_group, patient_id, data):
         new_values_user = user_update_schema.dump(data)
         if new_values or new_values_user:
             try:
-                stmt = update(Patient).where(Patient.id_patient == patient_id).values(new_values). \
-                    execution_options(synchronize_session=False)
-                stmt_user = update(User).where(Patient.id_patient == patient_id).where(Patient.id_user == User.id_user) \
-                    .values(new_values_user).execution_options(synchronize_session=False)
-                update_changes(stmt, stmt_user)
+                if new_values:
+                    stmt = update(Patient).where(Patient.id_patient == patient_id).values(new_values). \
+                        execution_options(synchronize_session=False)
+                    update_changes(stmt)
+                if new_values_user:
+                    stmt_user = update(User).where(Patient.id_patient == patient_id).where(Patient.id_user == User.id_user) \
+                        .values(new_values_user).execution_options(synchronize_session=False)
+                    update_changes(stmt_user)
                 return jsonify({**patient_schema_detail.dump(patient), **new_values})
             except:
                 return {
