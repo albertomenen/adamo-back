@@ -121,7 +121,8 @@ def delete_user(role_code, user_id, id_group=None, id_location=None):
 
 
 def get_users():
-    return pagination.paginate(User.query.filter_by(state=True).all(), user_list_schema, True)
+    users = db.session.query(User).join(Role).filter(Role.role_code != 'patient').filter(Role.role_code != 'master').filter(User.state == True).all()
+    return pagination.paginate(users, user_list_schema, True)
 
 
 def get_user(id_user):
