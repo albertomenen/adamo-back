@@ -161,6 +161,11 @@ def json_to_data(response):
     depth_image2 = image_base64_to_numpy_array_urllib(response['lastImage']['idDepth'], "depth")
     print("Se descarga im_Depth2")
 
+    color_image1 = cv2.rotate(color_image1, cv2.cv2.ROTATE_90_CLOCKWISE)
+    color_image2 = cv2.rotate(color_image2, cv2.cv2.ROTATE_90_CLOCKWISE)
+    depth_image1 = cv2.rotate(depth_image1, cv2.cv2.ROTATE_90_CLOCKWISE)
+    depth_image2 = cv2.rotate(depth_image2, cv2.cv2.ROTATE_90_CLOCKWISE)
+
     intrinsics1 = intrinsics_params(response['firstImage']['width'], response['firstImage']['height'],
                                     response['firstImage']['ppx'], response['firstImage']['ppy'],
                                     response['firstImage']['fx'], response['firstImage']['fy'],
@@ -217,13 +222,13 @@ def get_offset(images_to_offset):
     print(color_image2.shape)
     print(depth_image2.shape)
 
-    if color_image1.shape != (intrinsics1.width, intrinsics1.height, 3):
+    if color_image1.shape != (intrinsics1.height, intrinsics1.width, 3):
         raise Exception("The first color image has not been received")
-    elif depth_image1.shape != (intrinsics1.width, intrinsics1.height):
+    elif depth_image1.shape != (intrinsics1.height, intrinsics1.width):
         raise Exception("The first depth image has not been received")
-    elif color_image2.shape != (intrinsics2.width, intrinsics2.height, 3):
+    elif color_image2.shape != (intrinsics2.height, intrinsics2.width, 3):
         raise Exception("The last color image has not been received")
-    elif depth_image2.shape != (intrinsics2.width, intrinsics2.height):
+    elif depth_image2.shape != (intrinsics2.height, intrinsics2.width):
         raise Exception("The last depth image has not been received")
     elif len(treatment_points) == 0:
         raise Exception("The treatment's points has not been received")
