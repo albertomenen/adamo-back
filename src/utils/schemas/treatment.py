@@ -88,8 +88,6 @@ class TreatmentOffsetSchema(Schema):
     extrinsics = fields.Str()
     image_3D_depth = fields.Str()
     image_3D_color = fields.Str()
-    n_cycles = fields.Str()
-    auto_type_move = fields.Str()
 
 
 class TreatmentUpdateSchema(Schema):
