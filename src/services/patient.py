@@ -81,7 +81,7 @@ def update_patient(id_group, patient_id, data):
     if patient:
         new_values = patient_schema_update.dump(data)
         new_values_user = user_update_schema.dump(data)
-        if new_values:
+        if new_values or new_values_user:
             try:
                 stmt = update(Patient).where(Patient.id_patient == patient_id).values(new_values). \
                     execution_options(synchronize_session=False)
