@@ -402,6 +402,7 @@ def get_offset(images_to_offset):
         if not ptos_validos:
             raise Exception('Points out of range')
 
+    print(offset_final.tolist())
     return offset_final.tolist()
     #for e in resultado:
     #    e[0], e[1] = -e[1], -e[0]
