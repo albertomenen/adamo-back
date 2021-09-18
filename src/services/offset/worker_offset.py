@@ -13,9 +13,8 @@ from PIL import Image
 import numpy as np
 import cv2
 
-from . import point_cloud_procces_offset as pcpo
+# from . import point_cloud_procces_offset as pcpo
 from . import point_cloud_procces_offset_v2 as pcpo2
-from ..common import get_points
 
 # ----------------------------------------------------------------------
 
@@ -264,10 +263,12 @@ def get_offset(images_to_offset):
     # Se llama al primer metodo
 
     status1 = False
+    status2 = False
+    offset_pcd1 = 0
 
-    status2, offset_pcd1 = pcpo.calcular_offset(color_image1, depth_image1, color_image2, depth_image2,
-                                                intrinsics1, intrinsics2, depth_scale1, depth_scale2,
-                                                p_trat_t)
+    # status2, offset_pcd1 = pcpo.calcular_offset(color_image1, depth_image1, color_image2, depth_image2,
+    #                                             intrinsics1, intrinsics2, depth_scale1, depth_scale2,
+    #                                             p_trat_t)
 
     # Se llama al tercer metodo
     # Este metodo alinea las dos point clouds con RANSAC
@@ -287,27 +288,27 @@ def get_offset(images_to_offset):
     offset_pcd_t1 = np.zeros(shape=(len(p_trat), 3))
     offset_pcd_t2 = np.zeros(shape=(len(p_trat), 3))
 
-    if status2:
-        if (not offset_pcd1.shape == (len(p_trat), 3)):
-            status2 = False
-        elif not areTheyParallel(offset_pcd1, len(p_trat)):
-            status2 = False
-        else:
-            offset_pcd1 = np.append(offset_pcd1, np.ones((len(offset_pcd1), 1)),
-                                    axis=1)  # Se añade un 1 al final de cada vector para poder hacer la trnasformacion homogenea
-            offset_pcd_t1 = T.T * offset_pcd1.T  # Se devuelve el offset a las coordenadas del robot
-            offset_pcd_t1 = np.asarray(offset_pcd_t1)[:3].T
-            # offset_pcd_t1 = np.around(offset_pcd_t1, decimals = 3) # Coordenadas del robot
-            mod_off_pcd1 = np.linalg.norm(offset_pcd_t1, axis=1)
-            mod_axis_off_pcd1 = np.mean(offset_pcd_t1, axis=1)
-            # print("El desplazamiento con el metodo COVARIANCE: ", mod_off_pcd1)
-            error_max = 0.5  # Desplazamiento maximo permitido en metros
-            for i in range(len(mod_off_pcd1)):
-                if mod_off_pcd1[i] > error_max:
-                    status2 = False
-
-            theta2 = np.arctan2(offset_pcd_t1[:, 2], offset_pcd_t1[:, 0])
-            alpha2 = np.arctan2(offset_pcd_t1[:, 1], offset_pcd_t1[:, 0])
+    # if status2:
+    #     if (not offset_pcd1.shape == (len(p_trat), 3)):
+    #         status2 = False
+    #     elif not areTheyParallel(offset_pcd1, len(p_trat)):
+    #         status2 = False
+    #     else:
+    #         offset_pcd1 = np.append(offset_pcd1, np.ones((len(offset_pcd1), 1)),
+    #                                 axis=1)  # Se añade un 1 al final de cada vector para poder hacer la trnasformacion homogenea
+    #         offset_pcd_t1 = T.T * offset_pcd1.T  # Se devuelve el offset a las coordenadas del robot
+    #         offset_pcd_t1 = np.asarray(offset_pcd_t1)[:3].T
+    #         # offset_pcd_t1 = np.around(offset_pcd_t1, decimals = 3) # Coordenadas del robot
+    #         mod_off_pcd1 = np.linalg.norm(offset_pcd_t1, axis=1)
+    #         mod_axis_off_pcd1 = np.mean(offset_pcd_t1, axis=1)
+    #         # print("El desplazamiento con el metodo COVARIANCE: ", mod_off_pcd1)
+    #         error_max = 0.5  # Desplazamiento maximo permitido en metros
+    #         for i in range(len(mod_off_pcd1)):
+    #             if mod_off_pcd1[i] > error_max:
+    #                 status2 = False
+#
+    #         theta2 = np.arctan2(offset_pcd_t1[:, 2], offset_pcd_t1[:, 0])
+    #         alpha2 = np.arctan2(offset_pcd_t1[:, 1], offset_pcd_t1[:, 0])
 
     if status3:
         if (not offset_pcd2.shape == (len(p_trat), 3)):
@@ -332,15 +333,15 @@ def get_offset(images_to_offset):
             print(status3)
             print(offset_pcd_t2)
 
-    if status2 and status3:
-        dif_giro_z = np.sqrt((alpha3 - alpha2) ** 2)
-        print("Diferencia de giro en el eje z: ", dif_giro_z)
-        error_max = 0.15  # error maximo permitido en radianes entre los dos metodos (radianes)
-
-        for i in range(len(dif_giro_z)):
-
-            if (dif_giro_z[i] > error_max) and (mod_axis_off_pcd2[i] > 0.01) and (mod_axis_off_pcd1[i] > 0.01):
-                status2 = False
+    # if status2 and status3:
+    #     dif_giro_z = np.sqrt((alpha3 - alpha2) ** 2)
+    #     print("Diferencia de giro en el eje z: ", dif_giro_z)
+    #     error_max = 0.15  # error maximo permitido en radianes entre los dos metodos (radianes)
+#
+    #     for i in range(len(dif_giro_z)):
+#
+    #         if (dif_giro_z[i] > error_max) and (mod_axis_off_pcd2[i] > 0.01) and (mod_axis_off_pcd1[i] > 0.01):
+    #             status2 = False
 
     """Deteccion errores:"""
     offset_mean = np.zeros((len(p_trat_t), 3), dtype=np.float32)
@@ -392,8 +393,6 @@ def get_offset(images_to_offset):
         offset_final = offset_mean
 
         activate_vertical_offset = True
-        if activate_vertical_offset == False:
-            offset_final[:, 2] = np.zeros((1, len(p_trat)))[0]
 
         offset_final = np.around(offset_final, decimals=4)  # Se redondea
 
@@ -402,8 +401,10 @@ def get_offset(images_to_offset):
         if not ptos_validos:
             raise Exception('Points out of range')
 
-    print(offset_final.tolist())
-    return offset_final.tolist()
+        print(offset_final.tolist())
+        return offset_final.tolist()
+    else:
+        raise Exception('Fail at the end')
     #for e in resultado:
     #    e[0], e[1] = -e[1], -e[0]
     #return resultado
