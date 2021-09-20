@@ -41,6 +41,7 @@ class Treatment(db.Model):
     coeff = db.Column(db.String(100), nullable=False)
     depth_scale = db.Column(db.REAL(), nullable=False)
     extrinsics = db.Column(db.String(200), nullable=False)
+    velocity = db.Column(db.REAL())
 
     state = db.Column(db.String(12), nullable=False, default='new')
     mode = db.Column(db.String(45), nullable=False)
@@ -59,8 +60,9 @@ class Treatment(db.Model):
                  width, height, ppx, ppy, fx, fy, model, coeff, depth_scale, mode, extrinsics,
                  sessions_number, notes=None, points=None, injury=None,
                  injury_kind=None, injury_cause=None, pressure=None, image_thermic_width=None,
-                 image_thermic_height=None, image_thermic_depth=None, auto_type_move=None, n_cycles=1):
+                 image_thermic_height=None, image_thermic_depth=None, auto_type_move=None, n_cycles=1, velocity=None):
         self.pressure = pressure
+        self.velocity = velocity
         self.move = move
         self.id_treatment = uuid.uuid4()
         self.id_patient = id_patient

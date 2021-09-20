@@ -32,6 +32,7 @@ class TreatmentCreateSchema(Schema):
     image_thermic_depth = fields.Str()
     n_cycles = fields.Str()
     auto_type_move = fields.Str()
+    velocity = fields.Float()
 
 
 class TreatmentDetailSchema(Schema):
@@ -70,6 +71,7 @@ class TreatmentDetailSchema(Schema):
     image_thermic = fields.Str()
     n_cycles = fields.Str()
     auto_type_move = fields.Str()
+    velocity = fields.Float()
 
     sessions = fields.List(fields.Nested(session_schema_list))
 
@@ -112,6 +114,7 @@ class TreatmentListSchema(Schema):
     last_session_date = fields.Date()
     n_cycles = fields.Str()
     auto_type_move = fields.Str()
+    velocity = fields.Float()
 
 
 treatment_schema_create = TreatmentCreateSchema()
