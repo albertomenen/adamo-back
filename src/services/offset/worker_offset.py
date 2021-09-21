@@ -160,7 +160,8 @@ def image_url_to_numpy_array_urllib(image_bites, tipo):
     # imagen_p
     # opencvImage
     ## returns a bytearray object which is a mutable sequence of integers in the range 0 <=x< 256
-    mutable_byte_array = bytearray(image_bites)
+    array_bytes = base64.b64decode(image_bites)
+    mutable_byte_array = bytearray(array_bytes)
 
     # print(mutable_byte_array)
     ## read as unsigned integer 1D numpy array
@@ -170,7 +171,7 @@ def image_url_to_numpy_array_urllib(image_bites, tipo):
         image = cv2.imdecode(image, cv2.IMREAD_COLOR)
 
     if tipo == "depth":
-        imageBinaryBytes = image_bites
+        imageBinaryBytes = array_bytes
         imageStream = io.BytesIO(imageBinaryBytes)
         imageFile = Image.open(imageStream)
         opencvImage = np.asarray(imageFile, dtype="uint16")
