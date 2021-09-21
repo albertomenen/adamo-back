@@ -1,5 +1,4 @@
 from marshmallow import Schema, fields
-from .point import point_schema
 
 
 class SessionDetailSchema(Schema):

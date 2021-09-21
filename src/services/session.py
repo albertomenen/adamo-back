@@ -4,8 +4,9 @@ from flask import jsonify, make_response
 from src import db, pagination
 from .common import save_changes
 from .treatment import update_treatment
-from ..models import Session, Treatment, PAlias, Patient, User, Station, Location
+from ..models import Session, Treatment, PAlias, Patient, User, Station, Location, Device
 from ..utils.s3 import get_from_aws, upload_to_aws
+from ..utils.schemas.device import device_schema_detail
 from ..utils.schemas.session import session_schema_list, session_schema_create, session_schema_detail
 from ..utils.schemas.station import station_schema_detail
 
@@ -30,13 +31,14 @@ def save_new_session(id_group, patient_id, id_treatment, data):
                                                  .filter(Station.id_station == data.get('station_id')) \
                                                  .filter(Station.id_location == Location.id_location) \
                                                  .filter(Location.id_group == id_group).first())
+            device = device_schema_detail.dump(db.session.query(Device).filter(Device.station_id == station.id_station).first())
         except:
             return {
                        'status': 'fail',
                        'message': 'Station not found',
                    }, 404
-        if station and station['device']:
-            data['device_id'] = station['device'][0]['id_device']
+        if station and device:
+            data['device_id'] = device.id_device
         else:
             return {
                        'status': 'fail',
