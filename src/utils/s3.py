@@ -21,12 +21,12 @@ def upload_to_aws(data, s3_filename):
         return False
 
 
-def get_from_aws(s3_filename, to_base64=False):
+def get_from_aws(s3_filename, to_base64=False, to_ascii=True):
     result = s3.Bucket(bucket).Object(s3_filename).get()
     if result and result.get('Body'):
         result = base64.b64encode(result.get('Body').read()) if to_base64 else result.get('Body').read()
         try:
-            return result.decode('ascii')
+            return result.decode('ascii') if to_ascii else result
         except:
             raise Exception('Cant download image')
     else:

@@ -118,14 +118,14 @@ def getI420FromBase64(codec):
 
 ################################### FUNCIONES ###################################
 def image_base64_to_numpy_array_urllib(image_64, tipo):
-    global resp
-    global resp_byte_array
-    global mutable_byte_array
-    global imageBinaryBytes
-    global imageStream
-    global imageFile
-    global imagen_p
-    global opencvImage
+    # global resp
+    # global resp_byte_array
+    # global mutable_byte_array
+    # global imageBinaryBytes
+    # global imageStream
+    # global imageFile
+    # global imagen_p
+    # global opencvImage
     ## read as HTTPResponse
     # resp = urllib.urlopen(url)
     ## read as 1D bytearray
@@ -149,28 +149,55 @@ def image_base64_to_numpy_array_urllib(image_64, tipo):
     return image
 
 
+
+def image_url_to_numpy_array_urllib(image_bites, tipo):
+    # resp
+    # resp_byte_array
+    # mutable_byte_array
+    # imageBinaryBytes
+    # imageStream
+    # imageFile
+    # imagen_p
+    # opencvImage
+    ## returns a bytearray object which is a mutable sequence of integers in the range 0 <=x< 256
+    mutable_byte_array = bytearray(image_bites)
+
+    # print(mutable_byte_array)
+    ## read as unsigned integer 1D numpy array
+    if tipo == "color":
+        image = np.asarray(mutable_byte_array, dtype="uint8")
+        ## To decode the 1D image array into a 2D format with RGB color components we make a call to cv2.imdecode
+        image = cv2.imdecode(image, cv2.IMREAD_COLOR)
+
+    if tipo == "depth":
+        imageBinaryBytes = resp_byte_array
+        imageStream = io.BytesIO(imageBinaryBytes)
+        imageFile = Image.open(imageStream)
+        opencvImage = np.asarray(imageFile, dtype="uint16")
+        imagen_p = opencvImage[:, :, 1] << 8 | opencvImage[:, :, 0]
+        # imagen_p = opencvImage
+        image = imagen_p
+    # return the image
+    return image
+
 """Se reciven los datos necesarios para el calculo del offset y el id en la cola, se hace un long poll cada dos segundos:"""
 
 
 def json_to_data(response):
-    color_image1 = image_base64_to_numpy_array_urllib(response['firstImage']['idColor'], "color")
+    color_image1 = image_url_to_numpy_array_urllib(response['firstImage']['idColor'], "color")
     print("Se descarga im_Color1")
-    depth_image1 = image_base64_to_numpy_array_urllib(response['firstImage']['idDepth'], "depth")
+    depth_image1 = image_url_to_numpy_array_urllib(response['firstImage']['idDepth'], "depth")
     print("Se descarga im_Depth1")
-    color_image2 = image_base64_to_numpy_array_urllib(response['lastImage']['idColor'], "color")
+    color_image2 = image_url_to_numpy_array_urllib(response['lastImage']['idColor'], "color")
     print("Se descarga im_Color2")
-    depth_image2 = image_base64_to_numpy_array_urllib(response['lastImage']['idDepth'], "depth")
+    depth_image2 = image_url_to_numpy_array_urllib(response['lastImage']['idDepth'], "depth")
     print("Se descarga im_Depth2")
 
-    color_image1 = cv2.rotate(color_image1, cv2.cv2.ROTATE_180)
-    color_image2 = cv2.rotate(color_image2, cv2.cv2.ROTATE_180)
-    depth_image1 = cv2.rotate(depth_image1, cv2.cv2.ROTATE_180)
-    depth_image2 = cv2.rotate(depth_image2, cv2.cv2.ROTATE_180)
+    color_image1 = cv2.rotate(color_image1, cv2.cv2.ROTATE_90_CLOCKWISE)
+    color_image2 = cv2.rotate(color_image2, cv2.cv2.ROTATE_90_CLOCKWISE)
+    depth_image1 = cv2.rotate(depth_image1, cv2.cv2.ROTATE_90_CLOCKWISE)
+    depth_image2 = cv2.rotate(depth_image2, cv2.cv2.ROTATE_90_CLOCKWISE)
 
-    #cv2.imwrite('prueba_color.png', color_image1)
-    #cv2.imwrite('prueba_depth.png', depth_image1)
-    #cv2.imwrite('prueba_color2.png', color_image2)
-    #cv2.imwrite('prueba_depth2.png', depth_image2)
 
     intrinsics1 = intrinsics_params(response['firstImage']['width'], response['firstImage']['height'],
                                     response['firstImage']['ppx'], response['firstImage']['ppy'],
@@ -228,13 +255,13 @@ def get_offset(images_to_offset):
     print(color_image2.shape)
     print(depth_image2.shape)
 
-    if color_image1.shape != (intrinsics1.width, intrinsics1.height, 3):
+    if color_image1.shape != (intrinsics1.height, intrinsics1.width):
         raise Exception("The first color image has not been received")
-    elif depth_image1.shape != (intrinsics1.width, intrinsics1.height, 3):
+    elif depth_image1.shape != (intrinsics1.height, intrinsics1.width, 3):
         raise Exception("The first depth image has not been received")
-    elif color_image2.shape != (intrinsics2.width, intrinsics2.height, 3):
+    elif color_image2.shape != (intrinsics2.height, intrinsics2.width):
         raise Exception("The last color image has not been received")
-    elif depth_image2.shape != (intrinsics2.width, intrinsics2.height, 3):
+    elif depth_image2.shape != (intrinsics2.height, intrinsics2.width, 3):
         raise Exception("The last depth image has not been received")
     elif len(treatment_points) == 0:
         raise Exception("The treatment's points has not been received")
