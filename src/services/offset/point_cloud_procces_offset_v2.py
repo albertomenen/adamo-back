@@ -276,9 +276,8 @@ def calcular_offset(color_image1, depth_image1, color_image2,depth_image2, intri
         print("No se han alineado bien los volumenes con RANSAC.")
         return False, 0
 
-    
-    result_icp = refine_registration(source, target,
-            source_fpfh, target_fpfh, voxel_size, result_ransac)
+    print('Va a hacer lo del modo3 despues de ver el resultado')
+    result_icp = refine_registration(source, target, source_fpfh, target_fpfh, voxel_size, result_ransac)
     #result_icp = refine_registration(source, target,
     #        source_fpfh, target_fpfh, voxel_size)
     print("Result ICP: ")
