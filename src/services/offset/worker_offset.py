@@ -170,7 +170,7 @@ def image_url_to_numpy_array_urllib(image_bites, tipo):
         image = cv2.imdecode(image, cv2.IMREAD_COLOR)
 
     if tipo == "depth":
-        imageBinaryBytes = resp_byte_array
+        imageBinaryBytes = image_bites
         imageStream = io.BytesIO(imageBinaryBytes)
         imageFile = Image.open(imageStream)
         opencvImage = np.asarray(imageFile, dtype="uint16")
