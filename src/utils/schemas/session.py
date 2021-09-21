@@ -18,6 +18,7 @@ class SessionListSchema(Schema):
     medic = fields.Str()
     session_number = fields.Integer()
     ts_creation_date = fields.Str()
+    image_thermic = fields.Str()
 
 
 class SessionCreateSchema(Schema):
