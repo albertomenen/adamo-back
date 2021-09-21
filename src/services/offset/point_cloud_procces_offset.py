@@ -196,8 +196,6 @@ def find_contour(puntos, paso):
 y buscando el punto medio de esta desviacion."""
 def find_features(contorno, array_body_width, cuerpo, paso):
 
-    global pts_cuello
-    global pts_cuello_filtrados
     if len(array_body_width) <= 1 or len(contorno) <= 1:
         return 0,0,0, False
     

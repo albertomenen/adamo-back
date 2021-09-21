@@ -117,36 +117,36 @@ def getI420FromBase64(codec):
     return Image.open(image_data)
 
 ################################### FUNCIONES ###################################
-def image_base64_to_numpy_array_urllib(image_64, tipo):
-    # global resp
-    # global resp_byte_array
-    # global mutable_byte_array
-    # global imageBinaryBytes
-    # global imageStream
-    # global imageFile
-    # global imagen_p
-    # global opencvImage
-    ## read as HTTPResponse
-    # resp = urllib.urlopen(url)
-    ## read as 1D bytearray
-    # resp_byte_array = resp.read()
-    image = getI420FromBase64(image_64)
-    ## returns a bytearray object which is a mutable sequence of integers in the range 0 <=x< 256
-
-    # print(mutable_byte_array)
-    ## read as unsigned integer 1D numpy array
-    if tipo == "color":
-        image = np.asarray(image, dtype="uint8")
-        ## To decode the 1D image array into a 2D format with RGB color components we make a call to cv2.imdecode
-        #image = cv2.imdecode(image, cv2.IMREAD_COLOR)
-
-    if tipo == "depth":
-        # imageBinaryBytes = resp_byte_array
-        # imageStream = io.BytesIO(imageBinaryBytes)
-        # imageFile = Image.open(imageStream)
-        image = np.asarray(image, dtype="uint16")
-    # return the image
-    return image
+#def image_base64_to_numpy_array_urllib(image_64, tipo):
+#    # global resp
+#    # global resp_byte_array
+#    # global mutable_byte_array
+#    # global imageBinaryBytes
+#    # global imageStream
+#    # global imageFile
+#    # global imagen_p
+#    # global opencvImage
+#    ## read as HTTPResponse
+#    # resp = urllib.urlopen(url)
+#    ## read as 1D bytearray
+#    # resp_byte_array = resp.read()
+#    image = getI420FromBase64(image_64)
+#    ## returns a bytearray object which is a mutable sequence of integers in the range 0 <=x< 256
+#
+#    # print(mutable_byte_array)
+#    ## read as unsigned integer 1D numpy array
+#    if tipo == "color":
+#        image = np.asarray(image, dtype="uint8")
+#        ## To decode the 1D image array into a 2D format with RGB color components we make a call to cv2.imdecode
+#        #image = cv2.imdecode(image, cv2.IMREAD_COLOR)
+#
+#    if tipo == "depth":
+#        # imageBinaryBytes = resp_byte_array
+#        # imageStream = io.BytesIO(imageBinaryBytes)
+#        # imageFile = Image.open(imageStream)
+#        image = np.asarray(image, dtype="uint16")
+#    # return the image
+#    return image
 
 
 
