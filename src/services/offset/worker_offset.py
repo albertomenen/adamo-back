@@ -198,7 +198,7 @@ def json_to_data(response):
     color_image2 = cv2.rotate(color_image2, cv2.cv2.ROTATE_90_CLOCKWISE)
     depth_image1 = cv2.rotate(depth_image1, cv2.cv2.ROTATE_90_CLOCKWISE)
     depth_image2 = cv2.rotate(depth_image2, cv2.cv2.ROTATE_90_CLOCKWISE)
-
+    color_image1, color_image2, depth_image1, depth_image2 = depth_image1, depth_image2, color_image1, color_image2
 
     intrinsics1 = intrinsics_params(response['firstImage']['width'], response['firstImage']['height'],
                                     response['firstImage']['ppx'], response['firstImage']['ppy'],
