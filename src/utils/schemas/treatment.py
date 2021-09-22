@@ -101,6 +101,9 @@ class TreatmentUpdateSchema(Schema):
     next_session_date = fields.Date()
     last_session_date = fields.Date()
     state = fields.Str()
+    injury = fields.Str()
+    injury_cause = fields.Str()
+    injury_kind = fields.Str()
 
 
 class TreatmentListSchema(Schema):
