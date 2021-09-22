@@ -37,7 +37,7 @@ def save_new_session(id_group, patient_id, id_treatment, data):
                        'message': 'Station not found',
                    }, 404
         try:
-            device = device_schema_detail.dump(db.session.query(Device).filter(Device.station_id == station.id_station).first())
+            device = device_schema_detail.dump(db.session.query(Device).filter(Device.station_id == station['id_station']).first())
         except Exception as e:
             return {
                        'status': 'fail',
