@@ -44,7 +44,7 @@ def save_new_session(id_group, patient_id, id_treatment, data):
                        'message': str(e),
                    }, 404
         if station and device:
-            data['device_id'] = device.id_device
+            data['device_id'] = device['id_device']
         else:
             return {
                        'status': 'fail',

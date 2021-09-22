@@ -18,9 +18,6 @@ class Device(db.Model):
     group_id = db.Column(UUID(as_uuid=True), ForeignKey('group.id_group'))
     station_id = db.Column(UUID(as_uuid=True), ForeignKey('station.id_station'))
 
-    station = relationship('Station')
-    group = relationship('Group')
-
     def __init__(self, mac, serial_number, hw_version, sw_version, device_name, station_id=None, group_id=None):
         self.id_device = uuid.uuid4()
         self.mac = mac
