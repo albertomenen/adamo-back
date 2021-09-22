@@ -53,6 +53,7 @@ def save_new_session(id_group, patient_id, id_treatment, data):
             images_directory = '{}/{}/{}/'.format(palias.id_palias, id_treatment, new_session.id_session)
             for image in ['image_3D_depth', 'image_3D_color', 'image_thermic', 'image_thermic_data']:
                 if image in data:
+                    print(data[image])
                     if upload_to_aws(data[image], images_directory + image + '.bin'):
                         new_session.__dict__[image] = images_directory + image + '.bin'
                     else:
