@@ -85,6 +85,7 @@ def get_treatment(id_group, id_patient, id_treatment):
 
     if treatment.get('image_thermic'):
         treatment['image_thermic'] = get_from_aws(treatment.get('image_thermic'))
+    treatment['sessions'] = treatment.get('sessions') if treatment.get('sessions') else []
     for session in treatment['sessions']:
         session['image_thermic'] = get_from_aws(session['image_thermic']) if session.get('image_thermic') else None
     return jsonify(treatment)
