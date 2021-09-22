@@ -31,11 +31,17 @@ def save_new_session(id_group, patient_id, id_treatment, data):
                                                  .filter(Station.id_station == data.get('station_id')) \
                                                  .filter(Station.id_location == Location.id_location) \
                                                  .filter(Location.id_group == id_group).first())
-            device = device_schema_detail.dump(db.session.query(Device).filter(Device.station_id == station.id_station).first())
         except:
             return {
                        'status': 'fail',
                        'message': 'Station not found',
+                   }, 404
+        try:
+            device = device_schema_detail.dump(db.session.query(Device).filter(Device.station_id == station.id_station).first())
+        except Exception as e:
+            return {
+                       'status': 'fail',
+                       'message': str(e),
                    }, 404
         if station and device:
             data['device_id'] = device.id_device
