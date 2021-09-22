@@ -24,7 +24,7 @@ class TreatmentCreateSchema(Schema):
     mode = fields.Str()
     move = fields.Str()
     extrinsics = fields.Str()
-    injury = fields.Str()
+    injury = fields.Bool()
     injury_cause = fields.Str()
     injury_kind = fields.Str()
     image_thermic_width = fields.Str()
@@ -101,7 +101,7 @@ class TreatmentUpdateSchema(Schema):
     next_session_date = fields.Date()
     last_session_date = fields.Date()
     state = fields.Str()
-    injury = fields.Str()
+    injury = fields.Bool()
     injury_cause = fields.Str()
     injury_kind = fields.Str()
 
