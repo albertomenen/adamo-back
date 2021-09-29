@@ -8,17 +8,22 @@ class Config(object):
     DEBUG = False
     TESTING = False
     CSRF_ENABLED = True
-    SECRET_KEY = os.environ['SECRET_KEY']
+    SECRET_KEY = os.environ.get('SECRET_KEY')
+    MAIL_SERVER = os.environ.get('MAIL_SERVER')
+    MAIL_PORT = os.environ.get('MAIL_PORT')
+    MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
+    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
+    MAIL_USE_TLS = False
     S3_Credentials = {
         'ACCESS_KEY': os.environ.get('S3_ACCESS_KEY'),
         'SECRET_KEY': os.environ.get('S3_SECRET_KEY'),
         'BUCKET': os.environ.get('S3_BUCKET')
     }
-    SQLALCHEMY_DATABASE_URI = 'postgresql://{}:{}@{}:{}/{}'.format(os.environ['POSTGRES_USER'],
-                                                                   os.environ['POSTGRES_PASSWORD'],
-                                                                   os.environ['POSTGRES_HOST'],
-                                                                   os.environ['POSTGRES_PORT'],
-                                                                   os.environ['POSTGRES_DB'])
+    SQLALCHEMY_DATABASE_URI = 'postgresql://{}:{}@{}:{}/{}'.format(os.environ.get('POSTGRES_USER'),
+                                                                   os.environ.get('POSTGRES_PASSWORD'),
+                                                                   os.environ.get('POSTGRES_HOST'),
+                                                                   os.environ.get('POSTGRES_PORT'),
+                                                                   os.environ.get('POSTGRES_DB'))
 
 
 class ProductionConfig(Config):

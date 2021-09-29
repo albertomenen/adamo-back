@@ -19,7 +19,7 @@ class User(db.Model):
     phone = db.Column(db.String(12), nullable=False)
     state = db.Column(db.Boolean(), default=True, nullable=False)
     email = db.Column(db.String(120), nullable=False, unique=True)
-    password = db.Column(db.String(64), nullable=False)
+    password = db.Column(db.String(64))
     name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
     country = db.Column(db.String(50))
@@ -27,7 +27,7 @@ class User(db.Model):
 
     role = relationship("Role")
 
-    def __init__(self, user_name, phone, country, email, password, name, last_name, role_id, id_group=None,
+    def __init__(self, user_name, phone, country, email, name, last_name, role_id, id_group=None,
                  id_location=None):
         self.id_user = uuid.uuid4()
         self.user_name = user_name
@@ -40,9 +40,12 @@ class User(db.Model):
         self.state = True
         self.email = email
         self.country = country
-        self.password = flask_bcrypt.generate_password_hash(password).decode('utf-8')
+        self.password = ''
+            #flask_bcrypt.generate_password_hash(password).decode('utf-8')
 
     def check_password(self, password):
+        if not self.password:
+            return False
         return flask_bcrypt.check_password_hash(self.password, password)
 
     @staticmethod
@@ -72,3 +75,14 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User Name: {} | email: {} >'.format(self.user_name, self.email)
+
+
+class CodeUser(db.Model):
+    __tablename__ = 'code_user'
+
+    id_code_user = db.Column(db.String(40), primary_key=True)
+    id_user = db.Column(UUID(as_uuid=True), ForeignKey('user.id_user'), nullable=False)
+
+    def __init__(self, id_user):
+        self.id_code_user = str(uuid.uuid4()).replace('-', '')
+        self.id_user = id_user

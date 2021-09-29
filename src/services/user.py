@@ -1,9 +1,12 @@
+import os
+
 from flask import jsonify, make_response
 from .common import update_changes, save_changes
-from .. import db, pagination
-from ..models import User, Patient, Role, Location
-from sqlalchemy import update
+from .. import db, pagination, flask_bcrypt
+from ..models import User, Patient, Role, Location, CodeUser
+from sqlalchemy import update, delete
 from ..utils.schemas.user import user_update_schema, user_create_schema, user_detail_schema, user_list_schema
+from ..utils.messages import Messages
 
 
 def save_new_user(role_code, data, id_group=None, id_location=None):
@@ -21,7 +24,13 @@ def save_new_user(role_code, data, id_group=None, id_location=None):
                 data['id_group'] = id_group
                 data['id_location'] = id_location
                 new_user = User(**user_create_schema.dump(data))
+                user_code = CodeUser(new_user.id_user)
                 save_changes(new_user)
+                save_changes(user_code)
+                url = os.environ.get('WEB_URL') + '/{}'.format(user_code.id_code_user)
+
+                print(url)
+                Messages.send_email(Messages.SendUrl, new_user.email, url)
             except Exception as e:
                 return {
                            'status': 'fail',
@@ -64,6 +73,61 @@ def get_user_query(role_code, user_id, id_group=None, id_location=None):
 def get_user_role(role_code, user_id, id_group=None, id_location=None):
     user = get_user_query(role_code, user_id, id_group, id_location)
     return jsonify(user_detail_schema.dump(user))
+
+
+def check_user_code(user_code):
+    code = CodeUser.query.filter(CodeUser.id_code_user == user_code).first()
+    if code:
+        return {
+                           'status': 'Ok',
+                           'message': 'Exists',
+                       }, 200
+    else:
+        return {
+            'status': 'fail',
+            'message': 'Doesnt exist',
+        }, 404
+
+
+def change_password(email):
+    user = User.query.filter(User.email == email).first()
+    user_code = CodeUser(user.id_user)
+    save_changes(user_code)
+    url = os.environ.get('WEB_URL') + '/{}'.format(user_code.id_code_user)
+    try:
+        Messages.send_email(Messages.ChangePassword, email, url)
+        return {
+            'status': 'Ok'
+        }, 200
+    except Exception as e:
+        return {
+            'status': 'fail',
+            'msg': str(e)
+        }, 400
+
+
+def prueba_email():
+    return Messages.send_email(Messages.SendUrl, 'alfonsocuestaalcantara@gmail.com', 'http://google.com')
+
+
+def set_password(user_code, password):
+    code = CodeUser.query.filter(CodeUser.id_code_user == user_code).first()
+    user = User.query.filter(User.id_user == code.id_user).first()
+    user.password = flask_bcrypt.generate_password_hash(password).decode('utf-8')
+    try:
+        save_changes(user)
+        stmt = delete(CodeUser).where(CodeUser.id_user == code.id_user).execution_options(synchronize_session=False)
+        update_changes(stmt)
+        Messages.send_email(Messages.ConfirmationEmail, user.email, user.email)
+        return {
+                           'status': 'Ok',
+                           'message': 'Password updated',
+                       }, 200
+    except Exception as e:
+        return {
+                   'status': 'fail',
+                   'message': str(e)
+               }, 401
 
 
 def update_user(role_code, user_id, data, id_group=None, id_location=None):

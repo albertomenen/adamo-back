@@ -21,7 +21,6 @@ class UserCreateSchema(Schema):
     user_name = fields.Str()
     phone = fields.Str()
     email = fields.Email()
-    password = fields.Str()
     name = fields.Str()
     last_name = fields.Str()
     country = fields.Str()
