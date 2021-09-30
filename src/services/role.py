@@ -1,10 +1,10 @@
 from src import db, pagination
+from .auth import Auth
 from .common import update_changes, save_changes
 from ..models import Role, User
 from flask import jsonify, make_response
 from sqlalchemy import update, delete
-from ..utils.schemas.role import role_schema_detail, role_schema_update
-
+from ..utils.schemas.role import role_schema_detail, role_schema_update, role_schema_list
 
 
 def save_new_role(data):
@@ -38,9 +38,13 @@ def get_role_from_user(user_id):
         return make_response('Bad id', 401)
 
 
-def get_all_roles():
-    roles = Role.query.filter(Role.role_code != 'master').filter(Role.role_code != 'patient').all()
-    return pagination.paginate(roles, role_schema_detail, True)
+def get_all_roles(request):
+    data, _ = Auth.get_logged_in_user(request)
+    role = role_schema_detail.dump(data.get('data').get('role'))
+    permits = ['manage_practice_manager', 'manage_mp', 'manage_nmp', 'manage_sysadmin', 'manage_dev']
+    permits = [r[7:] for r in permits if role.get(r)]
+    roles = Role.query.filter(Role.role_code.in_(permits)).all()
+    return pagination.paginate(roles, role_schema_list, True)
 
 
 def get_role(id_role):

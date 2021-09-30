@@ -52,5 +52,12 @@ class RoleUpdateSchema(Schema):
     manage_practice = fields.Boolean()
 
 
+class RoleSchemaList(Schema):
+    id_role = fields.UUID()
+    role_name = fields.Str()
+    role_code = fields.Str()
+
+
 role_schema_detail = RoleSchema()
 role_schema_update = RoleUpdateSchema()
+role_schema_list = RoleSchemaList()

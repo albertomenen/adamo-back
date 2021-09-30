@@ -1,16 +1,16 @@
 from flask import request, Blueprint, make_response
 from flask_restful import Resource, Api
 from ..services.role import save_new_role, get_role, get_all_roles, delete_role, update_role
-from ..utils.decorators import manage_roles
+from ..utils.decorators import manage_roles, token_required
 
 bp = Blueprint('role', __name__)
 api = Api(bp)
 
 
 class RoleList(Resource):
-    @manage_roles
+    @token_required
     def get(self):
-        return get_all_roles()
+        return get_all_roles(request)
 
     @manage_roles
     def post(self):
