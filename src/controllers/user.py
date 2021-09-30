@@ -3,16 +3,16 @@ from flask_restful import Resource, Api
 from ..services.user import save_new_user, get_users_role, get_user_role, update_user, delete_user, get_users, \
     set_password, check_user_code, change_password, prueba_email
 from ..utils.decorators import manage_sysadmin, manage_dev, manage_practice_manager, manage_mp, manage_nmp, \
-    manage_treatment, list_patient
+    manage_treatment, list_patient, token_required
 
 bp = Blueprint('User', __name__)
 api = Api(bp)
 
 
 class Users(Resource):
-    @manage_sysadmin
+    @token_required
     def get(self):
-        return get_users()
+        return get_users(request)
 
 
 api.add_resource(Users, '/users')
