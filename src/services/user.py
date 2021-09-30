@@ -194,7 +194,7 @@ def delete_user(role_code, user_id, id_group=None, id_location=None):
 def get_users(request):
     data, _ = Auth.get_logged_in_user(request)
     role = role_schema_detail.dump(data.get('data').get('role'))
-    permits = ['manage_practice_manager', 'manage_mp', 'manage_nmp', 'manage_patient', 'manage_sysadmin', 'manage_dev']
+    permits = ['manage_practice_manager', 'manage_mp', 'manage_nmp', 'manage_sysadmin', 'manage_dev']
     permits = [r[7:] for r in permits if role.get(r)]
     users = db.session.query(User).join(Role).filter(Role.role_code.in_(permits)).filter(User.state == True).all()
     users = users
