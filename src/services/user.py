@@ -91,6 +91,10 @@ def check_user_code(user_code):
 
 def change_password(email):
     user = User.query.filter(User.email == email).first()
+    if not user:
+        return {
+            'status': 'Ok'
+        }, 200
     user_code = CodeUser(user.id_user)
     save_changes(user_code)
     url = os.environ.get('WEB_URL') + '/{}'.format(user_code.id_code_user)
