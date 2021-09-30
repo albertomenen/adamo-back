@@ -8,17 +8,16 @@ services:
       - ./:/usr/src/app/
     environment:
       FLASK_ENV: "dev"
+    network_mode: "host"
     depends_on:
       - postgres
   postgres:
     image: 'postgres'
     restart: always
+    ports:
+      - 9256:5432
     volumes:
       - './postgres_data:/var/lib/postgresql/data'
     env_file:
       - config/.dev.env
-  mail_catcher:
-    image: dockage/mailcatcher:0.6.5
-    ports:
-      - 1069:1080
-      - 1029:1025
+

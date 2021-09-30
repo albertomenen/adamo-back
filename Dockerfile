@@ -18,4 +18,4 @@ RUN python3 get-pip.py
 RUN apt install -y python3-opencv
 RUN apt-get install -qqy x11-apps
 RUN pip install --no-cache-dir -r requirements.txt
-CMD ["uwsgi", "--master", "--http", "0.0.0.0:5000", "--module", "app:app"]
+CMD ["uwsgi", "--master", "--http", "0.0.0.0:5000", "--processes", "4", "--threads", "2", "--module", "app:app"]
