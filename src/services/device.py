@@ -3,6 +3,8 @@ from .. import pagination
 from ..models import Device
 from flask import jsonify, make_response
 from sqlalchemy import update, delete
+
+from ..utils.filter import filtering
 from ..utils.schemas.device import device_schema_list, device_schema_detail, device_schema_update, device_schema_create
 
 
@@ -24,8 +26,10 @@ def get_device_from_station(station_id):
     return jsonify(device_schema_detail.dump(Device.query.filter_by(station_id=station_id).first()))
 
 
-def get_all_devices():
-    return pagination.paginate(Device.query.all(), device_schema_list, True)
+def get_all_devices(filters):
+    devices = Device.query.all()
+    devices = filtering(devices, filters)
+    return pagination.paginate(devices, device_schema_list, True)
 
 
 def get_all_free_devices():

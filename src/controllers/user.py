@@ -1,3 +1,5 @@
+import json
+
 from flask import request, Blueprint
 from flask_restful import Resource, Api
 from ..services.user import save_new_user, get_users_role, get_user_role, update_user, delete_user, get_users, \
@@ -12,7 +14,8 @@ api = Api(bp)
 class Users(Resource):
     @token_required
     def get(self):
-        return get_users(request)
+        filters = json.loads(request.args.get('filters')) if request.args.get('filters') else []
+        return get_users(request, filters)
 
 
 api.add_resource(Users, '/users')

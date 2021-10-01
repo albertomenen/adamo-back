@@ -1,3 +1,5 @@
+import json
+
 from flask import request, Blueprint
 from flask_restful import Resource, Api
 from ..services.device import get_device, get_all_free_devices, save_new_device, update_device, delete_device, get_all_devices
@@ -10,7 +12,8 @@ api = Api(bp)
 class DeviceList(Resource):
     @manage_devices
     def get(self):
-        return get_all_devices()
+        filters = json.loads(request.args.get('filters')) if request.args.get('filters') else []
+        return get_all_devices(filters)
 
     @manage_devices
     def post(self):

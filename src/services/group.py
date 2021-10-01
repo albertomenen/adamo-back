@@ -4,6 +4,7 @@ from ..models import Group, User, Location, Station, Device
 from flask import jsonify, make_response
 from sqlalchemy import update
 
+from ..utils.filter import filtering
 from ..utils.s3 import upload_to_aws, get_from_aws
 from ..utils.schemas.group import group_schema_list, group_schema_update, group_schema_create, group_schema_detail
 
@@ -35,10 +36,11 @@ def save_new_group(data):
         return response_object, 409
 
 
-def get_groups():
+def get_groups(filters):
     groups = Group.query.all()
     for group in groups:
         group.locations = [location for location in group.locations if location.state]
+    groups = filtering(groups, filters)
     return pagination.paginate(groups, group_schema_list, True)
 
 

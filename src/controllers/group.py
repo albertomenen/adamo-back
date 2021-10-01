@@ -1,3 +1,5 @@
+import json
+
 from flask import request, Blueprint
 from flask_restful import Resource, Api
 from ..services.group import save_new_group, get_group, get_groups, update_group, delete_group
@@ -10,7 +12,8 @@ api = Api(bp)
 class GroupList(Resource):
     @manage_group
     def get(self):
-        return get_groups()
+        filters = json.loads(request.args.get('filters')) if request.args.get('filters') else []
+        return get_groups(filters)
 
     @manage_group
     def post(self):

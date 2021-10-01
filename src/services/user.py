@@ -7,6 +7,8 @@ from .common import update_changes, save_changes
 from .. import db, pagination, flask_bcrypt
 from ..models import User, Patient, Role, Location, CodeUser
 from sqlalchemy import update, delete
+
+from ..utils.filter import filtering
 from ..utils.schemas.user import user_update_schema, user_create_schema, user_detail_schema, user_list_schema
 from ..utils.schemas.role import role_schema_detail
 from ..utils.messages import Messages
@@ -191,13 +193,13 @@ def delete_user(role_code, user_id, id_group=None, id_location=None):
                }, 404
 
 
-def get_users(request):
+def get_users(request, filters):
     data, _ = Auth.get_logged_in_user(request)
     role = role_schema_detail.dump(data.get('data').get('role'))
     permits = ['manage_practice_manager', 'manage_mp', 'manage_nmp', 'manage_sysadmin', 'manage_dev']
     permits = [r[7:] for r in permits if role.get(r)]
     users = db.session.query(User).join(Role).filter(Role.role_code.in_(permits)).filter(User.state == True).all()
-    users = users
+    users = filtering(users, filters)
     return pagination.paginate(users, user_list_schema, True)
 
 
