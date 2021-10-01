@@ -14,7 +14,7 @@ class Role(db.Model):
     manage_mp = db.Column(db.Boolean())
     manage_nmp = db.Column(db.Boolean())
     manage_patient = db.Column(db.Boolean())
-    manage_sysadmin = db.Column(db.Boolean())
+    manage_sys_admin = db.Column(db.Boolean())
     manage_dev = db.Column(db.Boolean())
     get_patient = db.Column(db.Boolean())
     list_patient = db.Column(db.Boolean())
