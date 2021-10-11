@@ -50,7 +50,7 @@ def save_new_treatment(id_group, patient_id, data):
 
 def get_treatments():
     treatments = [treatment_schema_list.dump(treatment) for treatment in Treatment.query.all()]
-    treatments.sort(key=lambda x: {'new': 1, 'started': 2, 'finished': 3}.get(x.get('state')))
+    treatments.sort(key=lambda x: {'new': 1, 'started': 2, 'finished': 3}.get(x.get('state'), 4))
     return jsonify(treatments)
 
 
