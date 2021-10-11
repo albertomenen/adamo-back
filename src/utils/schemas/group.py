@@ -43,6 +43,7 @@ class GroupUpdateSchema(Schema):
     town = fields.Str()
     phone = fields.Str()
     contact_name = fields.Str()
+    logo = fields.Str()
 
 
 class GroupName(Schema):
