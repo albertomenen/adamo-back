@@ -267,13 +267,13 @@ def get_offset(images_to_offset):
     print(color_image2.shape)
     print(depth_image2.shape)
 
-    if color_image1.shape != (intrinsics1.height, intrinsics1.width, 3):
+    if color_image1.shape != (480, 640, 3):
         raise Exception("The first color image has not been received")
-    elif depth_image1.shape != (intrinsics1.height, intrinsics1.width):
+    elif depth_image1.shape != (480, 640):
         raise Exception("The first depth image has not been received")
-    elif color_image2.shape != (intrinsics2.height, intrinsics2.width, 3):
+    elif color_image2.shape != (480, 640, 3):
         raise Exception("The last color image has not been received")
-    elif depth_image2.shape != (intrinsics2.height, intrinsics2.width):
+    elif depth_image2.shape != (480, 640):
         raise Exception("The last depth image has not been received")
     elif len(treatment_points) == 0:
         raise Exception("The treatment's points has not been received")
