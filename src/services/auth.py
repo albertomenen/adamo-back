@@ -2,6 +2,7 @@ from flask import make_response
 from .. import db
 from ..models import User, Station, Location
 from ..services.blacklist import save_token
+from ..utils.s3 import get_from_aws
 from ..utils.schemas.user import user_detail_schema
 from flask import jsonify
 
@@ -36,6 +37,11 @@ class Auth:
                             'Authorization': str(auth_token),
                             'user': user_detail_schema.dump(user)
                         }
+                        if response_object.get['user'].get('id_group'):
+                            try:
+                                response_object['logo'] = get_from_aws(response_object['user'].get('id_group') + '.png')
+                            except:
+                                pass
                         return make_response(jsonify(response_object), 200)
                 else:
                     return {
