@@ -30,7 +30,7 @@ class TreatmentCreateSchema(Schema):
     image_thermic_width = fields.Str()
     image_thermic_height = fields.Str()
     image_thermic_depth = fields.Str()
-    n_cycles = fields.Str()
+    n_cycles = fields.Integer()
     auto_type_move = fields.Str()
     velocity = fields.Float()
 
@@ -69,7 +69,7 @@ class TreatmentDetailSchema(Schema):
     injury_cause = fields.Str()
     injury_kind = fields.Str()
     image_thermic = fields.Str()
-    n_cycles = fields.Str()
+    n_cycles = fields.Integer()
     auto_type_move = fields.Str()
     velocity = fields.Float()
 
@@ -115,7 +115,7 @@ class TreatmentListSchema(Schema):
     current_session_number = fields.Integer()
     mode = fields.Str()
     last_session_date = fields.Date()
-    n_cycles = fields.Str()
+    n_cycles = fields.Integer()
     auto_type_move = fields.Str()
     velocity = fields.Float()
 
