@@ -104,6 +104,7 @@ class TreatmentUpdateSchema(Schema):
     injury = fields.Bool()
     injury_cause = fields.Str()
     injury_kind = fields.Str()
+    velocity = fields.Float()
 
 
 class TreatmentListSchema(Schema):
