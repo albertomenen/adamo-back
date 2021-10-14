@@ -106,6 +106,7 @@ class TreatmentUpdateSchema(Schema):
     injury_kind = fields.Str()
     velocity = fields.Float()
     n_cycles = fields.Integer()
+    points = fields.List(fields.Nested(point_schema))
 
 
 class TreatmentListSchema(Schema):
