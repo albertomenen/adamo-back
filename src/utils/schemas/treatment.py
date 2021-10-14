@@ -111,6 +111,7 @@ class TreatmentUpdateSchema(Schema):
 
 class TreatmentListSchema(Schema):
     next_session_date = fields.Date()
+    ts_creation_date = fields.Date()
     id_treatment = fields.UUID()
     name = fields.Str()
     state = fields.Str()

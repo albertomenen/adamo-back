@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import jsonify, make_response
 from src import db, pagination
 from .common import save_changes, update_changes
@@ -9,7 +11,6 @@ from ..utils.schemas.treatment import treatment_schema_list, treatment_schema_cr
     treatment_schema_detail
 from .offset.from_model_to_offset import from_model_to_offset
 from .offset.worker_offset import get_offset
-from .common import get_points
 
 
 def save_new_treatment(id_group, patient_id, data):
@@ -48,10 +49,11 @@ def save_new_treatment(id_group, patient_id, data):
         return response_object, 409
 
 
-def get_treatments():
-    treatments = [treatment_schema_list.dump(treatment) for treatment in Treatment.query.all()]
-    treatments.sort(key=lambda x: {'new': 1, 'started': 2, 'finished': 3}.get(x.get('state'), 4))
-    return jsonify(treatments)
+# def get_treatments():
+#     treatments = [treatment_schema_list.dump(treatment) for treatment in Treatment.query.all()]
+#     return jsonify(type(treatments[4]['ts_creation_date']))
+#     # treatments.sort(key=lambda x: x['ts_creation_date'], reverse=True)
+#     # return jsonify(treatments)
 
 
 def get_query_treatment(id_group, id_patient, id_treatment):
@@ -71,7 +73,7 @@ def get_treatments_by_patient(id_group, patient_id):
         .filter(Patient.id_patient == patient_id) \
         .filter(User.id_user == Patient.id_user) \
         .filter(User.id_group == id_group).filter(User.state == True).all()
-
+    treatments.sort(key=lambda x: x.ts_creation_date if x.ts_creation_date else datetime(1990,1,1), reverse=True)
     return pagination.paginate(treatments, treatment_schema_list, True)
 
 
