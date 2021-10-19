@@ -1,10 +1,13 @@
+from datetime import datetime
+
 from flask import jsonify, make_response
 from src import db, pagination
 from .common import update_changes, save_changes
 from ..models import Patient, User, PAlias, Role, Group, Treatment
 from ..utils.schemas.treatment import treatment_schema_list
 from ..utils.schemas.user import user_create_schema, user_update_schema
-from ..utils.schemas.patient import patient_schema_list, patient_schema_update, patient_schema_create, patient_schema_detail
+from ..utils.schemas.patient import patient_schema_list, patient_schema_update, patient_schema_create, \
+    patient_schema_detail
 from sqlalchemy import update
 from ..utils.filter import filtering
 
@@ -68,6 +71,7 @@ def get_patient(id_group, id_patient):
     patient = patient_schema_detail.dump(patient)
     treatments = db.session.query(Treatment).join(PAlias) \
         .filter(Treatment.id_patient == PAlias.id_palias).filter(PAlias.patient == id_patient).all()
+    treatments.sort(key=lambda x: x.ts_creation_date if x.ts_creation_date else datetime(1990, 1, 1), reverse=True)
     patient['treatments'] = [treatment_schema_list.dump(treatment) for treatment in treatments]
     return jsonify(patient)
 
@@ -88,7 +92,8 @@ def update_patient(id_group, patient_id, data):
                         execution_options(synchronize_session=False)
                     update_changes(stmt)
                 if new_values_user:
-                    stmt_user = update(User).where(Patient.id_patient == patient_id).where(Patient.id_user == User.id_user) \
+                    stmt_user = update(User).where(Patient.id_patient == patient_id).where(
+                        Patient.id_user == User.id_user) \
                         .values(new_values_user).execution_options(synchronize_session=False)
                     update_changes(stmt_user)
                 return jsonify({**patient_schema_detail.dump(patient), **new_values})
