@@ -12,6 +12,7 @@ class Session(db.Model):
 
     id_session = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     medic = db.Column(UUID(as_uuid=True), ForeignKey('user.id_user'), nullable=False)
+    points = db.Column(db.JSON())
 
     image_3D_depth = db.Column(db.String(150))
     image_3D_color = db.Column(db.String(150))
@@ -30,7 +31,7 @@ class Session(db.Model):
 
     def __init__(self, medic, session_number, device_id, station_id, treatment_id,
                  notes=None, image_thermic_width=None, image_thermic_height=None,
-                 image_thermic_depth=None):
+                 image_thermic_depth=None, points=None):
 
         self.id_session = uuid.uuid4()
         self.medic = medic
@@ -43,6 +44,7 @@ class Session(db.Model):
         self.image_thermic_width = image_thermic_width
         self.image_thermic_height = image_thermic_height
         self.image_thermic_depth = image_thermic_depth
+        self.points = points
 
     def __repr__(self):
         return '<Session Number: {} >'.format(self.session_number)

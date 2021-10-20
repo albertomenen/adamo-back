@@ -1,4 +1,5 @@
 from marshmallow import Schema, fields
+from .point import point_schema
 
 
 class SessionDetailSchema(Schema):
@@ -11,6 +12,7 @@ class SessionDetailSchema(Schema):
     station_id = fields.UUID()
     image_thermic = fields.Str()
     image_3D_color = fields.Str()
+    points = fields.List(fields.Nested(point_schema))
 
 
 class SessionListSchema(Schema):
@@ -19,6 +21,7 @@ class SessionListSchema(Schema):
     session_number = fields.Integer()
     ts_creation_date = fields.Str()
     image_thermic = fields.Str()
+    points = fields.List(fields.Nested(point_schema))
 
 
 class SessionCreateSchema(Schema):
@@ -31,6 +34,7 @@ class SessionCreateSchema(Schema):
     image_thermic_width = fields.Str()
     image_thermic_height = fields.Str()
     image_thermic_depth = fields.Str()
+    points = fields.List(fields.Nested(point_schema))
 
 
 session_schema_detail = SessionDetailSchema()
