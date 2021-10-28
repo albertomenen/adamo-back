@@ -20,7 +20,7 @@ class Station(db.Model):
     # device = relationship("Device")
     location = relationship('Location')
 
-    def __init__(self, id_location, station_name, version, placed=None, installation_date=datetime.datetime):
+    def __init__(self, id_location, station_name, version, placed=None, installation_date=datetime.datetime.now()):
         self.id_station = uuid.uuid4()
         self.id_location = id_location
         self.station_name = station_name
