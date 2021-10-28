@@ -32,7 +32,7 @@ def save_new_user(role_code, data, id_group=None, id_location=None):
                 user_code = CodeUser(new_user.id_user)
                 save_changes(new_user)
                 save_changes(user_code)
-                url = os.environ.get('WEB_URL') + '/{}'.format(user_code.id_code_user)
+                url = os.environ.get('WEB_URL') + '/auth/user_pass/{}'.format(user_code.id_code_user)
 
                 print(url)
                 Messages.send_email(Messages.SendUrl, new_user.email, url)
@@ -102,7 +102,7 @@ def change_password(email):
         }, 200
     user_code = CodeUser(user.id_user)
     save_changes(user_code)
-    url = os.environ.get('WEB_URL') + '/{}'.format(user_code.id_code_user)
+    url = os.environ.get('WEB_URL') + 'auth/user_pass/{}'.format(user_code.id_code_user)
     try:
         Messages.send_email(Messages.ChangePassword, email, url)
         return {
