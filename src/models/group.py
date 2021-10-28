@@ -8,11 +8,11 @@ class Group(db.Model):
     __tablename__ = 'group'
 
     id_group = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    group_name = db.Column(db.String(50), nullable=False)
+    group_name = db.Column(db.String(150), nullable=False)
     address = db.Column(db.String(150), nullable=False)
     city = db.Column(db.String(100), nullable=False)
     town = db.Column(db.String(100), nullable=False)
-    phone = db.Column(db.String(12), nullable=False)
+    phone = db.Column(db.String(40), nullable=False)
     contact_name = db.Column(db.String(100), nullable=False)
     state = db.Column(db.Boolean(), default=True)
     email = db.Column(db.String(120), nullable=False, unique=True)

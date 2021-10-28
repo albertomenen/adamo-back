@@ -11,7 +11,7 @@ class Station(db.Model):
 
     id_station = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     id_location = db.Column(UUID(as_uuid=True), ForeignKey('location.id_location'))
-    station_name = db.Column(db.String(50), nullable=False)
+    station_name = db.Column(db.String(150), nullable=False)
     state = db.Column(db.Boolean(), default=True, nullable=False)
     placed = db.Column(db.String(150))
     installation_date = db.Column(db.Date(), nullable=False)
