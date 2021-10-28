@@ -14,8 +14,9 @@ from ..utils.filter import filtering
 
 def save_new_patient(id_group, data):
     patient = Patient.query.filter_by(email=data['email']).first()
+    user = User.query.filter_by(email=data['email']).first()
     group = Group.query.filter_by(id_group=id_group).first()
-    if not patient:
+    if not patient and not user:
         if not group:
             return {
                        'status': 'fail',
