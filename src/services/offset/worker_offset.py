@@ -195,20 +195,22 @@ def json_to_data(response):
     depth_image2 = image_url_to_numpy_array_urllib(response['lastImage']['idDepth'], "depth")
     print("Se descarga im_Depth2")
 
-    x_crop_l = floor((color_image1.shape[0] - 480) / 2)
-    x_crop_r = x_crop_l + 480
-    y_crop_l = floor((color_image1.shape[1] - 640) / 2)
-    y_crop_r = y_crop_l + 640
-    color_image1 = color_image1[x_crop_l:x_crop_r, y_crop_l:y_crop_r]
+
+    x_crop_l = floor((color_image1.shape[0] - 640) / 2)
+    x_crop_r = x_crop_l + 640
+    y_crop_l = floor((color_image1.shape[1] - 480) / 2)
+    y_crop_r = y_crop_l + 480
+
+    color_image1 = color_image1[y_crop_l:y_crop_r, x_crop_l:x_crop_r]
     # color_image1 = cv2.resize(color_image1, (480, 640))
 
-    color_image2 = color_image2[x_crop_l:x_crop_r, y_crop_l:y_crop_r]
+    color_image2 = color_image2[y_crop_l:y_crop_r, x_crop_l:x_crop_r]
     # color_image2 = cv2.resize(color_image2, (480, 640))
 
-    depth_image1 = depth_image1[x_crop_l:x_crop_r, y_crop_l:y_crop_r]
+    depth_image1 = depth_image1[y_crop_l:y_crop_r, x_crop_l:x_crop_r]
     # depth_image1 = cv2.resize(depth_image1, (480, 640))
 
-    depth_image2 = depth_image2[x_crop_l:x_crop_r, y_crop_l:y_crop_r]
+    depth_image2 = depth_image2[y_crop_l:y_crop_r, x_crop_l:x_crop_r]
     # depth_image2 = cv2.resize(depth_image2, (480, 640))
 
     color_image1 = cv2.rotate(color_image1, cv2.cv2.ROTATE_90_CLOCKWISE)
