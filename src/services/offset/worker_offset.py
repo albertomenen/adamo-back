@@ -202,10 +202,10 @@ def json_to_data(response):
     color_image2 = cv2.resize(color_image2, (480, 640))
 
     #depth_image1 = depth_image1[:640, :]
-    depth_image1 = cv2.resize(depth_image1, (480, 640))
+    depth_image1 = cv2.resize(depth_image1, (480, 640, 3))
 
     #depth_image2 = depth_image2[:640, :]
-    depth_image2 = cv2.resize(depth_image2, (480, 640))
+    depth_image2 = cv2.resize(depth_image2, (480, 640, 3))
 
     color_image1 = cv2.rotate(color_image1, cv2.cv2.ROTATE_90_CLOCKWISE)
     color_image2 = cv2.rotate(color_image2, cv2.cv2.ROTATE_90_CLOCKWISE)
