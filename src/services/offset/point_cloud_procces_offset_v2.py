@@ -203,10 +203,11 @@ def calcular_offset(color_image1, depth_image1, color_image2,depth_image2, intri
     depth_raw1 = Image(depth_image1)
     color_raw2 = Image(color_image2)
     depth_raw2 = Image(depth_image2)
-    
+    print('se calculan las imagenes modo2')
     rgbd_image1 = create_rgbd_image_from_color_and_depth(color_raw1, depth_raw1)
     rgbd_image2 = create_rgbd_image_from_color_and_depth(color_raw2, depth_raw2)
-    
+
+    print('se calculan las imagenes 2 modo2')
     #mat_pos_ini = [[1,  0,  0, 0],
     #               [0, -1,  0, 0],
     #               [0,  0, -1, 0],
@@ -216,16 +217,18 @@ def calcular_offset(color_image1, depth_image1, color_image2,depth_image2, intri
     pcd1_raw = PointCloud()        
     pcd1_raw = create_point_cloud_from_rgbd_image(rgbd_image1, PinholeCameraIntrinsic(intrinsics1.width, intrinsics1.height, intrinsics1.fx, intrinsics1.fy, intrinsics1.ppx, intrinsics1.ppy))
     #pcd1_raw.transform(mat_pos_ini)
+
+    print('se calculan las imagenes 3 modo2')
     """NUBE PUNTOS APLICAR TRATAMIENTO"""
     pcd2_raw = PointCloud()        
     pcd2_raw = create_point_cloud_from_rgbd_image(rgbd_image2, PinholeCameraIntrinsic(intrinsics2.width, intrinsics2.height, intrinsics2.fx, intrinsics2.fy, intrinsics2.ppx,intrinsics2.ppy))
     #pcd2_raw.transform(mat_pos_ini)
-       
-        
+
+    print('se calculan las imagenes 4 modo2')
     """PUNTOS DEL TRATAMIENTO"""
     """Estos puntos estan definidos en el sistema de coordenadas de la camara"""
     p_trat = treatment_points
-        
+
     pcd_trat = PointCloud()
     pcd_trat.points = Vector3dVector(p_trat) 
     #pcd_trat.transform(giro_x(np.pi))
@@ -265,7 +268,8 @@ def calcular_offset(color_image1, depth_image1, color_image2,depth_image2, intri
     voxel_size = 0.01 # means 5cm for the dataset
     source, target, source_down, target_down, source_fpfh, target_fpfh = \
             prepare_dataset(voxel_size, source1, target1)
-    
+
+
     result_ransac = execute_global_registration(source_down, target_down,
             source_fpfh, target_fpfh, voxel_size)
     print("Resultado RANSAC")

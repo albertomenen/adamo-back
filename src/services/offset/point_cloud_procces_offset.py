@@ -300,7 +300,7 @@ def calcular_offset(color_image1, depth_image1, color_image2,depth_image2, intri
         print("Se han calculado mal los ejes principales.")
         return False, 0
 
-    med_p_trat, cov2_p_trat = geometry.compute_point_cloud_mean_and_covariance(pcd_trat)
+    # med_p_trat, cov2_p_trat = geometry.compute_point_cloud_mean_and_covariance(pcd_trat)
     
         
     if theta1 < 0:
@@ -327,6 +327,7 @@ def calcular_offset(color_image1, depth_image1, color_image2,depth_image2, intri
     
     theta1_c, frame1_c, err1 = obtain_reference_frame_2(med1, cov1) 
     theta2_c,frame2_c, err2 = obtain_reference_frame_2(med2, cov2)
+
     print("Angulo 1: ",theta1_c)
     print("Angulo 2: ",theta2_c)
     
