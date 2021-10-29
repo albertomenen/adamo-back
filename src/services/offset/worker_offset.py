@@ -196,10 +196,10 @@ def json_to_data(response):
     print("Se descarga im_Depth2")
 
 
-    x_crop_l = floor((color_image1.shape[0] - 640) / 2)
-    x_crop_r = x_crop_l + 640
-    y_crop_l = floor((color_image1.shape[1] - 480) / 2)
-    y_crop_r = y_crop_l + 480
+    x_crop_l = floor((color_image1.shape[1] - 480) / 2)
+    x_crop_r = x_crop_l + 480
+    y_crop_l = floor((color_image1.shape[0] - 640) / 2)
+    y_crop_r = y_crop_l + 640
 
     color_image1 = color_image1[y_crop_l:y_crop_r, x_crop_l:x_crop_r]
     # color_image1 = cv2.resize(color_image1, (480, 640))
