@@ -275,6 +275,7 @@ def calcular_offset(color_image1, depth_image1, color_image2,depth_image2, intri
     print('target_fpfh:' + str(target_fpfh))
     print('voxel_size:' + str(voxel_size))
     print('se calculan las imagenes 10 modo2')
+
     result_ransac = execute_global_registration(source_down, target_down,
             source_fpfh, target_fpfh, voxel_size)
     print("Resultado RANSAC")
