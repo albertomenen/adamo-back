@@ -194,17 +194,17 @@ def json_to_data(response):
     depth_image2 = image_url_to_numpy_array_urllib(response['lastImage']['idDepth'], "depth")
     print("Se descarga im_Depth2")
 
-    color_image1 = color_image1[:640, :]
+    #color_image1 = color_image1[:640, :]
     color_image1 = cv2.resize(color_image1, (480, 640))
 
 
-    color_image2 = color_image2[:640, :]
+    #color_image2 = color_image2[:640, :]
     color_image2 = cv2.resize(color_image2, (480, 640))
 
-    depth_image1 = depth_image1[:640, :]
+    #depth_image1 = depth_image1[:640, :]
     depth_image1 = cv2.resize(depth_image1, (480, 640))
 
-    depth_image2 = depth_image2[:640, :]
+    #depth_image2 = depth_image2[:640, :]
     depth_image2 = cv2.resize(depth_image2, (480, 640))
 
     color_image1 = cv2.rotate(color_image1, cv2.cv2.ROTATE_90_CLOCKWISE)
