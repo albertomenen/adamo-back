@@ -228,7 +228,7 @@ def calcular_offset(color_image1, depth_image1, color_image2,depth_image2, intri
     """PUNTOS DEL TRATAMIENTO"""
     """Estos puntos estan definidos en el sistema de coordenadas de la camara"""
     p_trat = treatment_points
-
+    print('se calculan las imagenes 5 modo2')
     pcd_trat = PointCloud()
     pcd_trat.points = Vector3dVector(p_trat) 
     #pcd_trat.transform(giro_x(np.pi))
@@ -243,33 +243,33 @@ def calcular_offset(color_image1, depth_image1, color_image2,depth_image2, intri
     #pcd1_raw.transform(T_rot)
     #pcd2_raw.transform(T_rot)
     #pcd_trat.transform(T_rot)
-    
 
+    print('se calculan las imagenes 6 modo2')
 
     
     """Se filtran los puntos para quedarnos con el volumen de la espalda"""
     xyz_load1 = np.asarray(pcd1_raw.points)
     xyz_load2 = np.asarray(pcd2_raw.points)
-    
+    print('se calculan las imagenes 7 modo2')
         
     #h_max = np.max(pcd_trat_girados[:,2]); #Para filtrar la pointcloud se usan los propios puntos del tratamiento.
     #h_min = h_max - 0.1
     
     puntos1 = point_cloud_filter(xyz_load1)
     puntos2 = point_cloud_filter(xyz_load2)
-    
+    print('se calculan las imagenes 8 modo2')
     target1 = PointCloud()
     target1.points = Vector3dVector(puntos2) 
     source1 = PointCloud()
     source1.points = Vector3dVector(puntos1)
-    
-   
+
+    print('se calculan las imagenes 9 modo2')
     """ALINEAMIENTO""" 
     voxel_size = 0.01 # means 5cm for the dataset
     source, target, source_down, target_down, source_fpfh, target_fpfh = \
             prepare_dataset(voxel_size, source1, target1)
 
-
+    print('se calculan las imagenes 10 modo2')
     result_ransac = execute_global_registration(source_down, target_down,
             source_fpfh, target_fpfh, voxel_size)
     print("Resultado RANSAC")
