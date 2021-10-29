@@ -276,8 +276,13 @@ def calcular_offset(color_image1, depth_image1, color_image2,depth_image2, intri
     print('voxel_size:' + str(voxel_size))
     print('se calculan las imagenes 10 modo2')
 
-    result_ransac = execute_global_registration(source_down, target_down,
-            source_fpfh, target_fpfh, voxel_size)
+    puntos_source = list(source_down.points)
+    target_source = list(target_down.points)
+    if puntos_source and target_source:
+        result_ransac = execute_global_registration(source_down, target_down,
+                source_fpfh, target_fpfh, voxel_size)
+    else:
+        return False, 0
     print("Resultado RANSAC")
     print(result_ransac)
     
