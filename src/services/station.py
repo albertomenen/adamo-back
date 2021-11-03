@@ -29,7 +29,8 @@ def save_new_station(id_group, id_location, data):
 def get_stations(id_group, id_location):
     stations = db.session.query(Station).join(Location)\
         .filter(Location.id_group == id_group)\
-        .filter(Station.id_location == id_location).all()
+        .filter(Station.id_location == id_location)\
+        .filter(Station.state == True).all()
     return pagination.paginate(stations, station_schema_list, True)
 
 
