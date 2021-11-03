@@ -29,6 +29,7 @@ class StationListSchema(Schema):
     station_name = fields.Str()
     placed = fields.Str()
     installation_date = fields.Str()
+    location = fields.Nested(location_name)
 
 
 station_schema_create = StationCreateSchema()
