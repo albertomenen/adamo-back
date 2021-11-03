@@ -75,7 +75,7 @@ def update_station(id_group, id_location, id_station, data):
 
 
 def delete_station(id_group, id_location, id_station):
-    station = db.session.query(Station).join(Group) \
+    station = db.session.query(Station).join(Location) \
         .filter(Location.id_group == id_group) \
         .filter(Station.id_location == id_location) \
         .filter(Station.id_station == id_station) \
@@ -90,7 +90,7 @@ def delete_station(id_group, id_location, id_station):
             update_changes(stmt_station, stmt_device)
             return {
                 'status': 'success',
-                'message': 'location deleted',
+                'message': 'station deleted',
             }, 203
         except Exception as e:
             return {
