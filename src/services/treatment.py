@@ -135,6 +135,7 @@ def update_treatment(id_group, id_patient, id_treatment, data):
                }, 404
 
 
+# TODO Si un tratamiento esta cancelado no deberia poder crearse una sesion, deberia activarse primero
 def delete_treatment(id_group, id_patient, id_treatment):
     treatment = get_query_treatment(id_group, id_patient, id_treatment)
     if treatment:

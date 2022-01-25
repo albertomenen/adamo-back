@@ -245,11 +245,8 @@ def calcular_offset(color_image1, depth_image1, color_image2,depth_image2, intri
     color_raw2 = Image(color_image2)
     depth_raw2 = Image(depth_image2)
 
-    print('aqui')
     rgbd_image1 = create_rgbd_image_from_color_and_depth(color_raw1, depth_raw1)
     rgbd_image2 = create_rgbd_image_from_color_and_depth(color_raw2, depth_raw2)
-    print('aqui')
-    print(rgbd_image1)
     mat_pos_ini = [[1,  0,  0, 0],
                    [0, -1,  0, 0],
                    [0,  0, -1, 0],
@@ -311,11 +308,7 @@ def calcular_offset(color_image1, depth_image1, color_image2,depth_image2, intri
     theta_giro_z = np.deg2rad(theta2-theta1) # angulo de giro entre el 2 y el 1 en el ejez
     
     pxyz = med2-med1
-    
-    print("Offset del point cloud")
-    print(pxyz)
-    print("Angulo de giro relativo entre los dos: ")
-    print(np.rad2deg(theta_giro_z))
+
     if np.rad2deg(theta_giro_z) > 30:
         return False, 0
     
@@ -327,9 +320,6 @@ def calcular_offset(color_image1, depth_image1, color_image2,depth_image2, intri
     
     theta1_c, frame1_c, err1 = obtain_reference_frame_2(med1, cov1) 
     theta2_c,frame2_c, err2 = obtain_reference_frame_2(med2, cov2)
-
-    print("Angulo 1: ",theta1_c)
-    print("Angulo 2: ",theta2_c)
     
     if err1 or err2: 
         print("El angulo de giro del paciente en la camilla es mayor a 20 grados o la covarianza no es representativa.")
@@ -366,15 +356,7 @@ def calcular_offset(color_image1, depth_image1, color_image2,depth_image2, intri
     pcd_features2.points = Vector3dVector(ptos_hombros2) 
     med_cuello2, cov_cuello2 = geometry.compute_point_cloud_mean_and_covariance(pcd_features2)
     
-    
-    print("med_cuello1: ", med_cuello1)
-    print("med_cuello2: ", med_cuello2)
-
-    
     pxyz_c = (med_cuello2-med_cuello1)
-    
-    print("Desplazamiento tronco: ", pxyz)
-    print("Desplazamiento cuello: ", pxyz_c)
     
 
     pcd1.transform(desplazar(med1[0],med1[1],med1[2]))

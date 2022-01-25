@@ -187,13 +187,9 @@ def image_url_to_numpy_array_urllib(image_bites, tipo):
 
 def json_to_data(response):
     color_image1 = image_url_to_numpy_array_urllib(response['firstImage']['idColor'], "color")
-    print("Se descarga im_Color1")
     depth_image1 = image_url_to_numpy_array_urllib(response['firstImage']['idDepth'], "depth")
-    print("Se descarga im_Depth1")
     color_image2 = image_url_to_numpy_array_urllib(response['lastImage']['idColor'], "color")
-    print("Se descarga im_Color2")
     depth_image2 = image_url_to_numpy_array_urllib(response['lastImage']['idDepth'], "depth")
-    print("Se descarga im_Depth2")
 
     # x_crop_l = floor((color_image1.shape[0] - 480) / 2)
     # x_crop_r = ceil((color_image1.shape[0] - 480) / 2) + 480
@@ -265,13 +261,6 @@ def areTheyParallel(offset, n_points):
 def get_offset(images_to_offset):
     color_image1, depth_image1, color_image2, depth_image2, intrinsics1, intrinsics2, depth_scale1, depth_scale2, treatment_points = json_to_data(
         images_to_offset)
-
-    print(intrinsics1.height, intrinsics1.width)
-    print(intrinsics2.height, intrinsics2.width)
-    print(color_image1.shape)
-    print(depth_image1.shape)
-    print(color_image2.shape)
-    print(depth_image2.shape)
 
     if color_image1.shape != (480, 640, 3):
         raise Exception("The first color image has not been received")
@@ -378,13 +367,9 @@ def get_offset(images_to_offset):
             # print("El desplazamiento con el metodo ICP: ", mod_off_pcd2)
             theta3 = np.arctan2(offset_pcd_t2[:, 2], offset_pcd_t2[:, 0])
             alpha3 = np.arctan2(offset_pcd_t2[:, 1], offset_pcd_t2[:, 0])
-            print("Offset Metodos 3: ")
-            print(status3)
-            print(offset_pcd_t2)
 
     if status2 and status3:
         dif_giro_z = np.sqrt((alpha3 - alpha2) ** 2)
-        print("Diferencia de giro en el eje z: ", dif_giro_z)
         error_max = 0.15  # error maximo permitido en radianes entre los dos metodos (radianes)
         for i in range(len(dif_giro_z)):
             if (dif_giro_z[i] > error_max) and (mod_axis_off_pcd2[i] > 0.01) and (mod_axis_off_pcd1[i] > 0.01):
@@ -448,7 +433,6 @@ def get_offset(images_to_offset):
         if not ptos_validos:
             raise Exception('Points out of range')
 
-        print(offset_final.tolist())
         return offset_final.tolist()
     else:
         raise Exception('Fail at the end')

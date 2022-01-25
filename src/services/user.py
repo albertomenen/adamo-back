@@ -34,7 +34,6 @@ def save_new_user(role_code, data, id_group=None, id_location=None):
                 save_changes(user_code)
                 url = os.environ.get('WEB_URL') + '/auth/user_pass/{}'.format(user_code.id_code_user)
 
-                print(url)
                 Messages.send_email(Messages.SendUrl, new_user.email, url)
             except Exception as e:
                 return {
