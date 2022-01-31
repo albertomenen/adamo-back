@@ -437,7 +437,7 @@ def get_offset(images_to_offset):
         ptos_validos = validate_points(p_trat[:, :3], offset_final)
         if not ptos_validos:
             raise Exception('Points out of range')
-
+        print(offset_final.tolist())
         return offset_final.tolist()
     else:
         raise Exception('Fail at the end')
