@@ -195,17 +195,22 @@ def json_to_data(response):
     # x_crop_r = ceil((color_image1.shape[0] - 480) / 2) + 480
     # y_crop_l = floor((color_image1.shape[1] - 640) / 2)
     # y_crop_r = ceil((color_image1.shape[1] - 640) / 2) + 640
-    color_image1 = color_image1[:640, :]
+    print('Profundiad 1', depth_image1.shape)
+    print('Profundiad 2', depth_image2.shape)
+    print('Color 1', color_image1.shape)
+    print('Color 2', color_image2.shape)
+
+    #color_image1 = color_image1[:640, :]
     color_image1 = cv2.resize(color_image1, (480, 640))
 
 
-    color_image2 = color_image2[:640, :]
+    #color_image2 = color_image2[:640, :]
     color_image2 = cv2.resize(color_image2, (480, 640))
 
-    depth_image1 = depth_image1[:640, :]
+    #depth_image1 = depth_image1[:640, :]
     depth_image1 = cv2.resize(depth_image1, (480, 640))
 
-    depth_image2 = depth_image2[:640, :]
+    #depth_image2 = depth_image2[:640, :]
     depth_image2 = cv2.resize(depth_image2, (480, 640))
 
     color_image1 = cv2.rotate(color_image1, cv2.cv2.ROTATE_90_CLOCKWISE)
