@@ -267,13 +267,14 @@ def get_offset(images_to_offset):
     color_image1, depth_image1, color_image2, depth_image2, intrinsics1, intrinsics2, depth_scale1, depth_scale2, treatment_points = json_to_data(
         images_to_offset)
 
-    if color_image1.shape != (480, 640, 3):
+    print('intrinsics1', intrinsics1, '| intrinsics2', intrinsics2)
+    if color_image1.shape != (intrinsics1.height, intrinsics1.width, 3):
         raise Exception("The first color image has not been received")
-    elif depth_image1.shape != (480, 640):
+    elif depth_image1.shape != (intrinsics1.height, intrinsics1.width):
         raise Exception("The first depth image has not been received")
-    elif color_image2.shape != (480, 640, 3):
+    elif color_image2.shape != (intrinsics2.height, intrinsics2.width, 3):
         raise Exception("The last color image has not been received")
-    elif depth_image2.shape != (480, 640):
+    elif depth_image2.shape != (intrinsics2.height, intrinsics2.width):
         raise Exception("The last depth image has not been received")
     elif len(treatment_points) == 0:
         raise Exception("The treatment's points has not been received")
