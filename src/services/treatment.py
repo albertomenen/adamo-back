@@ -113,8 +113,9 @@ def update_treatment(id_group, id_patient, id_treatment, data):
                 elif new_values.get('state') == 'finished':
                     patient = get_patient_from_alias(treatment.id_patient)
                     stmt = update(Patient).where(Patient.id_patient == id_patient).values(
-                        {'active_treatments': patient.active_treatments - 1}). \
-                        execution_options(synchronize_session=False)
+                        {'active_treatments': patient.active_treatments - 1
+                        if new_values.get('current_session_number', 2) > 1
+                        else patient.active_treatments}).execution_options(synchronize_session=False)
                     update_changes(stmt)
                 return jsonify({**treatment_schema_detail.dump(treatment), **new_values})
             except Exception as e:
