@@ -213,10 +213,10 @@ def json_to_data(response):
     ##depth_image2 = depth_image2[:640, :]
     #depth_image2 = cv2.resize(depth_image2, (480, 640))
 
-    color_image1 = cv2.rotate(color_image1, cv2.cv2.ROTATE_90_CLOCKWISE)
-    color_image2 = cv2.rotate(color_image2, cv2.cv2.ROTATE_90_CLOCKWISE)
-    depth_image1 = cv2.rotate(depth_image1, cv2.cv2.ROTATE_90_CLOCKWISE)
-    depth_image2 = cv2.rotate(depth_image2, cv2.cv2.ROTATE_90_CLOCKWISE)
+    # color_image1 = cv2.rotate(color_image1, cv2.cv2.ROTATE_90_CLOCKWISE)
+    # color_image2 = cv2.rotate(color_image2, cv2.cv2.ROTATE_90_CLOCKWISE)
+    # depth_image1 = cv2.rotate(depth_image1, cv2.cv2.ROTATE_90_CLOCKWISE)
+    # depth_image2 = cv2.rotate(depth_image2, cv2.cv2.ROTATE_90_CLOCKWISE)
 
     intrinsics1 = intrinsics_params(response['firstImage']['width'], response['firstImage']['height'],
                                     response['firstImage']['ppx'], response['firstImage']['ppy'],
@@ -289,10 +289,15 @@ def get_offset(images_to_offset):
     p_trat = np.append(p_trat, np.ones((len(p_trat), 1)), axis=1)
 
     """Matriz de transformacion homogenea para el paso de las coordenadas del robot a las coordenadas de la camara"""
-    T = np.matrix([[0.9989, -0.0043, -0.0464, 0.5639],
-                   [-0.0035, -0.9999, 0.0162, 0.1294],
-                   [-0.0465, -0.0161, -0.9988, 0.6385],
-                   [0, 0, 0, 1.0000]])  # cam_T_r Camara perpendicular al robot
+    # T = np.matrix([[0.9989, -0.0043, -0.0464, 0.5639],
+    #                [-0.0035, -0.9999, 0.0162, 0.1294],
+    #                [-0.0465, -0.0161, -0.9988, 0.6385],
+    #                [0, 0, 0, 1.0000]])  # cam_T_r Camara perpendicular al robot
+
+    T = np.matrix([[-0.0087, -0.9982, 0.0594, -0.0249],
+                   [-0.9960, 0.0139, 0.0883, -0.6470],
+                   [-0.0890, -0.0584, -0.9943, 0.6948],
+                   [0, 0, 0, 1.0000]])  # cam_T_r Camara paralela al robot
 
     # Se transforman los puntos del tratamiento al sistema de coordenadas de la camara
     p_trat_t = T * p_trat.T
