@@ -10,7 +10,7 @@ class RoleSchema(Schema):
     manage_mp = fields.Boolean()
     manage_nmp = fields.Boolean()
     manage_patient = fields.Boolean()
-    manage_sysadmin = fields.Boolean()
+    manage_sys_admin = fields.Boolean()
     manage_dev = fields.Boolean()
     get_patient = fields.Boolean()
     list_patient = fields.Boolean()
