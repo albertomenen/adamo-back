@@ -4,7 +4,7 @@ from flask import request, Blueprint
 from flask_restful import Resource, Api
 from ..services.user import save_new_user, get_users_role, get_user_role, update_user, delete_user, get_users, \
     set_password, check_user_code, change_password, prueba_email
-from ..utils.decorators import manage_sysadmin, manage_dev, manage_practice_manager, manage_mp, manage_nmp, \
+from ..utils.decorators import manage_sys_admin, manage_dev, manage_practice_manager, manage_mp, manage_nmp, \
     manage_treatment, list_patient, token_required
 
 bp = Blueprint('User', __name__)
@@ -48,25 +48,25 @@ api.add_resource(RecoverPassword, '/recover_pass')
 
 
 class SysAdminList(Resource):
-    @manage_sysadmin
+    @manage_sys_admin
     def get(self):
         return get_users_role('sys_admin')
 
-    @manage_sysadmin
+    @manage_sys_admin
     def post(self):
         return save_new_user('sys_admin', request.get_json(force=True))
 
 
 class SysAdmin(Resource):
-    @manage_sysadmin
+    @manage_sys_admin
     def get(self, id_user):
         return get_user_role('sys_admin', id_user)
 
-    @manage_sysadmin
+    @manage_sys_admin
     def put(self, id_user):
         return update_user('sys_admin', id_user, request.get_json(force=True))
 
-    @manage_sysadmin
+    @manage_sys_admin
     def delete(self, id_user):
         return delete_user('sys_admin', id_user)
 

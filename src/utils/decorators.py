@@ -89,10 +89,10 @@ def manage_patient(f):
     return decorated
 
 
-def manage_sysadmin(f):
+def manage_sys_admin(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        not_permission = check_role(request, 'manage_sysadmin')
+        not_permission = check_role(request, 'manage_sys_admin')
         if not_permission:
             return not_permission
         return f(*args, **kwargs)
