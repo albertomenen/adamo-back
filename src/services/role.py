@@ -41,7 +41,7 @@ def get_role_from_user(user_id):
 def get_all_roles(request):
     data, _ = Auth.get_logged_in_user(request)
     role = role_schema_detail.dump(data.get('data').get('role'))
-    permits = ['manage_practice_manager', 'manage_mp', 'manage_nmp', 'manage_sysadmin', 'manage_dev']
+    permits = ['manage_practice_manager', 'manage_mp', 'manage_nmp', 'manage_sys_admin', 'manage_dev']
     permits = [r[7:] for r in permits if role.get(r)]
     roles = Role.query.filter(Role.role_code.in_(permits)).all()
     return pagination.paginate(roles, role_schema_list, True)
