@@ -2,9 +2,9 @@ import json
 
 from flask import request, Blueprint
 from flask_restful import Resource, Api
-from ..utils.decorators import manage_patient, detail_patient, list_patient
+from ..utils.decorators import manage_patient, detail_patient, list_patient, manage_group
 from ..services.patient import save_new_patient, get_patient, delete_patient, update_patient, \
-    get_patients_by_group
+    get_patients_by_group, get_patients
 
 bp = Blueprint('Patient', __name__)
 api = Api(bp)
@@ -35,5 +35,12 @@ class Patient(Resource):
         return delete_patient(group_id, patient_id)
 
 
+class PatientManager(Resource):
+    @manage_group
+    def get(self):
+        return get_patients()
+
+
 api.add_resource(PatientList, '/group/<group_id>/patient')
 api.add_resource(Patient, '/group/<group_id>/patient/<patient_id>')
+api.add_resource(PatientManager, '/patient')
