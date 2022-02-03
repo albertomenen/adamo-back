@@ -1,4 +1,4 @@
-from flask import request, Blueprint
+from flask import request, Blueprint, jsonify
 from flask_restful import Resource, Api
 from ..services.treatment import get_treatment, get_treatments_by_patient, update_treatment, save_new_treatment, \
     delete_treatment, get_treatment_offset
@@ -35,7 +35,8 @@ class Treatment(Resource):
 class TreatmentOffset(Resource):
     @run_sesion
     def post(self, group_id, patient_id, treatment_id):
-        return get_treatment_offset(group_id, patient_id, treatment_id, request.get_json(force=True))
+        return jsonify([[0, 0, 0], [0, 0, 0]])
+        #return get_treatment_offset(group_id, patient_id, treatment_id, request.get_json(force=True))
 
 
 api.add_resource(TreatmentList, '/group/<group_id>/patient/<patient_id>/treatment')
