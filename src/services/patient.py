@@ -2,8 +2,10 @@ from datetime import datetime
 
 from flask import jsonify, make_response
 from src import db, pagination
+from .auth import Auth
 from .common import update_changes, save_changes
 from ..models import Patient, User, PAlias, Role, Group, Treatment
+from ..utils.schemas.role import role_schema_detail
 from ..utils.schemas.treatment import treatment_schema_list
 from ..utils.schemas.user import user_create_schema, user_update_schema
 from ..utils.schemas.patient import patient_schema_list, patient_schema_update, patient_schema_create, \
@@ -47,10 +49,18 @@ def save_new_patient(id_group, data):
         return response_object, 409
 
 
-def get_patients():
+def get_patients(request):
+    data, _ = Auth.get_logged_in_user(request)
+    role = role_schema_detail.dump(data.get('data').get('role'))
     patient_list = db.session.query(Patient).join(User) \
         .filter(User.id_user == Patient.id_user) \
-        .filter(User.state == True).all()
+        .filter(User.state == True)
+    if role.get('manage_sys_admin'):
+        patient_list = patient_list.all()
+    else:
+        user = data.get('data').get('user_id')
+        id_group = db.session.query(User).filter(User.id_user == user).first().id_group
+        patient_list = patient_list.filter(User.id_group == id_group).all()
     return pagination.paginate(patient_list, patient_schema_list, True)
 
 

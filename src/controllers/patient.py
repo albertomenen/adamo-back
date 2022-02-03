@@ -36,9 +36,9 @@ class Patient(Resource):
 
 
 class PatientManager(Resource):
-    @manage_group
+    @list_patient
     def get(self):
-        return get_patients()
+        return get_patients(request)
 
 
 api.add_resource(PatientList, '/group/<group_id>/patient')
