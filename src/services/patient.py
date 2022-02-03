@@ -69,7 +69,7 @@ def get_patients_by_group(id_group, filters=()):
         .filter(User.id_user == Patient.id_user) \
         .filter(User.state == True) \
         .filter(User.id_group == id_group).all()
-    patient_list = filtering(patient_list, filters)
+    patient_list = filtering(patient_list, filters, True)
     return pagination.paginate(patient_list, patient_schema_list, True)
 
 
