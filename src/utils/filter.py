@@ -1,5 +1,7 @@
 def filtering(data_list, filters, or_mode=False):
     new_list = []
+    if not filters:
+        return data_list
     for filtr in filters:
         op = filtr.get('op')
 
