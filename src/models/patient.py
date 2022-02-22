@@ -11,15 +11,15 @@ class Patient(db.Model):
 
     id_patient = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     id_user = db.Column(UUID(as_uuid=True), ForeignKey('user.id_user'), nullable=False)
-    address = db.Column(db.String(150), nullable=False)
-    city = db.Column(db.String(100), nullable=False)
-    town = db.Column(db.String(100), nullable=False)
-    phone = db.Column(db.String(12), nullable=False)
+    address = db.Column(db.String(150))
+    city = db.Column(db.String(100))
+    town = db.Column(db.String(100))
+    phone = db.Column(db.String(12))
     profession = db.Column(db.String(150))
     observations = db.Column(db.String(4000))
-    birthdate = db.Column(db.Date(), nullable=False)
-    identification = db.Column(db.String(9), nullable=False)
-    state = db.Column(db.Boolean(), default=True, nullable=False)
+    birthdate = db.Column(db.Date())
+    identification = db.Column(db.String(9))
+    state = db.Column(db.Boolean(), default=True)
     email = db.Column(db.String(120), nullable=False, unique=True)
     name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
@@ -36,8 +36,9 @@ class Patient(db.Model):
 
     user = relationship('User')
 
-    def __init__(self, id_user, address, city, town, phone, email, birthdate, name, last_name, identification, country,
-                 gender, race, complexity, weight, height, allergies, medication, profession=None, observations=None):
+    def __init__(self, id_user, email, name, last_name, gender, address=None, city=None, town=None, phone=None,
+                 birthdate=None, identification=None, country=None, race=None, complexity=None, weight=None,
+                 height=None, allergies=None, medication=None, profession=None, observations=None):
         self.id_patient = uuid.uuid4()
         self.id_user = id_user
         self.address = address
