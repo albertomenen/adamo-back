@@ -13,7 +13,7 @@ class Treatment(db.Model):
     id_treatment = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     id_patient = db.Column(UUID(as_uuid=True), ForeignKey('palias.id_palias'), nullable=False)
     medic = db.Column(UUID(as_uuid=True), ForeignKey('user.id_user'), nullable=False)
-    name = db.Column(db.String(45), nullable=False)
+    name = db.Column(db.String(100), nullable=False)
     sessions_number = db.Column(db.SmallInteger(), nullable=False)
     current_session_number = db.Column(db.SmallInteger(), nullable=False)
     notes = db.Column(db.String(4000))

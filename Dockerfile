@@ -13,7 +13,7 @@ RUN apt -y upgrade
 RUN apt-get install -y python3
 RUN apt install -y python3-pip
 RUN apt install -y build-essential libssl-dev libffi-dev python3-dev curl
-RUN curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"
+RUN curl "https://bootstrap.pypa.io/pip/3.6/get-pip.py" -o "get-pip.py"
 RUN python3 get-pip.py
 RUN apt install -y python3-opencv
 RUN apt-get install -qqy x11-apps
