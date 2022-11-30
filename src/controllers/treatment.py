@@ -36,8 +36,8 @@ class TreatmentOffset(Resource):
     @run_sesion
     def post(self, group_id, patient_id, treatment_id):
         _ = request.get_json(force=True)
-        return jsonify([[0, 0, 0], [0, 0, 0]])
-        #return get_treatment_offset(group_id, patient_id, treatment_id, request.get_json(force=True))
+        #return jsonify([[0, 0, 0], [0, 0, 0]])
+        return get_treatment_offset(group_id, patient_id, treatment_id, request.get_json(force=True))
 
 
 api.add_resource(TreatmentList, '/group/<group_id>/patient/<patient_id>/treatment')
