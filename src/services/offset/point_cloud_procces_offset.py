@@ -293,6 +293,8 @@ def calcular_offset(color_image1, depth_image1, color_image2,depth_image2, intri
     med2, cov2 = geometry.compute_point_cloud_mean_and_covariance(pcd2)
     theta2,frame2,err2 = obtain_reference_frame(med2, cov2)
 
+    print('err1 = ', err1, ' | err2 = ', err2)
+
     if err1 or err2: 
         print("Se han calculado mal los ejes principales.")
         return False, 0
