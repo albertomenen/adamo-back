@@ -232,6 +232,13 @@ def json_to_data(response):
 
     points = response['points']
 
+    print('intrinsics1 -> ', intrinsics1)
+    print('intrinsics1.height -> ', intrinsics1.height)
+    print('intrinsics1.width -> ', intrinsics1.width)
+    print('intrinsics2 -> ', intrinsics2)
+    print('intrinsics2.height -> ', intrinsics2.height)
+    print('intrinsics2.width -> ', intrinsics2.width)
+
     # return response['id'], color_image1, depth_image1, color_image2, depth_image2
     return color_image1, depth_image1, color_image2, depth_image2, intrinsics1, intrinsics2, depth_scale1, depth_scale2, points
 
@@ -267,7 +274,7 @@ def get_offset(images_to_offset):
     color_image1, depth_image1, color_image2, depth_image2, intrinsics1, intrinsics2, depth_scale1, depth_scale2, treatment_points = json_to_data(
         images_to_offset)
 
-    print('intrinsics1', intrinsics1, '| intrinsics2', intrinsics2)
+    # print('intrinsics1', intrinsics1, '| intrinsics2', intrinsics2)
     if color_image1.shape != (intrinsics1.height, intrinsics1.width, 3):
         raise Exception("The first color image has not been received")
     elif depth_image1.shape != (intrinsics1.height, intrinsics1.width):
