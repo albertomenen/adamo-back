@@ -11,6 +11,7 @@ class SessionDetailSchema(Schema):
     device_id = fields.UUID()
     station_id = fields.UUID()
     image_thermic = fields.Str()
+    image_thermic_data = fields.Str()
     image_3D_color = fields.Str()
     points = fields.List(fields.Nested(point_schema))
 
@@ -21,6 +22,7 @@ class SessionListSchema(Schema):
     session_number = fields.Integer()
     ts_creation_date = fields.Str()
     image_thermic = fields.Str()
+    image_thermic_data = fields.Str()
     points = fields.List(fields.Nested(point_schema))
 
 
