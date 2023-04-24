@@ -232,13 +232,6 @@ def json_to_data(response):
 
     points = response['points']
 
-    print('intrinsics1 -> ', intrinsics1)
-    print('intrinsics1.height -> ', intrinsics1.height)
-    print('intrinsics1.width -> ', intrinsics1.width)
-    print('intrinsics2 -> ', intrinsics2)
-    print('intrinsics2.height -> ', intrinsics2.height)
-    print('intrinsics2.width -> ', intrinsics2.width)
-
     # return response['id'], color_image1, depth_image1, color_image2, depth_image2
     return color_image1, depth_image1, color_image2, depth_image2, intrinsics1, intrinsics2, depth_scale1, depth_scale2, points
 
@@ -296,15 +289,15 @@ def get_offset(images_to_offset):
     p_trat = np.append(p_trat, np.ones((len(p_trat), 1)), axis=1)
 
     """Matriz de transformacion homogenea para el paso de las coordenadas del robot a las coordenadas de la camara"""
-    T = np.matrix([[1.0000, 0, 0, 0.5639],
-                    [0, 1.0000, 0, 0.1294],
-                    [0, 0, 1.0000, 0.6385],
-                    [0, 0, 0, 1.0000]])  # cam_T_r Camara perpendicular al robot
+    # T = np.matrix([[1.0000, 0, 0, 0.5639],
+    #                [0, 1.0000, 0, 0.1294],
+    #                [0, 0, 1.0000, 0.6385],
+    #                [0, 0, 0, 1.0000]])  # cam_T_r Camara perpendicular al robot
 
-    # T = np.matrix([[-0.0087, -0.9982, 0.0594, -0.0249],
-    #               [-0.9960, 0.0139, 0.0883, -0.6470],
-    #               [-0.0890, -0.0584, -0.9943, 0.6948],
-    #               [0, 0, 0, 1.0000]])  # cam_T_r Camara paralela al robot
+    T = np.matrix([[-0.0087, -0.9982, 0.0594, -0.0249],
+                  [-0.9960, 0.0139, 0.0883, -0.6470],
+                  [-0.0890, -0.0584, -0.9943, 0.6948],
+                  [0, 0, 0, 1.0000]])  # cam_T_r Camara paralela al robot
 
     # Se transforman los puntos del tratamiento al sistema de coordenadas de la camara
     p_trat_t = T * p_trat.T

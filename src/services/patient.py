@@ -68,8 +68,7 @@ def get_patients_by_group(id_group, filters=()):
     patient_list = db.session.query(Patient).join(User) \
         .filter(User.id_user == Patient.id_user) \
         .filter(User.state == True) \
-        .filter(User.id_group == id_group).all() \
-       # .order_by(Patient.name.desc())
+        .filter(User.id_group == id_group).all()
     patient_list = filtering(patient_list, filters, True)
     return pagination.paginate(patient_list, patient_schema_list, True)
 
